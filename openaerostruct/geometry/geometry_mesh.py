@@ -8,7 +8,7 @@ import openmdao.api as om
 from openaerostruct.geometry.geometry_mesh_transformations import \
      Taper, ScaleX, Sweep, ShearX, Stretch, ShearY, Dihedral, \
      ShearZ, Rotate
-
+from openaerostruct.geometry.convert_mesh import ConvertMesh
 
 class GeometryMesh(om.Group):
     """
@@ -36,9 +36,15 @@ class GeometryMesh(om.Group):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig [nx, ny, 3] : numpy array
         Modified mesh based on the initial mesh in the surface dictionary and
-        the geometric design variables.
+        the geometric design variables. In the original shape, and this is passed to
+        the structure setup groups.
+    mesh [nx-1, ny-1, 4, 3] : numpy array
+        Mesh in the multiple-valued format. Mesh vertices would have multiple values of
+        locations in aerostructural cases. This is passed to the aero or AS point group.
+        First two indices denote cells, the third index for the four vertices of the cell
+        (in the order of 11, 12, 21, 22), and the last one for xyz locations. 
     """
 
     def initialize(self):
@@ -163,7 +169,7 @@ class GeometryMesh(om.Group):
             promotes = []
 
         self.add_subsystem('rotate', Rotate(val=val, mesh_shape=mesh_shape, symmetry=symmetry),
-                           promotes_inputs=promotes, promotes_outputs=['mesh'])
+                           promotes_inputs=promotes, promotes_outputs=['mesh_orig'])
 
 
         names = ['taper', 'scale_x', 'sweep', 'shear_x', 'stretch', 'shear_y', 'dihedral',
@@ -171,3 +177,6 @@ class GeometryMesh(om.Group):
 
         for j in np.arange(len(names) - 1):
             self.connect(names[j] + '.mesh', names[j+1] + '.in_mesh')
+
+        # Mesh conversion to the 4D multi-valued form
+        self.add_subsystem('convert_mesh', ConvertMesh(mesh_shape=mesh_shape), promotes_inputs=['mesh_orig'], promotes_outputs=['mesh'])
