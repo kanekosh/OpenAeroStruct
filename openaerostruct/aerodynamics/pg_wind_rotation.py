@@ -20,7 +20,8 @@ class RotateToWindFrame(om.ExplicitComponent):
 
     Parameters
     ----------
-    def_mesh[nx, ny, 3] : numpy array
+    # def_mesh[nx, ny, 3] : numpy array
+    def_mesh[nx-1, ny-1, 4, 3] : numpy array
         Array defining the nodal coordinates of the lifting surface in aero
         frame.
     bound_vecs[num_eval_points, 3] : numpy array
@@ -50,7 +51,8 @@ class RotateToWindFrame(om.ExplicitComponent):
 
     Returns
     -------
-    def_mesh_w_frame[nx, ny, 3] : numpy array
+    # def_mesh_w_frame[nx, ny, 3] : numpy array
+    def_mesh_w_frame[nx-1, ny-1, 4, 3] : numpy array
         Array defining the nodal coordinates of the lifting surface in wind
         frame.
     bound_vecs_w_frame[num_eval_points, 3] : numpy array
@@ -107,13 +109,13 @@ class RotateToWindFrame(om.ExplicitComponent):
             name = surface['name']
 
             mesh_name = '{}_def_mesh'.format(name)
-            self.add_input(mesh_name, shape=(nx, ny, 3), units='m')
+            self.add_input(mesh_name, shape=(nx-1, ny-1, 4, 3), units='m')
 
             normals_name = '{}_normals'.format(name)
             self.add_input(normals_name, shape=(nx - 1, ny - 1, 3))
 
             mesh_name = '{}_def_mesh_w_frame'.format(name)
-            self.add_output(mesh_name, shape=(nx, ny, 3), units='m')
+            self.add_output(mesh_name, shape=(nx-1, ny-1, 4, 3), units='m')
 
             normals_name = '{}_normals_w_frame'.format(name)
             self.add_output(normals_name, shape=(nx - 1, ny - 1, 3))
@@ -157,7 +159,8 @@ class RotateToWindFrame(om.ExplicitComponent):
 
             wrt_name = '{}_def_mesh'.format(name)
             of_name = '{}_def_mesh_w_frame'.format(name)
-            self.declare_partials(of_name, wrt_name, rows=rows, cols=cols)
+            # self.declare_partials(of_name, wrt_name, rows=rows, cols=cols)
+            self.declare_partials(of_name, wrt_name, method='fd')
 
     def compute(self, inputs, outputs):
         rotational = self.options['rotational']
@@ -189,12 +192,14 @@ class RotateToWindFrame(om.ExplicitComponent):
 
             wrt_name = '{}_def_mesh'.format(name)
             of_name = '{}_def_mesh_w_frame'.format(name)
-            outputs[of_name] = np.einsum('lk,ijk->ijl', Tw, inputs[wrt_name])
+            # outputs[of_name] = np.einsum('lk,ijk->ijl', Tw, inputs[wrt_name])
+            outputs[of_name] = np.einsum('ml,ijkl->ijkm', Tw, inputs[wrt_name])
 
             wrt_name = '{}_normals'.format(name)
             of_name = '{}_normals_w_frame'.format(name)
             outputs[of_name] = np.einsum('lk,ijk->ijl', Tw, inputs[wrt_name])
 
+    """
     def compute_partials(self, inputs, partials):
         rotational = self.options['rotational']
         alpha = inputs['alpha']
@@ -235,7 +240,7 @@ class RotateToWindFrame(om.ExplicitComponent):
             of_name = '{}_def_mesh_w_frame'.format(name)
             nn = nx * ny
             partials[of_name, wrt_name] = np.tile(Tw, nn)
-
+    """
 
 class RotateFromWindFrame(om.ExplicitComponent):
     """

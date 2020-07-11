@@ -23,7 +23,8 @@ class ViscousDrag(om.ExplicitComponent):
         factor calculation.
     widths[ny-1] : numpy array
         The spanwise width of each panel.
-    lengths[ny] : numpy array
+    lengths[ny-1, 2] : numpy array
+    # lengths[ny] : numpy array
         The sum of the lengths of each line segment along a chord section.
     t_over_c[ny-1] : numpy array
         The streamwise thickness-to-chord ratio of each VLM panel.
@@ -57,11 +58,13 @@ class ViscousDrag(om.ExplicitComponent):
         self.add_input('S_ref', val=1., units='m**2')
         self.add_input('cos_sweep', val=np.ones((ny-1)), units='m')
         self.add_input('widths', val=np.ones((ny-1)), units='m')
-        self.add_input('lengths', val=np.ones((ny)), units='m')
+        # self.add_input('lengths', val=np.ones((ny)), units='m')
+        self.add_input('lengths', val=np.ones((ny-1, 2)), units='m')
         self.add_input('t_over_c', val=np.ones((ny-1)))
         self.add_output('CDv', val=0.)
 
-        self.declare_partials('CDv', '*')
+        # self.declare_partials('CDv', '*')
+        self.declare_partials('CDv', '*', method='fd')
 
         self.set_check_partial_options(wrt='*', method='cs', step=1e-50)
 
@@ -76,7 +79,8 @@ class ViscousDrag(om.ExplicitComponent):
             t_over_c = inputs['t_over_c']
 
             # Take panel chord length to be average of its edge lengths
-            chords = (lengths[1:] + lengths[:-1]) / 2.
+            # chords = (lengths[1:] + lengths[:-1]) / 2.  (ny-1,)
+            chords = (lengths[:, 0] + lengths[:, 1]) / 2.
             Re_c = re * chords
 
             cdturb_total = 0.455 / (np.log10(Re_c))**2.58 / \
@@ -116,8 +120,9 @@ class ViscousDrag(om.ExplicitComponent):
         else:
             outputs['CDv'] = 0.0
 
+    """
     def compute_partials(self, inputs, partials):
-        """ Jacobian for viscous drag."""
+        # Jacobian for viscous drag.
 
         partials['CDv', 'lengths'] = np.zeros_like(partials['CDv', 'lengths'])
         re = inputs['re']
@@ -247,3 +252,4 @@ class ViscousDrag(om.ExplicitComponent):
                 partials['CDv', 'Mach_number'][0, :] *=  2
                 partials['CDv', 're'][0, :] *=  2
                 partials['CDv', 't_over_c'][0, :] *=  2
+    """

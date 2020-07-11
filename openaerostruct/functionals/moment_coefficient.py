@@ -10,11 +10,13 @@ class MomentCoefficient(om.ExplicitComponent):
 
     Parameters
     ----------
-    b_pts[nx-1, ny, 3] : numpy array
+    b_pts[nx-1, ny-1, 2, 3] : numpy array
+    ## b_pts[nx-1, ny, 3] : numpy array
         Bound points for the horseshoe vortices, found along the 1/4 chord.
     widths[ny-1] : numpy array
         The spanwise widths of each individual panel.
-    chords[ny] : numpy array
+    ## chords[ny] : numpy array
+    chords[ny-1, 2] : numpy array
         The chordwise length of the entire airfoil following the camber line.
     S_ref : float
         The reference area of the lifting surface.
@@ -48,9 +50,11 @@ class MomentCoefficient(om.ExplicitComponent):
             nx = surface['mesh'].shape[0]
             ny = surface['mesh'].shape[1]
 
-            self.add_input(name + '_b_pts', val=np.ones((nx-1, ny, 3)), units='m')
+            # self.add_input(name + '_b_pts', val=np.ones((nx-1, ny, 3)), units='m')
+            self.add_input(name + '_b_pts', val=np.ones((nx-1, ny-1, 2, 3)), units='m')
             self.add_input(name + '_widths', val=np.ones((ny-1)), units='m')
-            self.add_input(name + '_chords', val=np.ones((ny)), units='m')
+            # self.add_input(name + '_chords', val=np.ones((ny)), units='m')
+            self.add_input(name + '_chords', val=np.ones((ny-1, 2)), units='m')
             self.add_input(name + '_S_ref', val=1., units='m**2')
             self.add_input(name + '_sec_forces', val=np.ones((nx-1, ny-1, 3)), units='N')
 
@@ -61,7 +65,8 @@ class MomentCoefficient(om.ExplicitComponent):
 
         self.add_output('CM', val=np.ones((3)))
 
-        self.declare_partials(of='*', wrt='*')
+        # self.declare_partials(of='*', wrt='*')
+        self.declare_partials(of='*', wrt='*', method='fd')
 
     def compute(self, inputs, outputs):
         cg = inputs['cg']
@@ -82,7 +87,8 @@ class MomentCoefficient(om.ExplicitComponent):
             # Compute the average chord for each panel and then the
             # mean aerodynamic chord (MAC) based on these chords and the
             # computed area
-            panel_chords = (chords[1:] + chords[:-1]) * 0.5
+            # panel_chords = (chords[1:] + chords[:-1]) * 0.5
+            panel_chords = (chords[:, 0] + chords[:, 1]) / 2.
             MAC = 1. / S_ref * np.sum(panel_chords**2 * widths)
 
             # If the surface is symmetric, then the previously computed MAC
@@ -91,7 +97,8 @@ class MomentCoefficient(om.ExplicitComponent):
                 MAC *= 2.0
 
             # Get the moment arm acting on each panel, relative to the cg
-            pts = (b_pts[:, 1:, :] + b_pts[:, :-1, :]) * 0.5
+            # pts = (b_pts[:, 1:, :] + b_pts[:, :-1, :]) * 0.5
+            pts = (b_pts[:, :, 0, :] + b_pts[:, :, 1, :]) * 0.5
             diff = (pts - cg)
 
             # Compute the moment based on the previously computed moment
@@ -120,6 +127,7 @@ class MomentCoefficient(om.ExplicitComponent):
         rho = inputs['rho']
         outputs['CM'] = M / (0.5 * rho * inputs['v']**2 * inputs['S_ref_total'] * self.MAC_wing)
 
+    """
     def compute_partials(self, inputs, partials):
         cg = inputs['cg']
         rho = inputs['rho']
@@ -242,3 +250,4 @@ class MomentCoefficient(om.ExplicitComponent):
                 partials['CM', base_name + '_chords'] -= np.outer(M_j * term, base_dMAC_dc)
                 partials['CM', base_name + '_widths'] -= np.outer(M_j * term, base_dMAC_dw)
                 partials['CM', base_name + '_S_ref'] -= np.outer(M_j, base_dMAC_dS * term)
+    """

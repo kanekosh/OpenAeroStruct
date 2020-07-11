@@ -176,7 +176,7 @@ class GeometryMesh(om.Group):
                  'shear_z', 'rotate']
 
         for j in np.arange(len(names) - 1):
-            self.connect(names[j] + '.mesh', names[j+1] + '.in_mesh')
+            self.connect(names[j] + '.mesh_orig', names[j+1] + '.in_mesh')
 
         # Mesh conversion to the 4D multi-valued form
         self.add_subsystem('convert_mesh', ConvertMesh(mesh_shape=mesh_shape), promotes_inputs=['mesh_orig'], promotes_outputs=['mesh'])

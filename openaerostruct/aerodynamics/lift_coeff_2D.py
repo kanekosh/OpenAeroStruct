@@ -20,7 +20,8 @@ class LiftCoeff2D(om.ExplicitComponent):
         panel).
     widths[ny-1] : numpy array
         The spanwise widths of each individual panel.
-    chords[ny] : numpy array
+    ## chords[ny] : numpy array
+    chords[ny-1, 2] : numpy array
         The chordwise distance between the leading and trailing edges.
     v : float
         Freestream air velocity in m/s.
@@ -48,13 +49,17 @@ class LiftCoeff2D(om.ExplicitComponent):
         self.add_input('alpha', val=3., units='deg')
         self.add_input('sec_forces', val=np.ones((self.nx-1, self.ny-1, 3)), units='N')
         self.add_input('widths', val=np.ones((self.ny-1)), units='m')
-        self.add_input('chords', val=np.ones((self.ny)), units='m')
+        # self.add_input('chords', val=np.ones((self.ny)), units='m')
+        self.add_input('chords', val=np.ones((self.ny-1, 2)), units='m')
         self.add_input('v', val=1., units='m/s')
         self.add_input('rho', val=1., units='kg/m**3')
 
         # Outputs
         self.add_output('Cl', val=np.zeros((self.ny-1)))
 
+
+        self.declare_partials('*', '*', method='fd')
+        """
         self.declare_partials('Cl', 'widths')
         self.declare_partials('Cl', 'v')
         self.declare_partials('Cl', 'rho')
@@ -69,6 +74,7 @@ class LiftCoeff2D(om.ExplicitComponent):
         rows = np.tile(np.repeat(arange, 3), self.nx-1)
         cols = np.arange((self.ny-1)*(self.nx-1)*3)
         self.declare_partials('Cl', 'sec_forces', rows=rows, cols=cols)
+        """
 
     def compute(self, inputs, outputs):
 
@@ -87,13 +93,14 @@ class LiftCoeff2D(om.ExplicitComponent):
         lift_dist = (-forces[:, 0] * sina + forces[:, 2] * cosa) / widths[:]
 
         # Mid-panel chord
-        chord = 0.5 * (chords[1:] + chords[:-1]) # chord c(y)
+        chord = (chords[:, 0] + chords[:, 1]) / 2.  # (ny-1,)
 
         # Lift coefficient distribution
         outputs['Cl'] = lift_dist[:] / ( 0.5 * rho * v**2 * chord[:] )
 
+    """
     def compute_partials(self, inputs, partials):
-        """ Jacobian for 2D lift coefficient distribution."""
+        # Jacobian for 2D lift coefficient distribution.
 
         # Input parameters
         alpha = inputs['alpha'] * np.pi / 180.
@@ -163,3 +170,4 @@ class LiftCoeff2D(om.ExplicitComponent):
         # Analytic derivatives for rho
         partials['Cl', 'rho'] = -1. / rho**2 * \
                            lift_dist[:] / ( 0.5 * v**2 * chord[:] )
+    """

@@ -16,7 +16,7 @@ class CollocationPoints(om.ExplicitComponent):
 
     Parameters
     ----------
-    def_mesh[nx, ny, 3] : numpy array
+    def_mesh[nx-1, ny-1, 4, 3] : numpy array
         We have a mesh for each lifting surface in the problem.
         That is, if we have both a wing and a tail surface, we will have both
         `wing_def_mesh` and `tail_def_mesh` as inputs.
@@ -48,7 +48,7 @@ class CollocationPoints(om.ExplicitComponent):
         # Loop through all the surfaces to determine the total number
         # of evaluation points.
         for surface in self.options['surfaces']:
-            mesh = surface['mesh']
+            mesh = surface['mesh']  # this is the original mesh (nx, ny, 3)
             nx = mesh.shape[0]
             ny = mesh.shape[1]
 
@@ -73,8 +73,9 @@ class CollocationPoints(om.ExplicitComponent):
 
             # Take in a deformed mesh for each surface.
             mesh_name = name + '_def_mesh'
-            self.add_input(mesh_name, shape=(nx, ny, 3), units='m')
+            self.add_input(mesh_name, shape=(nx-1, ny-1, 4, 3), units='m')
 
+            """
             mesh_indices = np.arange(nx * ny * 3).reshape(
                 (nx, ny, 3))
 
@@ -116,6 +117,10 @@ class CollocationPoints(om.ExplicitComponent):
             self.declare_partials('bound_vecs', mesh_name, val=data, rows=rows, cols=cols)
 
             ind_eval_points_1 += (nx - 1) * (ny - 1)
+            """
+            self.declare_partials('coll_pts', mesh_name, method='fd')
+            self.declare_partials('force_pts', mesh_name, method='fd')
+            self.declare_partials('bound_vecs', mesh_name, method='fd')
 
     def compute(self, inputs, outputs):
         ind_eval_points_1 = 0
@@ -136,28 +141,34 @@ class CollocationPoints(om.ExplicitComponent):
 
             # The collocation points are 3/4 chord down the panel and in the
             # midpoint spanwise.
+            # outputs['coll_pts'][ind_eval_points_1:ind_eval_points_2, :] = (
+            #     0.25 * 0.5 * inputs[mesh_name][0:-1, 0:-1, :] +   # 0
+            #     0.75 * 0.5 * inputs[mesh_name][1:  , 0:-1, :] +   # 1
+            #     0.25 * 0.5 * inputs[mesh_name][0:-1, 1:  , :] +   # 2
+            #     0.75 * 0.5 * inputs[mesh_name][1:  , 1:  , :]     # 3
+            # ).reshape(((nx - 1) * (ny - 1), 3))
             outputs['coll_pts'][ind_eval_points_1:ind_eval_points_2, :] = (
-                0.25 * 0.5 * inputs[mesh_name][0:-1, 0:-1, :] +
-                0.75 * 0.5 * inputs[mesh_name][1:  , 0:-1, :] +
-                0.25 * 0.5 * inputs[mesh_name][0:-1, 1:  , :] +
-                0.75 * 0.5 * inputs[mesh_name][1:  , 1:  , :]
+                0.25 * 0.5 * inputs[mesh_name][:, :, 0, :] +
+                0.75 * 0.5 * inputs[mesh_name][:, :, 1, :] +
+                0.25 * 0.5 * inputs[mesh_name][:, :, 2, :] +
+                0.75 * 0.5 * inputs[mesh_name][:, :, 3, :]
             ).reshape(((nx - 1) * (ny - 1), 3))
 
             # The force points are 1/4 chord down the panel and in the midpoint
             # spanwise.
             outputs['force_pts'][ind_eval_points_1:ind_eval_points_2, :] = (
-                0.75 * 0.5 * inputs[mesh_name][0:-1, 0:-1, :] +
-                0.25 * 0.5 * inputs[mesh_name][1:  , 0:-1, :] +
-                0.75 * 0.5 * inputs[mesh_name][0:-1, 1:  , :] +
-                0.25 * 0.5 * inputs[mesh_name][1:  , 1:  , :]
+                0.75 * 0.5 * inputs[mesh_name][:, :, 0, :] +
+                0.25 * 0.5 * inputs[mesh_name][:, :, 1, :] +
+                0.75 * 0.5 * inputs[mesh_name][:, :, 2, :] +
+                0.25 * 0.5 * inputs[mesh_name][:, :, 3, :]
             ).reshape(((nx - 1) * (ny - 1), 3))
 
             # The bound vectors are computed at the 1/4 chord line.
             outputs['bound_vecs'][ind_eval_points_1:ind_eval_points_2, :] = (
-                 0.75 * inputs[mesh_name][0:-1, 0:-1, :] +
-                 0.25 * inputs[mesh_name][1:  , 0:-1, :] +
-                -0.75 * inputs[mesh_name][0:-1, 1:  , :] +
-                -0.25 * inputs[mesh_name][1:  , 1:  , :]
+                 0.75 * inputs[mesh_name][:, :, 0, :] +
+                 0.25 * inputs[mesh_name][:, :, 1, :] +
+                -0.75 * inputs[mesh_name][:, :, 2, :] +
+                -0.25 * inputs[mesh_name][:, :, 3, :]
             ).reshape(((nx - 1) * (ny - 1), 3))
 
             # Increment the indices based on the amount contributed by this

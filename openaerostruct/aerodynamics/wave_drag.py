@@ -20,7 +20,8 @@ class WaveDrag(om.ExplicitComponent):
         of cos(sweep)
     CL : float
         The CL of the lifting surface used for wave drag estimation.
-    chords[ny] : numpy array
+    chords[ny-1, 2] : numpy array
+    # chords[ny] : numpy array
         The chord length of each mesh slice. This is dimension ny rather than ny-1 which would be
         expected for chord length of each VLM panel.
     t_over_c[ny-1] : numpy array
@@ -50,11 +51,13 @@ class WaveDrag(om.ExplicitComponent):
         self.add_input('cos_sweep', val=np.ones((ny-1))*.2, units='m')
         self.add_input('widths', val=np.arange((ny-1))+1., units='m') # set to np.arange so that d_CDw_d_chords is nonzero
         self.add_input('CL', val=0.33)
-        self.add_input('chords', val=np.ones((ny)), units='m')
+        # self.add_input('chords', val=np.ones((ny)), units='m')
+        self.add_input('chords', val=np.ones((ny-1, 2)), units='m')
         self.add_input('t_over_c', val=np.arange((ny-1)))
         self.add_output('CDw', val=0.)
 
-        self.declare_partials('CDw', '*')
+        # self.declare_partials('CDw', '*')
+        self.declare_partials('CDw', '*', method='fd')
         self.set_check_partial_options(wrt='*', method='cs', step=1e-50)
 
     def compute(self, inputs, outputs):
@@ -66,12 +69,16 @@ class WaveDrag(om.ExplicitComponent):
             chords = inputs['chords']
             CL = inputs['CL']
 
-            mean_chords = (chords[:-1] + chords[1:]) / 2.
+            # mean_chords = (chords[:-1] + chords[1:]) / 2.
+            mean_chords = (chords[:, 0] + chords[:, 1]) / 2.
             panel_areas = mean_chords * inputs['cos_sweep']
             avg_cos_sweep = np.sum(actual_cos_sweep * panel_areas) / np.sum(panel_areas) # weighted average of 1/4 chord sweep
             avg_t_over_c = np.sum(t_over_c * panel_areas) / np.sum(panel_areas) # weighted average of streamwise t/c
             MDD = self.ka / avg_cos_sweep - avg_t_over_c / avg_cos_sweep**2 - CL / (10*avg_cos_sweep**3)
             Mcrit = MDD - (0.1 / 80.)**(1./3.)
+
+            print('avg_cos_sweep', avg_cos_sweep)
+            print('avg_t_over_c', avg_t_over_c)
 
             if M > Mcrit:
                 outputs['CDw'] = 20*(M - Mcrit)**4
@@ -83,8 +90,9 @@ class WaveDrag(om.ExplicitComponent):
         else:
             outputs['CDw'] = 0.0
 
+    """
     def compute_partials(self, inputs, partials):
-        """ Jacobian for wave drag."""
+        # Jacobian for wave drag.
         if self.with_wave:
             ny = self.surface['mesh'].shape[1]
             t_over_c = inputs['t_over_c']
@@ -141,3 +149,4 @@ class WaveDrag(om.ExplicitComponent):
             partials['CDw', 'Mach_number'][0, :] *=  2
             partials['CDw', 'chords'][0, :] *=  2
             partials['CDw', 't_over_c'][0, :] *=  2
+    """

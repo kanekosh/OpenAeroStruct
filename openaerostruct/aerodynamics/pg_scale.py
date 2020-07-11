@@ -31,7 +31,8 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
 
     Parameters
     ----------
-    def_mesh_w_frame[nx, ny, 3] : numpy array
+    # def_mesh_w_frame[nx, ny, 3] : numpy array
+    def_mesh_w_frame[nx-1, ny-1, 4, 3] : numpy array
         Array defining the nodal coordinates of the lifting surface in aero
         frame.
     bound_vecs_w_frame[num_eval_points, 3] : numpy array
@@ -60,7 +61,8 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
 
     Returns
     -------
-    def_mesh_pg[nx, ny, 3] : numpy array
+    # def_mesh_pg[nx, ny, 3] : numpy array
+    def_mesh_pg[nx-1, ny-1, 4, 3] : numpy array
         Array defining the nodal coordinates of the lifting surface in PG frame.
     bound_vecs_pg[num_eval_points, 3] : numpy array
         Bound points in PG frame.
@@ -114,13 +116,13 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
             name = surface['name']
 
             mesh_name = '{}_def_mesh_w_frame'.format(name)
-            self.add_input(mesh_name, shape=(nx, ny, 3), units='m')
+            self.add_input(mesh_name, shape=(nx-1, ny-1, 4, 3), units='m')
 
             normals_name = '{}_normals_w_frame'.format(name)
             self.add_input(normals_name, shape=(nx - 1, ny - 1, 3))
 
             mesh_name = '{}_def_mesh_pg'.format(name)
-            self.add_output(mesh_name, shape=(nx, ny, 3), units='m')
+            self.add_output(mesh_name, shape=(nx-1, ny-1, 4, 3), units='m')
 
             normals_name = '{}_normals_pg'.format(name)
             self.add_output(normals_name, shape=(nx - 1, ny - 1, 3))
@@ -139,6 +141,7 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
             self.declare_partials('rotational_velocities_pg', 'rotational_velocities_w_frame', rows=row_col, cols=row_col)
 
         for surface in surfaces:
+
             mesh = surface['mesh']
             nx = mesh.shape[0]
             ny = mesh.shape[1]
@@ -156,7 +159,8 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
 
             wrt_name = '{}_def_mesh_w_frame'.format(name)
             of_name = '{}_def_mesh_pg'.format(name)
-            self.declare_partials(of_name, wrt_name, rows=row_col, cols=row_col)
+            # self.declare_partials(of_name, wrt_name, rows=row_col, cols=row_col)
+            self.declare_partials(of_name, wrt_name, method='fd')
 
     def compute(self, inputs, outputs):
         rotational = self.options['rotational']
@@ -189,8 +193,10 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
             of_name = '{}_def_mesh_pg'.format(name)
 
             outputs[of_name] = inputs[wrt_name]
-            outputs[of_name][:, :, 1] *= betaPG
-            outputs[of_name][:, :, 2] *= betaPG
+            # outputs[of_name][:, :, 1] *= betaPG
+            # outputs[of_name][:, :, 2] *= betaPG
+            outputs[of_name][:, :, :, 1] *= betaPG
+            outputs[of_name][:, :, :, 2] *= betaPG
 
             wrt_name = '{}_normals_w_frame'.format(name)
             of_name = '{}_normals_pg'.format(name)
@@ -198,6 +204,8 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
             outputs[of_name] = inputs[wrt_name]
             outputs[of_name][:, :, 0] *= betaPG
 
+
+    """
     def compute_partials(self, inputs, partials):
         rotational = self.options['rotational']
 
@@ -230,7 +238,7 @@ class ScaleToPrandtlGlauert(om.ExplicitComponent):
             of_name = '{}_normals_pg'.format(name)
             nn = (nx-1) * (ny-1)
             partials[of_name, wrt_name] = np.tile(fact_norm, nn)
-
+    """
 
 class ScaleFromPrandtlGlauert(om.ExplicitComponent):
     """

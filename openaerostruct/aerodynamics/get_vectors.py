@@ -12,7 +12,7 @@ class GetVectors(om.ExplicitComponent):
 
     Parameters
     ----------
-    vortex_mesh[nx, ny, 3] : numpy array
+    vortex_mesh[nx-1, ny-1, 4, 3] : numpy array
         The actual aerodynamic mesh used in VLM calculations, where we look
         at the rings of the panels instead of the panels themselves. That is,
         this mesh coincides with the quarter-chord panel line, except for the
@@ -22,10 +22,12 @@ class GetVectors(om.ExplicitComponent):
 
     Returns
     -------
-    vectors[num_eval_points, nx, ny, 3] : numpy array
-        The actual velocities experienced at the evaluation points for each
-        lifting surface in the system. This is the summation of the freestream
-        velocities and the induced velocities caused by the circulations.
+    vectors[num_eval_points, nx-1, ny-1, 4, 3] : numpy array
+    # vectors[num_eval_points, nx, ny, 3] : numpy array
+        The vectors from the aerodynamic meshes to the evaluation points for
+        every surface to every surface. For the symmetric case, the third
+        dimension is length (2 * ny - 1). There is one of these arrays
+        for each lifting surface in the problem.
     """
 
     def initialize(self):
@@ -42,7 +44,7 @@ class GetVectors(om.ExplicitComponent):
         self.add_input(eval_name, val=np.zeros((num_eval_points, 3)), units='m')
 
         for surface in surfaces:
-            mesh=surface['mesh']
+            mesh = surface['mesh']
             nx = mesh.shape[0]
             ny = mesh.shape[1]
             name = surface['name']
@@ -57,9 +59,12 @@ class GetVectors(om.ExplicitComponent):
             else:
                 actual_ny_size = ny
 
-            self.add_input(name + '_vortex_mesh', val=np.zeros((nx, actual_ny_size, 3)), units='m')
-            self.add_output(vectors_name, val=np.ones((num_eval_points, nx, actual_ny_size, 3)), units='m')
+            # self.add_input(name + '_vortex_mesh', val=np.zeros((nx, actual_ny_size, 3)), units='m')
+            # self.add_output(vectors_name, val=np.ones((num_eval_points, nx, actual_ny_size, 3)), units='m')
+            self.add_input(name + '_vortex_mesh', val=np.zeros((nx-1, actual_ny_size-1, 4, 3)), units='m')
+            self.add_output(vectors_name, val=np.ones((num_eval_points, nx-1, actual_ny_size-1, 4, 3)), units='m')
 
+            """
             # Set up indices so we can get the rows and cols for the delcare
             vector_indices = np.arange(num_eval_points * nx * actual_ny_size * 3)
             mesh_indices = np.outer(
@@ -73,6 +78,9 @@ class GetVectors(om.ExplicitComponent):
 
             self.declare_partials(vectors_name, name + '_vortex_mesh', val=-1., rows=vector_indices, cols=mesh_indices)
             self.declare_partials(vectors_name, eval_name, val= 1., rows=vector_indices, cols=eval_indices)
+            """
+            self.declare_partials(vectors_name, name + '_vortex_mesh', method='fd')
+            self.declare_partials(vectors_name, eval_name, method='fd')
 
     def compute(self, inputs, outputs):
         surfaces = self.options['surfaces']
@@ -92,6 +100,7 @@ class GetVectors(om.ExplicitComponent):
             mesh_name = name + '_vortex_mesh'
             vectors_name = '{}_{}_vectors'.format(name, eval_name)
 
+            """
             mesh_reshaped = np.einsum('i,jkl->ijkl', np.ones(num_eval_points), inputs[mesh_name])
 
             if surface['symmetry']:
@@ -104,6 +113,21 @@ class GetVectors(om.ExplicitComponent):
                     inputs[eval_name],
                     np.ones((nx, ny)),
                 )
+            """
+            mesh_reshaped = np.einsum('i,jklm->ijklm', np.ones(num_eval_points), inputs[mesh_name])   # 5D array
+            
+            if surface['symmetry']:
+                ny_full = ny*2-1
+                eval_points_reshaped = np.einsum('im,jkl->ijklm',
+                    inputs[eval_name],
+                    np.ones((nx-1, ny_full-1, 4)),
+                )
+            else:
+                eval_points_reshaped = np.einsum('im,jkl->ijklm',
+                    inputs[eval_name],
+                    np.ones((nx-1, ny-1, 4)),
+                )
 
             # Actually subtract the vectors.
             outputs[vectors_name] = eval_points_reshaped - mesh_reshaped
+

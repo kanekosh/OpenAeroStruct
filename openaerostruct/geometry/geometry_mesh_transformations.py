@@ -20,7 +20,7 @@ class Taper(om.ExplicitComponent):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the tapered aerodynamic surface.
     """
 
@@ -41,7 +41,7 @@ class Taper(om.ExplicitComponent):
 
         self.add_input('taper', val=val)
 
-        self.add_output('mesh', val=mesh, units='m')
+        self.add_output('mesh_orig', val=mesh, units='m')
 
         self.declare_partials('*', '*')
 
@@ -73,7 +73,7 @@ class Taper(om.ExplicitComponent):
         taper = np.interp(x.real, xp.real, fp.real)
 
         # Modify the mesh based on the taper amount computed per spanwise section
-        outputs['mesh'] = np.einsum('ijk,j->ijk', mesh - quarter_chord, taper) + quarter_chord
+        outputs['mesh_orig'] = np.einsum('ijk,j->ijk', mesh - quarter_chord, taper) + quarter_chord
 
     def compute_partials(self, inputs, partials):
         mesh = self.options['mesh']
@@ -107,7 +107,7 @@ class Taper(om.ExplicitComponent):
         else:
             dtaper = (1.0 - taper) / (1.0 - taper_ratio)
 
-        partials['mesh', 'taper'] = np.einsum('ijk, j->ijk', mesh - quarter_chord, dtaper)
+        partials['mesh_orig', 'taper'] = np.einsum('ijk, j->ijk', mesh - quarter_chord, dtaper)
 
 
 class ScaleX(om.ExplicitComponent):
@@ -117,14 +117,14 @@ class ScaleX(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     chord[ny] : numpy array
         Chord length for each panel edge.
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh with the new chord lengths.
     """
 
@@ -142,7 +142,7 @@ class ScaleX(om.ExplicitComponent):
         self.add_input('chord', units='m', val=val)
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
         nn = nx * ny * 3
@@ -151,7 +151,7 @@ class ScaleX(om.ExplicitComponent):
         col = np.tile(np.zeros(3), ny) + np.repeat(np.arange(ny), 3)
         cols = np.tile(col, nx)
 
-        self.declare_partials('mesh', 'chord', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'chord', rows=rows, cols=cols)
 
         p_rows = np.arange(nn)
         te_rows = np.arange(((nx-1) * ny * 3))
@@ -161,7 +161,7 @@ class ScaleX(om.ExplicitComponent):
         rows = np.concatenate([p_rows, te_rows, le_rows])
         cols = np.concatenate([p_rows, te_cols, le_cols])
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         mesh = inputs['in_mesh']
@@ -171,7 +171,7 @@ class ScaleX(om.ExplicitComponent):
         le = mesh[ 0]
         quarter_chord = 0.25 * te + 0.75 * le
 
-        outputs['mesh'] = np.einsum('ijk,j->ijk', mesh - quarter_chord, chord_dist) + quarter_chord
+        outputs['mesh_orig'] = np.einsum('ijk,j->ijk', mesh - quarter_chord, chord_dist) + quarter_chord
 
     def compute_partials(self, inputs, partials):
         mesh = inputs['in_mesh']
@@ -181,21 +181,21 @@ class ScaleX(om.ExplicitComponent):
         le = mesh[ 0]
         quarter_chord = 0.25 * te + 0.75 * le
 
-        partials['mesh', 'chord'] = (mesh - quarter_chord).flatten()
+        partials['mesh_orig', 'chord'] = (mesh - quarter_chord).flatten()
 
         nx, ny, _ = mesh.shape
         nn = nx * ny * 3
         d_mesh = np.einsum('i,ij->ij', chord_dist, np.ones((ny, 3))).flatten()
-        partials['mesh', 'in_mesh'][:nn] = np.tile(d_mesh, nx)
+        partials['mesh_orig', 'in_mesh'][:nn] = np.tile(d_mesh, nx)
 
         d_qc = (np.einsum('ij,i->ij', np.ones((ny, 3)), 1.0 - chord_dist)).flatten()
         nnq = (nx-1) * ny * 3
-        partials['mesh', 'in_mesh'][nn:nn + nnq] = np.tile(0.25 * d_qc, nx-1)
-        partials['mesh', 'in_mesh'][nn + nnq:] = np.tile(0.75 * d_qc, nx-1)
+        partials['mesh_orig', 'in_mesh'][nn:nn + nnq] = np.tile(0.25 * d_qc, nx-1)
+        partials['mesh_orig', 'in_mesh'][nn + nnq:] = np.tile(0.75 * d_qc, nx-1)
 
         nnq = ny*3
-        partials['mesh', 'in_mesh'][nn - nnq:nn] += 0.25 * d_qc
-        partials['mesh', 'in_mesh'][:nnq] += 0.75 * d_qc
+        partials['mesh_orig', 'in_mesh'][nn - nnq:nn] += 0.25 * d_qc
+        partials['mesh_orig', 'in_mesh'][:nnq] += 0.75 * d_qc
 
 
 class Sweep(om.ExplicitComponent):
@@ -204,7 +204,7 @@ class Sweep(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     sweep : float
         Shearing sweep angle in degrees.
@@ -213,7 +213,7 @@ class Sweep(om.ExplicitComponent):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the swept aerodynamic surface.
     """
 
@@ -234,14 +234,14 @@ class Sweep(om.ExplicitComponent):
         self.add_input('sweep', val=val, units='deg')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
         nn = nx * ny
         rows = 3 * np.arange(nn)
         cols = np.zeros(nn)
 
-        self.declare_partials('mesh', 'sweep', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'sweep', rows=rows, cols=cols)
 
         nn = nx * ny * 3
         n_rows = np.arange(nn)
@@ -269,7 +269,7 @@ class Sweep(om.ExplicitComponent):
         rows = np.concatenate(([n_rows, te_rows, te_rows]))
         cols = np.concatenate(([n_rows, te_cols, se_cols]))
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         symmetry = self.options['symmetry']
@@ -298,8 +298,8 @@ class Sweep(om.ExplicitComponent):
             dx = np.hstack((dx_left, dx_right))
 
         # dx added spanwise.
-        outputs['mesh'][:] = mesh
-        outputs['mesh'][:, :, 0] += dx
+        outputs['mesh_orig'][:] = mesh
+        outputs['mesh_orig'][:, :, 0] += dx
 
     def compute_partials(self, inputs, partials):
         symmetry = self.options['symmetry']
@@ -329,14 +329,14 @@ class Sweep(om.ExplicitComponent):
             dx_dtheta_left = -(le[:ny2, 1] - y0)
             dx_dtheta = np.hstack((dx_dtheta_left, dx_dtheta_right))
 
-        partials['mesh', 'sweep'] = np.tile(dx_dtheta * dtan_dtheta, nx)
+        partials['mesh_orig', 'sweep'] = np.tile(dx_dtheta * dtan_dtheta, nx)
 
         nn = nx * ny * 3
-        partials['mesh', 'in_mesh'][:nn] = 1.0
+        partials['mesh_orig', 'in_mesh'][:nn] = 1.0
 
         nn2 = nx * (ny-1)
-        partials['mesh', 'in_mesh'][nn:nn + nn2] = tan_theta
-        partials['mesh', 'in_mesh'][nn + nn2:] = -tan_theta
+        partials['mesh_orig', 'in_mesh'][nn:nn + nn2] = tan_theta
+        partials['mesh_orig', 'in_mesh'][nn + nn2:] = -tan_theta
 
 
 class ShearX(om.ExplicitComponent):
@@ -346,14 +346,14 @@ class ShearX(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     xshear[ny] : numpy array
         Distance to translate wing in x direction.
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh with the new chord lengths.
     """
 
@@ -371,7 +371,7 @@ class ShearX(om.ExplicitComponent):
         self.add_input('xshear', val=val, units='m')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
 
@@ -380,18 +380,18 @@ class ShearX(om.ExplicitComponent):
         cols = np.tile(np.arange(ny), nx)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'xshear', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'xshear', rows=rows, cols=cols, val=val)
 
         nn = nx * ny * 3
         rows = np.arange(nn)
         cols = np.arange(nn)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols, val=val)
 
     def compute(self, inputs, outputs):
-        outputs['mesh'][:] = inputs['in_mesh']
-        outputs['mesh'][:, :, 0] += inputs['xshear']
+        outputs['mesh_orig'][:] = inputs['in_mesh']
+        outputs['mesh_orig'][:, :, 0] += inputs['xshear']
 
 
 class Stretch(om.ExplicitComponent):
@@ -401,7 +401,7 @@ class Stretch(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     span : float
         Relative stetch ratio in the spanwise direction.
@@ -410,7 +410,7 @@ class Stretch(om.ExplicitComponent):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the stretched aerodynamic surface.
     """
 
@@ -430,14 +430,14 @@ class Stretch(om.ExplicitComponent):
         self.add_input('span', val=val, units='m')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
         nn = nx * ny
         rows = 3 * np.arange(nn) + 1
         cols = np.zeros(nn)
 
-        self.declare_partials('mesh', 'span', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'span', rows=rows, cols=cols)
 
         # First: x and z on diag is identity.
         nn = nx * ny
@@ -466,7 +466,7 @@ class Stretch(om.ExplicitComponent):
         rows = np.concatenate([xz_diag, xz_diag + 2, rows_4c, rows_dg])
         cols = np.concatenate([xz_diag, xz_diag + 2, cols_4c, cols_dg])
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         symmetry = self.options['symmetry']
@@ -488,8 +488,8 @@ class Stretch(om.ExplicitComponent):
         prev_span = quarter_chord[-1, 1] - quarter_chord[0, 1]
         s = quarter_chord[:, 1] / prev_span
 
-        outputs['mesh'][:] = mesh
-        outputs['mesh'][:, :, 1] = s * span
+        outputs['mesh_orig'][:] = mesh
+        outputs['mesh_orig'][:, :, 1] = s * span
 
     def compute_partials(self, inputs, partials):
         symmetry = self.options['symmetry']
@@ -518,25 +518,25 @@ class Stretch(om.ExplicitComponent):
         d_prev_span_qc0[0] = d_prev_span_qc1[-1] = 1.0 / prev_span
 
         if symmetry:
-            partials['mesh', 'span'] = np.tile(0.5 * s, nx)
+            partials['mesh_orig', 'span'] = np.tile(0.5 * s, nx)
         else:
-            partials['mesh', 'span'] = np.tile(s, nx)
+            partials['mesh_orig', 'span'] = np.tile(s, nx)
 
         nn = nx * ny * 2
-        partials['mesh', 'in_mesh'][:nn] = 1.0
+        partials['mesh_orig', 'in_mesh'][:nn] = 1.0
 
         nn2 = nx * ny
-        partials['mesh', 'in_mesh'][nn:nn + nn2] = np.tile(-0.75 * span * (d_prev_span - d_prev_span_qc0), nx)
+        partials['mesh_orig', 'in_mesh'][nn:nn + nn2] = np.tile(-0.75 * span * (d_prev_span - d_prev_span_qc0), nx)
         nn3 = nn + nn2 * 2
-        partials['mesh', 'in_mesh'][nn + nn2:nn3] = np.tile(0.75 * span * (d_prev_span + d_prev_span_qc1), nx)
+        partials['mesh_orig', 'in_mesh'][nn + nn2:nn3] = np.tile(0.75 * span * (d_prev_span + d_prev_span_qc1), nx)
         nn4 = nn3 + nn2
-        partials['mesh', 'in_mesh'][nn3:nn4] = np.tile(-0.25 * span * (d_prev_span - d_prev_span_qc0), nx)
+        partials['mesh_orig', 'in_mesh'][nn3:nn4] = np.tile(-0.25 * span * (d_prev_span - d_prev_span_qc0), nx)
         nn5 = nn4 + nn2
-        partials['mesh', 'in_mesh'][nn4:nn5] = np.tile(0.25 * span * (d_prev_span + d_prev_span_qc1), nx)
+        partials['mesh_orig', 'in_mesh'][nn4:nn5] = np.tile(0.25 * span * (d_prev_span + d_prev_span_qc1), nx)
 
         nn6 = nn5 + nx*(ny-2)
-        partials['mesh', 'in_mesh'][nn5:nn6] = 0.75 * span / prev_span
-        partials['mesh', 'in_mesh'][nn6:] = 0.25 * span / prev_span
+        partials['mesh_orig', 'in_mesh'][nn5:nn6] = 0.75 * span / prev_span
+        partials['mesh_orig', 'in_mesh'][nn6:] = 0.25 * span / prev_span
 
 
 class ShearY(om.ExplicitComponent):
@@ -546,14 +546,14 @@ class ShearY(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     yshear[ny] : numpy array
         Distance to translate wing in y direction.
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh with the new chord lengths.
     """
 
@@ -571,7 +571,7 @@ class ShearY(om.ExplicitComponent):
         self.add_input('yshear', val=val, units='m')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
 
@@ -580,18 +580,18 @@ class ShearY(om.ExplicitComponent):
         cols = np.tile(np.arange(ny), nx)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'yshear', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'yshear', rows=rows, cols=cols, val=val)
 
         nn = nx * ny * 3
         rows = np.arange(nn)
         cols = np.arange(nn)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols, val=val)
 
     def compute(self, inputs, outputs):
-        outputs['mesh'][:] = inputs['in_mesh']
-        outputs['mesh'][:, :, 1] += inputs['yshear']
+        outputs['mesh_orig'][:] = inputs['in_mesh']
+        outputs['mesh_orig'][:, :, 1] += inputs['yshear']
 
 
 class Dihedral(om.ExplicitComponent):
@@ -600,7 +600,7 @@ class Dihedral(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     dihedral : float
         Dihedral angle in degrees.
@@ -609,7 +609,7 @@ class Dihedral(om.ExplicitComponent):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the aerodynamic surface with dihedral angle.
     """
 
@@ -629,14 +629,14 @@ class Dihedral(om.ExplicitComponent):
         self.add_input('dihedral', val=val, units='deg')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
         nn = nx*ny
         rows = 3*np.arange(nn) + 2
         cols = np.zeros(nn)
 
-        self.declare_partials('mesh', 'dihedral', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'dihedral', rows=rows, cols=cols)
 
         nn = nx * ny * 3
         n_rows = np.arange(nn)
@@ -664,7 +664,7 @@ class Dihedral(om.ExplicitComponent):
         rows = np.concatenate(([n_rows, te_rows, te_rows]))
         cols = np.concatenate(([n_rows, te_cols, se_cols]))
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         symmetry = self.options['symmetry']
@@ -691,8 +691,8 @@ class Dihedral(om.ExplicitComponent):
             dz = np.hstack((dz_left, dz_right))
 
         # dz added spanwise.
-        outputs['mesh'][:] = mesh
-        outputs['mesh'][:, :, 2] += dz
+        outputs['mesh_orig'][:] = mesh
+        outputs['mesh_orig'][:, :, 2] += dz
 
     def compute_partials(self, inputs, partials):
         symmetry = self.options['symmetry']
@@ -723,14 +723,14 @@ class Dihedral(om.ExplicitComponent):
             dz_dtheta = np.hstack((ddz_left, ddz_right))
 
         # dz added spanwise.
-        partials['mesh', 'dihedral'] = np.tile(dz_dtheta, nx)
+        partials['mesh_orig', 'dihedral'] = np.tile(dz_dtheta, nx)
 
         nn = nx * ny * 3
-        partials['mesh', 'in_mesh'][:nn] = 1.0
+        partials['mesh_orig', 'in_mesh'][:nn] = 1.0
 
         nn2 = nx * (ny-1)
-        partials['mesh', 'in_mesh'][nn:nn + nn2] = tan_theta
-        partials['mesh', 'in_mesh'][nn + nn2:] = -tan_theta
+        partials['mesh_orig', 'in_mesh'][nn:nn + nn2] = tan_theta
+        partials['mesh_orig', 'in_mesh'][nn + nn2:] = -tan_theta
 
 
 class ShearZ(om.ExplicitComponent):
@@ -740,14 +740,14 @@ class ShearZ(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the initial aerodynamic surface.
     zshear[ny] : numpy array
         Distance to translate wing in z direction.
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh with the new chord lengths.
     """
 
@@ -765,7 +765,7 @@ class ShearZ(om.ExplicitComponent):
         self.add_input('zshear', val=val, units='m')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
 
@@ -774,18 +774,18 @@ class ShearZ(om.ExplicitComponent):
         cols = np.tile(np.arange(ny), nx)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'zshear', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'zshear', rows=rows, cols=cols, val=val)
 
         nn = nx * ny * 3
         rows = np.arange(nn)
         cols = np.arange(nn)
         val = np.ones(nn)
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols, val=val)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols, val=val)
 
     def compute(self, inputs, outputs):
-        outputs['mesh'][:] = inputs['in_mesh']
-        outputs['mesh'][:, :, 2] += inputs['zshear']
+        outputs['mesh_orig'][:] = inputs['in_mesh']
+        outputs['mesh_orig'][:, :, 2] += inputs['zshear']
 
 
 class Rotate(om.ExplicitComponent):
@@ -807,7 +807,7 @@ class Rotate(om.ExplicitComponent):
 
     Returns
     -------
-    mesh[nx, ny, 3] : numpy array
+    mesh_orig[nx, ny, 3] : numpy array
         Nodal mesh defining the twisted aerodynamic surface.
     """
 
@@ -831,7 +831,7 @@ class Rotate(om.ExplicitComponent):
         self.add_input('twist', val=val, units='deg')
         self.add_input('in_mesh', shape=mesh_shape, units='m')
 
-        self.add_output('mesh', shape=mesh_shape, units='m')
+        self.add_output('mesh_orig', shape=mesh_shape, units='m')
 
         nx, ny, _ = mesh_shape
         nn = nx*ny*3
@@ -839,7 +839,7 @@ class Rotate(om.ExplicitComponent):
         col = np.tile(np.zeros(3), ny) + np.repeat(np.arange(ny), 3)
         cols = np.tile(col, nx)
 
-        self.declare_partials('mesh', 'twist', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'twist', rows=rows, cols=cols)
 
         row_base = np.array([0, 0, 0, 1, 1, 1, 2, 2, 2])
         col_base = np.array([0, 1, 2, 0, 1, 2, 0, 1, 2])
@@ -892,7 +892,7 @@ class Rotate(om.ExplicitComponent):
             rows = np.concatenate([dg_row, le_dg_row, te_dg_row, te_od_row1, te_od_row2, te_od_row1, te_od_row2])
             cols = np.concatenate([dg_col, le_dg_col, te_dg_col, le_od_col1, le_od_col2, te_od_col1, te_od_col2])
 
-        self.declare_partials('mesh', 'in_mesh', rows=rows, cols=cols)
+        self.declare_partials('mesh_orig', 'in_mesh', rows=rows, cols=cols)
 
     def compute(self, inputs, outputs):
         symmetry = self.options['symmetry']
@@ -948,7 +948,7 @@ class Rotate(om.ExplicitComponent):
         mats[:, 2, 1] = sin_rtx
         mats[:, 2, 2] = cos_rtx*cos_rty
 
-        outputs['mesh'] = np.einsum("ikj, mij -> mik", mats, mesh - quarter_chord) + quarter_chord
+        outputs['mesh_orig'] = np.einsum("ikj, mij -> mik", mats, mesh - quarter_chord) + quarter_chord
 
     def compute_partials(self, inputs, partials):
         symmetry = self.options['symmetry']
@@ -1030,18 +1030,18 @@ class Rotate(om.ExplicitComponent):
         dmats_dthy[:, 2, 2] = -cos_rtx * sin_rty * deg2rad
 
         d_dthetay = np.einsum("ikj, mij -> mik", dmats_dthy, mesh - quarter_chord)
-        partials['mesh', 'twist'] = d_dthetay.flatten()
+        partials['mesh_orig', 'twist'] = d_dthetay.flatten()
 
         nn = nx*ny*9
-        partials['mesh', 'in_mesh'][:nn] = np.tile(mats.flatten(), nx)
+        partials['mesh_orig', 'in_mesh'][:nn] = np.tile(mats.flatten(), nx)
 
         # Quarter chord direct contribution.
         eye = np.tile(np.eye(3).flatten(), ny).reshape(ny, 3, 3)
         d_qch = (eye - mats).flatten()
 
         nqc = ny*9
-        partials['mesh', 'in_mesh'][:nqc] += 0.75 * d_qch
-        partials['mesh', 'in_mesh'][nn -nqc:nn] += 0.25 * d_qch
+        partials['mesh_orig', 'in_mesh'][:nqc] += 0.75 * d_qch
+        partials['mesh_orig', 'in_mesh'][nn -nqc:nn] += 0.25 * d_qch
 
         if rotate_x:
 
@@ -1061,18 +1061,18 @@ class Rotate(om.ExplicitComponent):
             del_n = (nn - 9*ny)
             nn2 = nn + del_n
             nn3 = nn2 + del_n
-            partials['mesh', 'in_mesh'][nn:nn2] = 0.75 * d_dq_flat[-del_n:]
-            partials['mesh', 'in_mesh'][nn2:nn3] = 0.25 * d_dq_flat[:del_n]
+            partials['mesh_orig', 'in_mesh'][nn:nn2] = 0.75 * d_dq_flat[-del_n:]
+            partials['mesh_orig', 'in_mesh'][nn2:nn3] = 0.25 * d_dq_flat[:del_n]
 
             # Contribution back to main diagonal.
             del_n = 9*ny
-            partials['mesh', 'in_mesh'][:nqc] += 0.75 * d_dq_flat[:del_n]
-            partials['mesh', 'in_mesh'][nn-nqc:nn] += 0.25 * d_dq_flat[-del_n:]
+            partials['mesh_orig', 'in_mesh'][:nqc] += 0.75 * d_dq_flat[:del_n]
+            partials['mesh_orig', 'in_mesh'][nn-nqc:nn] += 0.25 * d_dq_flat[-del_n:]
 
             # Quarter chord direct contribution.
             d_qch_od = np.tile(d_qch.flatten(), nx-1)
-            partials['mesh', 'in_mesh'][nn:nn2] += 0.75 * d_qch_od
-            partials['mesh', 'in_mesh'][nn2:nn3] += 0.25 * d_qch_od
+            partials['mesh_orig', 'in_mesh'][nn:nn2] += 0.75 * d_qch_od
+            partials['mesh_orig', 'in_mesh'][nn2:nn3] += 0.25 * d_qch_od
 
             # off-off diagonal pieces
             if symmetry:
@@ -1080,9 +1080,9 @@ class Rotate(om.ExplicitComponent):
 
                 del_n = (nn - 9*nx)
                 nn4 = nn3 + del_n
-                partials['mesh', 'in_mesh'][nn3:nn4] = -0.75 * d_dq_flat
+                partials['mesh_orig', 'in_mesh'][nn3:nn4] = -0.75 * d_dq_flat
                 nn5 = nn4 + del_n
-                partials['mesh', 'in_mesh'][nn4:nn5] = -0.25 * d_dq_flat
+                partials['mesh_orig', 'in_mesh'][nn4:nn5] = -0.25 * d_dq_flat
 
             else:
                 d_dq_flat1 = d_dq[:, :root_index, :, :].flatten()
@@ -1090,10 +1090,10 @@ class Rotate(om.ExplicitComponent):
 
                 del_n = nx * root_index * 9
                 nn4 = nn3 + del_n
-                partials['mesh', 'in_mesh'][nn3:nn4] = -0.75 * d_dq_flat1
+                partials['mesh_orig', 'in_mesh'][nn3:nn4] = -0.75 * d_dq_flat1
                 nn5 = nn4 + del_n
-                partials['mesh', 'in_mesh'][nn4:nn5] = -0.75 * d_dq_flat2
+                partials['mesh_orig', 'in_mesh'][nn4:nn5] = -0.75 * d_dq_flat2
                 nn6 = nn5 + del_n
-                partials['mesh', 'in_mesh'][nn5:nn6] = -0.25 * d_dq_flat1
+                partials['mesh_orig', 'in_mesh'][nn5:nn6] = -0.25 * d_dq_flat1
                 nn7 = nn6 + del_n
-                partials['mesh', 'in_mesh'][nn6:nn7] = -0.25 * d_dq_flat2
+                partials['mesh_orig', 'in_mesh'][nn6:nn7] = -0.25 * d_dq_flat2

@@ -137,7 +137,8 @@ class EvalVelMtx(om.ExplicitComponent):
     ----------
     alpha : float
         The angle of attack for the aircraft (all lifting surfaces) in degrees.
-    vectors[num_eval_points, nx, ny, 3] : numpy array
+    vectors[num_eval_points, nx-1, ny-1, 4, 3] : numpy array
+    # vectors[num_eval_points, nx, ny, 3] : numpy array
         The vectors from the aerodynamic meshes to the evaluation points for
         every surface to every surface. For the symmetric case, the third
         dimension is length (2 * ny - 1). There is one of these arrays
@@ -180,8 +181,11 @@ class EvalVelMtx(om.ExplicitComponent):
             # The logic differs if the surface is symmetric or not, due to the
             # existence of the "ghost" surface; the reflection of the actual.
             if surface['symmetry']:
-                self.add_input(vectors_name, shape=(num_eval_points, nx, 2*ny-1, 3), units='m')
+                # self.add_input(vectors_name, shape=(num_eval_points, nx, 2*ny-1, 3), units='m')
+                ny_full = 2 * ny - 1
+                self.add_input(vectors_name, shape=(num_eval_points, nx-1, ny_full-1, 4, 3), units='m')
 
+                """
                 # Get an array of indices representing the number of entries
                 # in the vectors array.
                 vectors_indices = np.arange(num_eval_points * nx * (2*ny-1) * 3).reshape(
@@ -218,12 +222,15 @@ class EvalVelMtx(om.ExplicitComponent):
                 # Actually remove the duplicate entries
                 rows = np.delete(rows, to_remove)
                 cols = np.delete(cols, to_remove)
+                """
 
             # In the nonsymmetric case, the derivative sparsity patterns are
             # much more straightforward.
             else:
-                self.add_input(vectors_name, shape=(num_eval_points, nx, ny, 3), units='m')
+                # self.add_input(vectors_name, shape=(num_eval_points, nx, ny, 3), units='m')
+                self.add_input(vectors_name, shape=(num_eval_points, nx-1, ny-1, 4, 3), units='m')
 
+                """
                 vectors_indices = np.arange(num_eval_points * nx * ny * 3).reshape(
                     (num_eval_points, nx, ny, 3))
                 vel_mtx_indices = np.arange(num_eval_points * (nx - 1) * (ny - 1) * 3).reshape(
@@ -237,15 +244,20 @@ class EvalVelMtx(om.ExplicitComponent):
                     np.einsum('ijkm,l->ijklm', vectors_indices[:, 0:-1, 1:  , :], np.ones(3, int)).flatten(),
                     np.einsum('ijkm,l->ijklm', vectors_indices[:, 1:  , 1:  , :], np.ones(3, int)).flatten(),
                 ])
+                """
 
             self.add_output(vel_mtx_name, shape=(num_eval_points, nx - 1, ny - 1, 3), units='1/m')
 
+            """
             self.declare_partials(vel_mtx_name, vectors_name, rows=rows, cols=cols)
 
             # It's worth the cs cost here because alpha is just a scalar
             self.declare_partials(vel_mtx_name, 'alpha', method='cs')
 
             self.set_check_partial_options(wrt='*', method='cs')
+            """
+            self.declare_partials(vel_mtx_name, vectors_name, method='cs')
+            self.declare_partials(vel_mtx_name, 'alpha', method='cs')
 
     def compute(self, inputs, outputs):
         surfaces = self.options['surfaces']
@@ -281,23 +293,31 @@ class EvalVelMtx(om.ExplicitComponent):
             # to compute the panel forces.
 
             # front vortex
-            r1 = inputs[vectors_name][:, 0:-1, 1:  , :]
-            r2 = inputs[vectors_name][:, 0:-1, 0:-1, :]
+            # r1 = inputs[vectors_name][:, 0:-1, 1:  , :]  # (n_eval, nx-1, ny-1, 3)
+            # r2 = inputs[vectors_name][:, 0:-1, 0:-1, :]
+            r1 = inputs[vectors_name][:, :, :, 2, :]
+            r2 = inputs[vectors_name][:, :, :, 0, :]
             result1 = _compute_finite_vortex(r1, r2)
 
             # right vortex
-            r1 = inputs[vectors_name][:, 0:-1, 0:-1, :]
-            r2 = inputs[vectors_name][:, 1:  , 0:-1, :]
+            # r1 = inputs[vectors_name][:, 0:-1, 0:-1, :]
+            # r2 = inputs[vectors_name][:, 1:  , 0:-1, :]
+            r1 = inputs[vectors_name][:, :, :, 0, :]
+            r2 = inputs[vectors_name][:, :, :, 1, :]
             result2 = _compute_finite_vortex(r1, r2)
 
             # rear vortex
-            r1 = inputs[vectors_name][:, 1:  , 0:-1, :]
-            r2 = inputs[vectors_name][:, 1:  , 1:  , :]
+            # r1 = inputs[vectors_name][:, 1:  , 0:-1, :]
+            # r2 = inputs[vectors_name][:, 1:  , 1:  , :]
+            r1 = inputs[vectors_name][:, :, :, 1, :]
+            r2 = inputs[vectors_name][:, :, :, 3, :]
             result3 = _compute_finite_vortex(r1, r2)
 
             # left vortex
-            r1 = inputs[vectors_name][:, 1:  , 1:  , :]
-            r2 = inputs[vectors_name][:, 0:-1, 1:  , :]
+            # r1 = inputs[vectors_name][:, 1:  , 1:  , :]
+            # r2 = inputs[vectors_name][:, 0:-1, 1:  , :]
+            r1 = inputs[vectors_name][:, :, :, 3, :]
+            r2 = inputs[vectors_name][:, :, :, 2, :]
             result4 = _compute_finite_vortex(r1, r2)
 
             # If the surface is symmetric, mirror the results and add them
@@ -317,8 +337,10 @@ class EvalVelMtx(om.ExplicitComponent):
 
             # ----------------- last row -----------------
 
-            r1 = inputs[vectors_name][:, -1:, 1:  , :]
-            r2 = inputs[vectors_name][:, -1:, 0:-1, :]
+            # r1 = inputs[vectors_name][:, -1:, 1:  , :]
+            # r2 = inputs[vectors_name][:, -1:, 0:-1, :]
+            r1 = inputs[vectors_name][:, -1:, :, 3, :]
+            r2 = inputs[vectors_name][:, -1:, :, 1, :]
             result1 = _compute_finite_vortex(r1, r2)
             result2 = _compute_semi_infinite_vortex(u, r1)
             result3 = _compute_semi_infinite_vortex(u, r2)
@@ -336,6 +358,7 @@ class EvalVelMtx(om.ExplicitComponent):
                 outputs[vel_mtx_name][:, -1:, :, :] -= result2
                 outputs[vel_mtx_name][:, -1:, :, :] += result3
 
+    """
     def compute_partials(self, inputs, partials):
         surfaces = self.options['surfaces']
         eval_name = self.options['eval_name']
@@ -497,3 +520,4 @@ class EvalVelMtx(om.ExplicitComponent):
                 derivs[1, :, -1:, :, :] += _compute_semi_infinite_vortex_deriv(u, r2, trailing_array)
 
                 partials[vel_mtx_name, vectors_name] = derivs.flatten()
+    """

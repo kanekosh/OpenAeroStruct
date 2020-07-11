@@ -16,18 +16,26 @@ class VLMGeometry(om.ExplicitComponent):
 
     parameters
     ----------
-    def_mesh[nx, ny, 3] : numpy array
+    def_mesh[nx-1, ny-1, 4, 3] : numpy array
         Array defining the nodal coordinates of the lifting surface.
+    # def_mesh[nx, ny, 3] : numpy array
 
     Returns
     -------
-    b_pts[nx-1, ny, 3] : numpy array
-        Bound points for the horseshoe vortices, found along the 1/4 chord.
+    b_pts[nx-1, ny-1, 2, 3] : numpy array
+    # b_pts[nx-1, ny, 3] : numpy array
+        Bound points for the horseshoe vortices, found along the 1/4 chord. 
+        The first two indices for cell, the third index for left/right edge (ascending order in y).
     widths[ny-1] : numpy array
         The spanwise widths of each individual panel.
-    lengths[ny] : numpy array
+    cos_sweep[ny-1] : numpy array
+        The numerator of the cosine of the sweep angle of each panel.
+    lengths[ny-1, 2] : numpy array
+    # lengths[ny] : numpy array
         The chordwise length of the entire airfoil following the camber line.
-    chords[ny] : numpy array
+        The second index for left/right edge.
+    chords[ny-1, 2] : numpy array
+    # chords[ny] : numpy array
         The chordwise distance between the leading and trailing edges.
     normals[nx-1, ny-1, 3] : numpy array
         The normal vector for each panel, computed as the cross of the two
@@ -42,21 +50,26 @@ class VLMGeometry(om.ExplicitComponent):
     def setup(self):
         self.surface = surface = self.options['surface']
 
-        mesh=surface['mesh']
+        mesh=surface['mesh']  # this is the original 3D mesh
         nx = self.nx = mesh.shape[0]
         ny = self.ny = mesh.shape[1]
 
         # All of these computations only need the deformed mesh
-        self.add_input('def_mesh', val=np.zeros((nx, ny, 3)), units='m')
+        # self.add_input('def_mesh', val=np.zeros((nx, ny, 3)), units='m')
+        self.add_input('def_mesh', val=np.zeros((nx-1, ny-1, 4, 3)), units='m')
 
-        self.add_output('b_pts', val=np.random.random((nx-1, ny, 3)), units='m')
+        # self.add_output('b_pts', val=np.random.random((nx-1, ny, 3)), units='m')  
+        self.add_output('b_pts', val=np.random.random((nx-1, ny-1, 2, 3)), units='m')  
         self.add_output('widths', val=np.ones((ny-1)), units='m')
         self.add_output('cos_sweep', val=np.zeros((ny-1)), units='m')
-        self.add_output('lengths', val=np.zeros((ny)), units='m')
-        self.add_output('chords', val=np.zeros((ny)), units='m')
+        # self.add_output('lengths', val=np.zeros((ny)), units='m')
+        self.add_output('lengths', val=np.zeros((ny-1, 2)), units='m')
+        # self.add_output('chords', val=np.zeros((ny)), units='m')
+        self.add_output('chords', val=np.zeros((ny-1, 2)), units='m')
         self.add_output('normals', val=np.zeros((nx-1, ny-1, 3)))
         self.add_output('S_ref', val=1., units='m**2')
 
+        """
         # Next up we have a lot of rows and cols settings for the sparse
         # Jacobians. Each set of partials needs a different rows/cols setup
 
@@ -116,35 +129,54 @@ class VLMGeometry(om.ExplicitComponent):
         # fully dense
         self.declare_partials('S_ref', 'def_mesh')
         self.set_check_partial_options(wrt='def_mesh', method='fd', step=1e-6)
+        """
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         mesh = inputs['def_mesh']
+        nx = mesh.shape[0] + 1   # add one because mesh is in 4D shape.
+        ny = mesh.shape[1] + 1
 
         # Compute the bound points at quarter-chord
-        b_pts = mesh[:-1, :, :] * .75 + mesh[1:, :, :] * .25
+        # b_pts = mesh[:-1, :, :] * .75 + mesh[1:, :, :] * .25
+        # b_pts = np.zeros((nx-1, ny-1, 2, 3))
+        # b_pts[:, :, 0, :] = mesh[:, :, 0, :] * 0.75 + mesh[:, :, 1, :] * 0.25
+        # b_pts[:, :, 1, :] = mesh[:, :, 2, :] * 0.75 + mesh[:, :, 3, :] * 0.25
+        b_pts = 0.75 * mesh[:, :, [0,2], :] + 0.25 * mesh[:, :, [1,3], :]    # (nx-1, ny-1, 2, 3)
 
         # Compute the widths of each panel at the quarter-chord line
-        quarter_chord = 0.25 * mesh[-1] + 0.75 * mesh[0]
-        widths = np.linalg.norm(quarter_chord[1:, :] - quarter_chord[:-1, :], axis=1)
+        # quarter_chord = 0.25 * mesh[-1] + 0.75 * mesh[0]  # (ny, 3)
+        # widths = np.linalg.norm(quarter_chord[1:, :] - quarter_chord[:-1, :], axis=1)
+        quarter_chord = 0.75 * mesh[0, :, [0,2], :] + 0.25 * mesh[-1, :, [1,3], :]  # (2, ny-1, 3) # don't know why but index swaps
+        widths = np.linalg.norm(quarter_chord[1, :, :] - quarter_chord[0, :, :], axis=1)
 
         # Compute the numerator of the cosine of the sweep angle of each panel
         # (we need this for the viscous drag dependence on sweep, and we only compute
         # the numerator because the denominator of the cosine fraction is the width,
         # which we have already computed. They are combined in the viscous drag
         # calculation.)
-        cos_sweep = np.linalg.norm(quarter_chord[1:, [1,2]] - quarter_chord[:-1, [1,2]], axis=1)
+        # cos_sweep = np.linalg.norm(quarter_chord[1:, [1,2]] - quarter_chord[:-1, [1,2]], axis=1)
+        cos_sweep = np.linalg.norm(quarter_chord[1, :, [1,2]] - quarter_chord[0, :, [1,2]], axis=0)  # again, index swaps here...
 
         # Compute the length of each chordwise set of mesh points through the camber line.
-        dx = mesh[1:, :, 0] - mesh[:-1, :, 0]
-        dy = mesh[1:, :, 1] - mesh[:-1, :, 1]
-        dz = mesh[1:, :, 2] - mesh[:-1, :, 2]
+        # dx = mesh[1:, :, 0] - mesh[:-1, :, 0]  # (nx-1, ny)
+        # dy = mesh[1:, :, 1] - mesh[:-1, :, 1]
+        # dz = mesh[1:, :, 2] - mesh[:-1, :, 2]
+        # lengths = np.sum(np.sqrt(dx**2 + dy**2 + dz**2), axis=0)
+        dx = mesh[:, :, [1,3], 0] - mesh[:, :, [0,2], 0]  # (nx-1, ny-1, 2)
+        dy = mesh[:, :, [1,3], 1] - mesh[:, :, [0,2], 1]
+        dz = mesh[:, :, [1,3], 2] - mesh[:, :, [0,2], 2]
         lengths = np.sum(np.sqrt(dx**2 + dy**2 + dz**2), axis=0)
-
+ 
         # Compute the normal of each panel by taking the cross-product of
         # its diagonals. Note that this could be a nonplanar surface
+        # normals = np.cross(
+        #     mesh[:-1,  1:, :] - mesh[1:, :-1, :],
+        #     mesh[:-1, :-1, :] - mesh[1:,  1:, :],
+        #     axis=2)
         normals = np.cross(
-            mesh[:-1,  1:, :] - mesh[1:, :-1, :],
-            mesh[:-1, :-1, :] - mesh[1:,  1:, :],
+            mesh[:, :, 2, :] - mesh[:, :, 1, :],
+            mesh[:, :, 0, :] - mesh[:, :, 3, :],
             axis=2)
 
         # Normalize the normal vectors
@@ -159,10 +191,11 @@ class VLMGeometry(om.ExplicitComponent):
         # Compute the projected surface area
         elif self.surface['S_ref_type'] == 'projected':
             proj_mesh = mesh.copy()
-            proj_mesh[: , :, 2] = 0.
+            # proj_mesh[: , :, 2] = 0.
+            proj_mesh[: , :, :, 2] = 0.  # set z entries 0
             proj_normals = np.cross(
-                proj_mesh[:-1,  1:, :] - proj_mesh[1:, :-1, :],
-                proj_mesh[:-1, :-1, :] - proj_mesh[1:,  1:, :],
+                proj_mesh[:, :, 2, :] - proj_mesh[:, :, 1, :],
+                proj_mesh[:, :, 0, :] - proj_mesh[:, :, 3, :],
                 axis=2)
 
             proj_norms = np.sqrt(np.sum(proj_normals**2, axis=2))
@@ -177,7 +210,11 @@ class VLMGeometry(om.ExplicitComponent):
 
         # Compute the chord for each spanwise portion.
         # This is the distance from the leading to trailing edge.
-        chords = np.linalg.norm(mesh[0, :, :] - mesh[-1, :, :], axis=1)
+        # chords = np.linalg.norm(mesh[0, :, :] - mesh[-1, :, :], axis=1)
+        chords = np.zeros((ny-1, 2))
+        chords[:, 0] = np.linalg.norm(mesh[0, :, 0, :] - mesh[-1, :, 1, :], axis=1)
+        chords[:, 1] = np.linalg.norm(mesh[0, :, 2, :] - mesh[-1, :, 3, :], axis=1)
+        # chords = np.linalg.norm(mesh[0, :, [0,2], :] - mesh[-1, :, [1,3], :], axis=1)
 
         # Store each array in the outputs dict
         outputs['b_pts'] = b_pts
@@ -188,8 +225,9 @@ class VLMGeometry(om.ExplicitComponent):
         outputs['S_ref'] = S_ref
         outputs['chords'] = chords
 
+    """
     def compute_partials(self, inputs, partials):
-        """ Jacobian for VLM geometry."""
+        # Jacobian for VLM geometry.
 
         nx = self.nx
         ny = self.ny
@@ -316,3 +354,4 @@ class VLMGeometry(om.ExplicitComponent):
         # Multiply the surface area by 2 if symmetric to get consistent area measures
         if self.surface['symmetry']:
             partials['S_ref', 'def_mesh'] *= 2.0
+    """
