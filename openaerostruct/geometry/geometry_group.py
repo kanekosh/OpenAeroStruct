@@ -76,7 +76,7 @@ class Geometry(om.Group):
             self.add_subsystem('mesh',
                 GeometryMesh(surface=surface, DVGeo=self.options['DVGeo']),
                 promotes_inputs=['shape'],
-                promotes_outputs=['mesh'])
+                promotes_outputs=['mesh', 'mesh_orig'])
 
         else:
             from openaerostruct.geometry.geometry_mesh import GeometryMesh
@@ -197,4 +197,4 @@ class Geometry(om.Group):
             self.add_subsystem('mesh',
                 GeometryMesh(surface=surface),
                 promotes_inputs=bsp_inputs,
-                promotes_outputs=['mesh'])
+                promotes_outputs=['mesh', 'mesh_orig'])

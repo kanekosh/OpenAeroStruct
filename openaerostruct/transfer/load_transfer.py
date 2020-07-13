@@ -14,11 +14,18 @@ class LoadTransfer(om.ExplicitComponent):
 
     Parameters
     ----------
-    def_mesh[nx, ny, 3] : numpy array
+    nodes[ny, 3] : numpy array
+        Array containing the structural node locations before deformation. 
+    # def_mesh[nx, ny, 3] : numpy array
+    def_mesh[nx-1, ny-1, 4, 3] : numpy array
         Array defining the lifting surfaces after deformation.
         Arrays will be flattened in Fortran order (only relevant when more than one chordwise panel).
     sec_forces[nx-1, ny-1, 3] : numpy array
         Array containing the sectional forces acting on each panel.
+    disp[ny, 6] : numpy array
+        Displacements and rotations acting on the structural spar which come
+        from solving the FEM system. disp and mesh are used to compute the structural node
+        locations after the deformation
 
     Returns
     -------
@@ -53,13 +60,17 @@ class LoadTransfer(om.ExplicitComponent):
         self.w1 = 0.25
         self.w2 = self.fem_origin
 
-        self.add_input('def_mesh', val=np.zeros((nx, ny, 3)), units='m')
+        # self.add_input('def_mesh', val=np.zeros((nx, ny, 3)), units='m')
+        self.add_input('nodes', val=np.zeros((ny, 3)), units='m')
+        self.add_input('def_mesh', val=np.zeros((nx-1, ny-1, 4, 3)), units='m')
         self.add_input('sec_forces', val=np.zeros((nx - 1, ny - 1, 3)), units='N')
+        self.add_input('disp', val=np.zeros((ny, 6)), units='m')
 
         self.add_output('loads', val=np.zeros((self.ny, 6)), units='N')  ## WARNING!!! UNITS ARE A MIXTURE OF N & N*m
         # Well, technically the units of this load array are mixed.
         # The first 3 indices are N and the last 3 are N*m.
 
+        """
         # Derivatives
 
         # First, the direct loads wrt sec_forces terms.
@@ -116,10 +127,14 @@ class LoadTransfer(om.ExplicitComponent):
 
         # -------------------------------- Check Partial Options-------------------------------------
         self.set_check_partial_options('*', method='cs', step=1e-40)
+        """
+        self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
-        mesh = inputs['def_mesh']  # [nx, ny, 3]
+        nodes = inputs['nodes']
+        mesh_def = inputs['def_mesh']  # [nx-1, ny-1, 4, 3]
         sec_forces = inputs['sec_forces']
+        disp = inputs['disp']
 
         # ----- 1. Forces transfer -----
         # Only need to zero out the part that is assigned via +=
@@ -133,16 +148,30 @@ class LoadTransfer(om.ExplicitComponent):
         # ----- 2. Moments transfer -----
         # Compute the aerodynamic centers at the quarter-chord point of each panel
         # a_pts [nx-1, ny-1, 3]
+        # a_pts = (
+        #     0.5 * (1 - self.w1) * mesh[:-1, :-1, :]
+        #     + 0.5 * self.w1 * mesh[1:, :-1, :]
+        #     + 0.5 * (1 - self.w1) * mesh[:-1, 1:, :]
+        #     + 0.5 * self.w1 * mesh[1:, 1:, :]
+        # )
         a_pts = (
-            0.5 * (1 - self.w1) * mesh[:-1, :-1, :]
-            + 0.5 * self.w1 * mesh[1:, :-1, :]
-            + 0.5 * (1 - self.w1) * mesh[:-1, 1:, :]
-            + 0.5 * self.w1 * mesh[1:, 1:, :]
+            0.5 * (1 - self.w1) * mesh_def[:, :, 0, :]
+            + 0.5 * self.w1 * mesh_def[:, :, 1, :]
+            + 0.5 * (1 - self.w1) * mesh_def[:, :, 2, :]
+            + 0.5 * self.w1 * mesh_def[:, :, 3, :]
         )
 
         # Compute the structural nodes based on the fem_origin location (weighted sum of the LE and TE mesh vertices)
         # s_pts [ny, 3]
-        s_pts = (1 - self.w2) * mesh[0, :, :] + self.w2 * mesh[-1, :, :]
+        s_pts = inputs['nodes'].copy()  # undeformed
+        # add translational displacement to get displaced location.
+        s_pts += disp[:, :3]
+
+        # s_pts = (1 - self.w2) * mesh_orig[0, :, :] + self.w2 * mesh_orig[-1, :, :]  # undeformed
+        # ny = disp.shape[0]
+        # undeformed structural nodes
+        # s_pts[:-1, :] = (1 - self.w2) * mesh_undef[0, :, 0, :] + self.w2 * mesh_undef[-1, :, 1, :]
+        # s_pts[-1, :] = (1 - self.w2) * mesh_undef[0, -1, 2, :] + self.w2 * mesh_undef[-1, -1, 3, :]
 
         # The moment arm is between the aerodynamic centers of each panel and the FEM nodes.
         # Moment contribution of sec_forces (acting on aero center) to the inner/outer adjacent node
@@ -153,6 +182,7 @@ class LoadTransfer(om.ExplicitComponent):
         outputs['loads'][:-1, 3:] = moment_in
         outputs['loads'][1:, 3:] += moment_out
 
+    """
     def compute_partials(self, inputs, partials):
         mesh = inputs['def_mesh']
         sec_forces = inputs['sec_forces']
@@ -263,3 +293,4 @@ class LoadTransfer(om.ExplicitComponent):
         id3 += idy
         partials['loads', 'def_mesh'][id2:id3] += dmon_ddiff_diag * (w1 * 0.25)
         partials['loads', 'def_mesh'][id3 - idy : id3] -= dmon_ddiff_diag_sum * (w2 * 0.5)
+    """

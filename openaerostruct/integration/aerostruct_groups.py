@@ -44,7 +44,9 @@ class AerostructGeometry(om.Group):
         self.add_subsystem('geometry',
             Geometry(surface=surface, DVGeo=DVGeo, connect_geom_DVs=connect_geom_DVs),
             promotes_inputs=[],
-            promotes_outputs=['mesh'] + geom_promotes)
+            promotes_outputs=['mesh', 'mesh_orig'] + geom_promotes)
+        # mesh_orig is the underformed mesh in 3D array, 
+        # which will be passed to TubeGroup/WingboxGroup and SpatialBeamSetup
 
         if surface['fem_model_type'] == 'tube':
             tube_promotes = []
@@ -52,7 +54,7 @@ class AerostructGeometry(om.Group):
             if 'thickness_cp' in surface.keys() and connect_geom_DVs:
                 tube_promotes.append('thickness_cp')
             if 'radius_cp' not in surface.keys():
-                tube_inputs = ['mesh', 't_over_c']
+                tube_inputs = [('mesh', 'mesh_orig'), 't_over_c']
             self.add_subsystem('tube_group',
                 TubeGroup(surface=surface, connect_geom_DVs=connect_geom_DVs),
                 promotes_inputs=tube_inputs,
@@ -69,7 +71,7 @@ class AerostructGeometry(om.Group):
 
             self.add_subsystem('wingbox_group',
                 WingboxGroup(surface=surface),
-                promotes_inputs=['mesh', 't_over_c'],
+                promotes_inputs=[('mesh', 'mesh_orig'), 't_over_c'],
                 promotes_outputs=['A', 'Iy', 'Iz', 'J', 'Qz', 'A_enc', 'A_int', 'htop', 'hbottom', 'hfront', 'hrear'] + wingbox_promotes)
         else:
             raise NameError('Please select a valid `fem_model_type` from either `tube` or `wingbox`.')
@@ -81,7 +83,7 @@ class AerostructGeometry(om.Group):
 
         self.add_subsystem('struct_setup',
             SpatialBeamSetup(surface=surface),
-            promotes_inputs=['mesh', 'A', 'Iy', 'Iz', 'J'] + promotes,
+            promotes_inputs=[('mesh', 'mesh_orig'), 'A', 'Iy', 'Iz', 'J'] + promotes,
             promotes_outputs=['nodes', 'local_stiff_transformed', 'structural_mass', 'cg_location', 'element_mass'])
 
 
@@ -108,7 +110,7 @@ class CoupledAS(om.Group):
 
         self.add_subsystem('def_mesh',
             DisplacementTransferGroup(surface=surface),
-            promotes_inputs=['nodes', 'mesh', 'disp'], promotes_outputs=['def_mesh'])
+            promotes_inputs=['nodes', 'mesh', 'disp'], promotes_outputs=['def_mesh', 'nodes_out'])
 
         self.add_subsystem('aero_geom',
             VLMGeometry(surface=surface),
@@ -174,9 +176,11 @@ class AerostructPoint(om.Group):
             coupled.connect(name + '.normals', 'aero_states.' + name + '_normals')
             coupled.connect(name + '.def_mesh', 'aero_states.' + name + '_def_mesh')
 
-            # Connect the results from 'coupled' to the performance groups
+            # Connect the results from 'coupled' to the load transfer component
+            coupled.connect(name + '.nodes_out', name + '_loads.nodes')
             coupled.connect(name + '.def_mesh', name + '_loads.def_mesh')
             coupled.connect('aero_states.' + name + '_sec_forces', name + '_loads.sec_forces')
+            coupled.connect(name + '.disp', name + '_loads.disp')
 
             # Connect the results from 'aero_states' to the performance groups
             self.connect('coupled.aero_states.' + name + '_sec_forces', name + '_perf' + '.sec_forces')

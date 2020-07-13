@@ -15,8 +15,11 @@ class DisplacementTransfer(om.ExplicitComponent):
 
     Parameters
     ----------
-    mesh[nx, ny, 3] : numpy array
-        Original undeformed aerodynamic mesh.
+    # mesh[nx, ny, 3] : numpy array
+    mesh[nx-1, ny-1, 4, 3] : numpy array
+        Undeformed aerodynamic mesh.
+    nodes[ny, 3] : numpy array
+        Undeformed structural node locations.
     disp[ny, 6] : numpy array
         Displacements and rotations acting on the structural spar which come
         from solving the FEM system. Contains displacements for all six degrees
@@ -32,9 +35,14 @@ class DisplacementTransfer(om.ExplicitComponent):
 
     Returns
     -------
-    def_mesh[nx, ny, 3] : numpy array
+    # def_mesh[nx, ny, 3] : numpy array
+    def_mesh[nx-1, ny-1, 4, 3] : numpy array
         The final deformed aerodynamic mesh for the lifting surface based on
         the FEM results.
+    nodes[ny, 3] : numpy array
+        Structural node locations. This is unchanged from the input, but we
+        need to add this as an output here in order to input this into the
+        load transfer component.
     """
 
     def initialize(self):
@@ -43,17 +51,19 @@ class DisplacementTransfer(om.ExplicitComponent):
     def setup(self):
         self.surface = surface = self.options['surface']
 
-        mesh=surface['mesh']
+        mesh = surface['mesh']
         self.nx = mesh.shape[0]
         self.ny = mesh.shape[1]
 
-        self.add_input('mesh', val=np.ones((self.nx, self.ny, 3)), units='m')
+        self.add_input('mesh', val=np.ones((self.nx-1, self.ny-1, 4, 3)), units='m')
+        self.add_input('nodes', val=np.ones((self.ny, 3)), units='m')
         self.add_input('disp', val=np.ones((self.ny, 6)), units='m')
         self.add_input('transformation_matrix', val=np.ones((self.ny, 3, 3)))
-        self.add_input('nodes', val=np.ones((self.ny, 3)), units='m')
 
-        self.add_output('def_mesh', val=np.random.random_sample((self.nx, self.ny, 3)), units='m')
+        self.add_output('def_mesh', val=np.random.random_sample((self.nx-1, self.ny-1, 4, 3)), units='m')
+        self.add_output('nodes_out', val=np.random.random_sample((self.ny, 3)), units='m')
 
+        """
         # Create index arrays for each relevant input and output.
         # This allows us to set up the rows and cols for the sparse Jacobians.
         disp_indices = get_array_indices(self.ny, 6)
@@ -81,6 +91,8 @@ class DisplacementTransfer(om.ExplicitComponent):
         rows = np.einsum('ijl,k->ijkl', mesh_disp_indices, np.ones(3, int)).flatten()
         cols = np.einsum('jlk,i->ijkl', transform_indices, np.ones(self.nx, int)).flatten()
         self.declare_partials('def_mesh', 'transformation_matrix', rows=rows, cols=cols)
+        """
+        self.declare_partials('*', '*', method='fd')
 
     def compute(self, inputs, outputs):
         # Get the location of the spar
@@ -89,6 +101,7 @@ class DisplacementTransfer(om.ExplicitComponent):
         # First set the deformed mesh with the undeformed mesh values
         outputs['def_mesh'] = inputs['mesh'].copy()
 
+        """
         # Add the translational displacements to the deformed mesh.
         # These are simply the x,y,z displacements getting added to all nodal
         # mesh points.
@@ -105,7 +118,34 @@ class DisplacementTransfer(om.ExplicitComponent):
         outputs['def_mesh'] += np.einsum('lij,klj->kli',
                                          inputs['transformation_matrix'],
                                          moment_arms)
+        """
+        # Add the translational displacements to the deformed mesh.
+        # These are the average of the x,y,z displacements of two FEM nodes.
+        disp_trans_avg = (inputs['disp'][:-1, :3] + inputs['disp'][1:, :3]) / 2.  # (ny-1, 3)
+        outputs['def_mesh'] += np.einsum('ij,kl->ikjl', np.ones((self.nx-1, 4)), disp_trans_avg)
 
+        # Compute the moment arms from the aerodynamic mesh points to the
+        # structural mesh points.
+        # moment arm from the left adjacent node (nx-1, ny-1, 4, 3)
+        nodes_4d = np.einsum('ij,kl->ikjl', np.ones((self.nx-1, 4)), nodes)  # (nx-1, ny, 4, 3)
+        moment_arms_left = inputs['mesh'] - nodes_4d[:, :-1, :, :]
+        # from the right node
+        moment_arms_right = inputs['mesh'] - nodes_4d[:, 1:, :, :]
+
+        # Apply the transformation matrix to the moment arms to get the
+        # rotational displacements from the FEM results transformed to the
+        # aerodynamic mesh. Then add these to the deformed mesh.
+        outputs['def_mesh'] += 0.5 * np.einsum('lij,klmj->klmi',
+                                               inputs['transformation_matrix'][:-1, :, :],
+                                               moment_arms_left)
+        outputs['def_mesh'] += 0.5 * np.einsum('lij,klmj->klmi',
+                                               inputs['transformation_matrix'][1:, :, :],
+                                               moment_arms_right)
+
+        # just copy the undeformed mesh to an output.
+        outputs['nodes_out'] = nodes.copy()
+
+    """
     def compute_partials(self, inputs, partials):
         partials['def_mesh', 'nodes'] = -np.einsum('i,jlk->ijlk',
             np.ones(self.nx), inputs['transformation_matrix']).flatten()
@@ -117,3 +157,4 @@ class DisplacementTransfer(om.ExplicitComponent):
         partials['def_mesh', 'transformation_matrix'] = np.einsum('ijk,l->ijkl',
             inputs['mesh'] - np.einsum('i,jk->ijk', np.ones(self.nx), inputs['nodes']),
             np.ones(3)).flatten()
+    """
