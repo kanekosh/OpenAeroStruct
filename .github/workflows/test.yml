@@ -56,7 +56,9 @@ jobs:
     #    travis-sphinx build --source=.
 
     - name: Coveralls
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        
+      run: |
+        - coveralls --rcfile=../.coveragerc;
+    #  uses: coverallsapp/github-action@master
+    #  with:
+    #    github-token: ${{ secrets.GITHUB_TOKEN }}
+
