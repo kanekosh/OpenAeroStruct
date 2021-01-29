@@ -32,7 +32,7 @@ jobs:
         cd ..
         git clone https://github.com/mdolab/pygeo.git
         pip install -e ./pygeo
-        export OMPI_MCA_btl=^openib
+    #    export OMPI_MCA_btl=^openib
 
     - name: Install packages for tests and docs
       run: |
@@ -47,9 +47,11 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Run tests
+      env:
+        OMPI_MCA_btl: ^openib
       run: |
         cd openaerostruct
-        testflo -n 4 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
+        testflo -n 1 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
     # - name: Build docs
     #  run: |
     #    cd openaerostruct/docs
@@ -59,6 +61,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        cd openaerostruct
+        pwd
+        ls ..
         coveralls --rcfile=../.coveragerc;
     #  uses: coverallsapp/github-action@master
     #  with:
