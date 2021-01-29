@@ -45,18 +45,17 @@ jobs:
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Run tests
-      # prevent OpenMPI warning messages
       env:
-        OMPI_MCA_btl: ^openib
+        OMPI_MCA_btl: ^openib   # prevent OpenMPI warning messages
       run: |
         cd openaerostruct
-        testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
+      #  testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
 
     # build and deploy docs
     - name: Build docs
       uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "./docs/"
+        docs-folder: "./openaerostruct/docs/"
 
     - name: Commit doc changes
       run: |
@@ -68,7 +67,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Update documentation" -a || true
-        
+
     - name: Push changes to gh-pages
       uses: ad-m/github-push-action@master
       with:
@@ -76,7 +75,7 @@ jobs:
         directory: gh-pages
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Coveralls
+    - name: Run coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
