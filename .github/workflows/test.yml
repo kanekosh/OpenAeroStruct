@@ -32,13 +32,11 @@ jobs:
         cd ..
         git clone https://github.com/mdolab/pygeo.git
         pip install -e ./pygeo
-    #    export OMPI_MCA_btl=^openib
 
     - name: Install packages for tests and docs
       run: |
         pip install coverage coveralls testflo
-    #    pip install travis-sphinx
-    #    pip install --user travis-sphinx
+
     # - name: Lint with flake8
     #  run: |
     #    # stop the build if there are Python syntax errors or undefined names
@@ -46,20 +44,21 @@ jobs:
     #    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    # 
     - name: Run tests
+      # prevent OpenMPI warning messages
       env:
         OMPI_MCA_btl: ^openib
       run: |
         cd openaerostruct
         testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
 
+    # build and deploy docs
     - name: Build docs
       uses: ammaraskar/sphinx-action@master
       with:
         docs-folder: "./docs/"
 
-    - name: Deploy docs
+    - name: Commit doc changes
       run: |
         git clone https://github.com/kanekosh/OpenAeroStruct.git --branch gh-pages --single-branch gh-pages
         cp -r docs/_build/html/* gh-pages/
@@ -69,7 +68,8 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Update documentation" -a || true
-    # - name: Push changes
+        
+    - name: Push changes to gh-pages
       uses: ad-m/github-push-action@master
       with:
         branch: gh-pages
@@ -82,7 +82,3 @@ jobs:
       run: |
         cd openaerostruct
         coveralls --service=github --rcfile=../.coveragerc;
-    #  uses: coverallsapp/github-action@master
-    #  with:
-    #    github-token: ${{ secrets.GITHUB_TOKEN }}
-
