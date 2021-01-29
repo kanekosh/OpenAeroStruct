@@ -18,6 +18,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip wheel
         pip install .
+        pip install coverage coveralls testflo   # for tests and coveralls
 
     # We need pySpline/pyGeo to run FFD tests.
     - name: Install pySpline and pyGeo
@@ -33,10 +34,6 @@ jobs:
         git clone https://github.com/mdolab/pygeo.git
         pip install -e ./pygeo
 
-    - name: Install packages for tests and docs
-      run: |
-        pip install coverage coveralls testflo
-
     # - name: Lint with flake8
     #  run: |
     #    # stop the build if there are Python syntax errors or undefined names
@@ -51,21 +48,11 @@ jobs:
         cd openaerostruct
       #  testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
 
-    - name: Run coveralls
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cd openaerostruct
-        coveralls --service=github --rcfile=../.coveragerc;
-
     # build and deploy docs
     - name: Build docs
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: |
-          apt-get install openmpi-bin libopenmpi-dev
-          pip install mpi4py
-          pip install .
+        pre-build-command: "pip install ."
         docs-folder: "./openaerostruct/docs/"
 
     - name: Commit doc changes
@@ -85,3 +72,10 @@ jobs:
         branch: gh-pages
         directory: gh-pages
         github_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Run coveralls
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd openaerostruct
+        coveralls --service=github --rcfile=../.coveragerc;
