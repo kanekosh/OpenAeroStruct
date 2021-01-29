@@ -46,12 +46,13 @@ jobs:
     #    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
     #    flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    # 
     - name: Run tests
       env:
         OMPI_MCA_btl: ^openib
       run: |
         cd openaerostruct
-        testflo -n 1 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
+        testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*
     # - name: Build docs
     #  run: |
     #    cd openaerostruct/docs
@@ -62,9 +63,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cd openaerostruct
-        pwd
-        ls ..
-        coveralls --rcfile=../.coveragerc;
+        coveralls --service=github --rcfile=../.coveragerc;
     #  uses: coverallsapp/github-action@master
     #  with:
     #    github-token: ${{ secrets.GITHUB_TOKEN }}
