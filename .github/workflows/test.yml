@@ -55,6 +55,7 @@ jobs:
     - name: Build docs
       uses: ammaraskar/sphinx-action@master
       with:
+        pre-build-command: "pip install ."   # install OAS
         docs-folder: "./openaerostruct/docs/"
 
     - name: Commit doc changes
