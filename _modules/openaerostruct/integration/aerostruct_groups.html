@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>openaerostruct.integration.aerostruct_groups &#8212; OpenAeroStruct 2.1.0 documentation</title>
+    <title>openaerostruct.integration.aerostruct_groups &#8212; OpenAeroStruct 2.2.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head><body>
@@ -25,7 +25,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
       </ul>
     </div>
@@ -39,6 +39,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
@@ -61,7 +62,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -85,10 +86,10 @@
 <span class="kn">from</span> <span class="nn">openaerostruct.structures.tube_group</span> <span class="kn">import</span> <span class="n">TubeGroup</span>
 <span class="kn">from</span> <span class="nn">openaerostruct.structures.wingbox_group</span> <span class="kn">import</span> <span class="n">WingboxGroup</span>
 
-<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">Group</span><span class="p">,</span> <span class="n">NonlinearBlockGS</span><span class="p">,</span> <span class="n">DirectSolver</span><span class="p">,</span> <span class="n">LinearBlockGS</span><span class="p">,</span> <span class="n">LinearRunOnce</span><span class="p">,</span> <span class="n">NewtonSolver</span><span class="p">,</span> <span class="n">ScipyKrylov</span>
+<span class="kn">import</span> <span class="nn">openmdao.api</span> <span class="k">as</span> <span class="nn">om</span>
 
 
-<div class="viewcode-block" id="AerostructGeometry"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.AerostructGeometry">[docs]</a><span class="k">class</span> <span class="nc">AerostructGeometry</span><span class="p">(</span><span class="n">Group</span><span class="p">):</span>
+<div class="viewcode-block" id="AerostructGeometry"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.AerostructGeometry">[docs]</a><span class="k">class</span> <span class="nc">AerostructGeometry</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;surface&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -158,7 +159,7 @@
             <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;nodes&#39;</span><span class="p">,</span> <span class="s1">&#39;local_stiff_transformed&#39;</span><span class="p">,</span> <span class="s1">&#39;structural_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;cg_location&#39;</span><span class="p">,</span> <span class="s1">&#39;element_mass&#39;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="CoupledAS"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.CoupledAS">[docs]</a><span class="k">class</span> <span class="nc">CoupledAS</span><span class="p">(</span><span class="n">Group</span><span class="p">):</span>
+<div class="viewcode-block" id="CoupledAS"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.CoupledAS">[docs]</a><span class="k">class</span> <span class="nc">CoupledAS</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;surface&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -187,10 +188,10 @@
             <span class="n">VLMGeometry</span><span class="p">(</span><span class="n">surface</span><span class="o">=</span><span class="n">surface</span><span class="p">),</span>
             <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;def_mesh&#39;</span><span class="p">],</span> <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;b_pts&#39;</span><span class="p">,</span> <span class="s1">&#39;widths&#39;</span><span class="p">,</span> <span class="s1">&#39;cos_sweep&#39;</span><span class="p">,</span> <span class="s1">&#39;lengths&#39;</span><span class="p">,</span> <span class="s1">&#39;chords&#39;</span><span class="p">,</span> <span class="s1">&#39;normals&#39;</span><span class="p">,</span> <span class="s1">&#39;S_ref&#39;</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">linear_solver</span> <span class="o">=</span> <span class="n">LinearRunOnce</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear_solver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">LinearRunOnce</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="CoupledPerformance"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.CoupledPerformance">[docs]</a><span class="k">class</span> <span class="nc">CoupledPerformance</span><span class="p">(</span><span class="n">Group</span><span class="p">):</span>
+<div class="viewcode-block" id="CoupledPerformance"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.CoupledPerformance">[docs]</a><span class="k">class</span> <span class="nc">CoupledPerformance</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;surface&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -200,7 +201,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;aero_funcs&#39;</span><span class="p">,</span>
             <span class="n">VLMFunctionals</span><span class="p">(</span><span class="n">surface</span><span class="o">=</span><span class="n">surface</span><span class="p">),</span>
-            <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;Mach_number&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;widths&#39;</span><span class="p">,</span> <span class="s1">&#39;cos_sweep&#39;</span><span class="p">,</span> <span class="s1">&#39;lengths&#39;</span><span class="p">,</span> <span class="s1">&#39;S_ref&#39;</span><span class="p">,</span> <span class="s1">&#39;sec_forces&#39;</span><span class="p">,</span> <span class="s1">&#39;t_over_c&#39;</span><span class="p">],</span> <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CDv&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;CL1&#39;</span><span class="p">,</span> <span class="s1">&#39;CDi&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CL&#39;</span><span class="p">])</span>
+            <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;Mach_number&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;widths&#39;</span><span class="p">,</span> <span class="s1">&#39;cos_sweep&#39;</span><span class="p">,</span> <span class="s1">&#39;lengths&#39;</span><span class="p">,</span> <span class="s1">&#39;S_ref&#39;</span><span class="p">,</span> <span class="s1">&#39;sec_forces&#39;</span><span class="p">,</span> <span class="s1">&#39;t_over_c&#39;</span><span class="p">],</span> <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CDv&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;CL1&#39;</span><span class="p">,</span> <span class="s1">&#39;CDi&#39;</span><span class="p">,</span> <span class="s1">&#39;CD&#39;</span><span class="p">,</span> <span class="s1">&#39;CL&#39;</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">surface</span><span class="p">[</span><span class="s1">&#39;fem_model_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;tube&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;struct_funcs&#39;</span><span class="p">,</span>
@@ -215,7 +216,7 @@
             <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;Please select a valid `fem_model_type` from either `tube` or `wingbox`.&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AerostructPoint"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.AerostructPoint">[docs]</a><span class="k">class</span> <span class="nc">AerostructPoint</span><span class="p">(</span><span class="n">Group</span><span class="p">):</span>
+<div class="viewcode-block" id="AerostructPoint"><a class="viewcode-back" href="../../../_srcdocs/packages/integration/aerostruct_groups.html#openaerostruct.integration.aerostruct_groups.AerostructPoint">[docs]</a><span class="k">class</span> <span class="nc">AerostructPoint</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">declare</span><span class="p">(</span><span class="s1">&#39;surfaces&#39;</span><span class="p">,</span> <span class="n">types</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -231,7 +232,7 @@
         <span class="n">surfaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;surfaces&#39;</span><span class="p">]</span>
         <span class="n">rotational</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;rotational&#39;</span><span class="p">]</span>
 
-        <span class="n">coupled</span> <span class="o">=</span> <span class="n">Group</span><span class="p">()</span>
+        <span class="n">coupled</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Group</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">surface</span> <span class="ow">in</span> <span class="n">surfaces</span><span class="p">:</span>
 
@@ -313,27 +314,27 @@
 
         <span class="c1"># Set solver properties for the coupled group</span>
         <span class="c1"># coupled.linear_solver = ScipyKrylov()</span>
-        <span class="c1"># coupled.linear_solver.precon = LinearRunOnce()</span>
+        <span class="c1"># coupled.linear_solver.precon = om.LinearRunOnce()</span>
 
-        <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span> <span class="o">=</span> <span class="n">NonlinearBlockGS</span><span class="p">(</span><span class="n">use_aitken</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">NonlinearBlockGS</span><span class="p">(</span><span class="n">use_aitken</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;maxiter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
         <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;atol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-7</span>
         <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;rtol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-30</span>
         <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;iprint&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;err_on_maxiter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">coupled</span><span class="o">.</span><span class="n">nonlinear_solver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;err_on_non_converge&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="c1"># coupled.linear_solver = DirectSolver()</span>
+        <span class="c1"># coupled.linear_solver = om.DirectSolver()</span>
 
-        <span class="n">coupled</span><span class="o">.</span><span class="n">linear_solver</span> <span class="o">=</span> <span class="n">DirectSolver</span><span class="p">(</span><span class="n">assemble_jac</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">coupled</span><span class="o">.</span><span class="n">linear_solver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">DirectSolver</span><span class="p">(</span><span class="n">assemble_jac</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">coupled</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;assembled_jac_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;csc&#39;</span>
 
-        <span class="c1"># coupled.nonlinear_solver = NewtonSolver(solve_subsystems=True)</span>
+        <span class="c1"># coupled.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)</span>
         <span class="c1"># coupled.nonlinear_solver.options[&#39;maxiter&#39;] = 50</span>
 
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        ### End change of solver settings ###</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">prom_in</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">]</span>
+        <span class="n">prom_in</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;rho&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;compressible&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">prom_in</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Mach_number&#39;</span><span class="p">)</span>
 
@@ -347,7 +348,7 @@
             <span class="c1"># the coupled system</span>
             <span class="n">perf_group</span> <span class="o">=</span> <span class="n">CoupledPerformance</span><span class="p">(</span><span class="n">surface</span><span class="o">=</span><span class="n">surface</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_perf&#39;</span><span class="p">,</span> <span class="n">perf_group</span><span class="p">,</span> <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;Mach_number&#39;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_perf&#39;</span><span class="p">,</span> <span class="n">perf_group</span><span class="p">,</span> <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rho&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;Mach_number&#39;</span><span class="p">])</span>
 
         <span class="c1"># Add functionals to evaluate performance of the system.</span>
         <span class="c1"># Note that only the interesting results are promoted here; not all</span>
@@ -374,14 +375,14 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Last updated on Jan 29, 2021.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

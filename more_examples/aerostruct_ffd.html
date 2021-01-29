@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Aerostructural FFD &#8212; OpenAeroStruct 2.1.0 documentation</title>
+    <title>Aerostructural FFD &#8212; OpenAeroStruct 2.2.1 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Aerostructural with wingbox (Q400)" href="aerostructural_wingbox_Q400.html" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="multipoint.html" title="Multipoint"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../more_examples.html" accesskey="U">More Examples</a> &#187;</li> 
       </ul>
     </div>
@@ -47,6 +47,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../struct_example.html">Structural Optimization Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../custom_mesh_example.html">User-Provided Mesh Example</a></li>
 </ul>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../more_examples.html">More Examples</a><ul class="current">
@@ -75,7 +76,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -90,13 +91,13 @@
 This allows for more general design shape changes and helps sync up geometry changes between meshes from different levels of fidelity.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>This example requires <cite>pyGeo</cite>, an in-house MDO Lab code. If you have access to the code, you can clone it from <a class="reference external" href="https://bitbucket.org/mdolab/pygeo">here</a>.</p>
+<p>This example requires <cite>pyGeo</cite>, an external code developed by the MDO Lab. You can install it from <a class="reference external" href="https://github.com/mdolab/pygeo">here</a>.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">openaerostruct.geometry.utils</span> <span class="kn">import</span> <span class="n">generate_mesh</span><span class="p">,</span> <span class="n">write_FFD_file</span>
 
 <span class="kn">from</span> <span class="nn">openaerostruct.integration.aerostruct_groups</span> <span class="kn">import</span> <span class="n">AerostructGeometry</span><span class="p">,</span> <span class="n">AerostructPoint</span>
 
-<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">IndepVarComp</span><span class="p">,</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">Group</span><span class="p">,</span> <span class="n">SqliteRecorder</span>
+<span class="kn">import</span> <span class="nn">openmdao.api</span> <span class="k">as</span> <span class="nn">om</span>
 <span class="kn">from</span> <span class="nn">pygeo</span> <span class="kn">import</span> <span class="n">DVGeometry</span>
 
 
@@ -160,10 +161,10 @@ This allows for more general design shape changes and helps sync up geometry cha
 <span class="n">surfaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">surf_dict</span><span class="p">]</span>
 
 <span class="c1"># Create the problem and assign the model group</span>
-<span class="n">prob</span> <span class="o">=</span> <span class="n">Problem</span><span class="p">()</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">()</span>
 
 <span class="c1"># Add problem information as an independent variables component</span>
-<span class="n">indep_var_comp</span> <span class="o">=</span> <span class="n">IndepVarComp</span><span class="p">()</span>
+<span class="n">indep_var_comp</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">IndepVarComp</span><span class="p">()</span>
 <span class="n">indep_var_comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">248.136</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m/s&#39;</span><span class="p">)</span>
 <span class="n">indep_var_comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">5.</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
 <span class="n">indep_var_comp</span><span class="o">.</span><span class="n">add_output</span><span class="p">(</span><span class="s1">&#39;Mach_number&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.84</span><span class="p">)</span>
@@ -237,10 +238,9 @@ This allows for more general design shape changes and helps sync up geometry cha
 
 <span class="c1"># Import the Scipy Optimizer and set the driver of the problem to use</span>
 <span class="c1"># it, which defaults to an SLSQP optimization method</span>
-<span class="kn">from</span> <span class="nn">openmdao.api</span> <span class="kn">import</span> <span class="n">ScipyOptimizeDriver</span>
-<span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">ScipyOptimizeDriver</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">ScipyOptimizeDriver</span><span class="p">()</span>
 
-<span class="n">recorder</span> <span class="o">=</span> <span class="n">SqliteRecorder</span><span class="p">(</span><span class="s2">&quot;aerostruct_ffd.db&quot;</span><span class="p">)</span>
+<span class="n">recorder</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">SqliteRecorder</span><span class="p">(</span><span class="s2">&quot;aerostruct_ffd.db&quot;</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">add_recorder</span><span class="p">(</span><span class="n">recorder</span><span class="p">)</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">recording_options</span><span class="p">[</span><span class="s1">&#39;record_derivatives&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">recording_options</span><span class="p">[</span><span class="s1">&#39;includes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
@@ -262,8 +262,7 @@ This allows for more general design shape changes and helps sync up geometry cha
 <span class="c1"># Set up the problem</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
-<span class="c1"># from openmdao.api import view_model</span>
-<span class="c1"># view_model(prob, outfile=&#39;aerostruct_ffd&#39;, show_browser=False)</span>
+<span class="c1"># om.view_model(prob, outfile=&#39;aerostruct_ffd&#39;, show_browser=False)</span>
 
 <span class="c1"># prob.run_model()</span>
 <span class="n">prob</span><span class="o">.</span><span class="n">run_driver</span><span class="p">()</span>
@@ -309,14 +308,14 @@ This allows for more general design shape changes and helps sync up geometry cha
         <li class="right" >
           <a href="multipoint.html" title="Multipoint"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../more_examples.html" >More Examples</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Last updated on Jan 29, 2021.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

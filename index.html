@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>OpenAeroStruct Documentation &#8212; OpenAeroStruct 2.1.0 documentation</title>
+    <title>OpenAeroStruct Documentation &#8212; OpenAeroStruct 2.2.1 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" /> 
@@ -29,7 +29,7 @@
         <li class="right" >
           <a href="installation.html" title="Installation"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">OpenAeroStruct 2.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">OpenAeroStruct 2.2.1 documentation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -42,6 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="struct_example.html">Structural Optimization Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_mesh_example.html">User-Provided Mesh Example</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="more_examples.html">More Examples</a></li>
@@ -64,7 +65,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -79,8 +80,13 @@
 It couples a vortex-lattice method (VLM) and a 6 degrees of freedom (per node) 3-dimensional spatial beam model to simulate aerodynamic and structural analyses using lifting surfaces.
 These simulations are wrapped with an optimizer using NASA’s OpenMDAO framework.
 The analysis and optimization results can be visualized using included tools, producing figures such as this:</p>
-<div class="figure align-center">
+<div class="figure align-center" id="id1">
 <a class="reference internal image-reference" href="_images/example.png"><img alt="sample visualization of aerostructural system" src="_images/example.png" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-text">Aerostructural optimization of the Common Research Model (CRM) wing.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<div class="figure align-center" id="id2">
+<a class="reference internal image-reference" href="_images/aerostruct_xdsm.pdf"><img alt="sample XDSM of aerostructural system" src="_images/aerostruct_xdsm.pdf" style="width: 70%;" /></a>
+<p class="caption"><span class="caption-text">The eXtended Design Structure Matrix (XDSM) of the aerostructural system.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="walkthroughs-and-examples">
@@ -101,6 +107,7 @@ Please review these at a minimum to understand how aerodynamic, structural, and 
 <li class="toctree-l1"><a class="reference internal" href="struct_example.html">Structural Optimization Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_mesh_example.html">User-Provided Mesh Example</a></li>
 </ul>
 </div>
 <p>Once you have reviewed and understand these examples, you can move on to some more advanced examples below.</p>
@@ -175,13 +182,13 @@ Please review these at a minimum to understand how aerodynamic, structural, and 
         <li class="right" >
           <a href="installation.html" title="Installation"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">OpenAeroStruct 2.1.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">OpenAeroStruct 2.2.1 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Last updated on Jan 29, 2021.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>

@@ -45,7 +45,7 @@ However, we currently have not implemented the functionality to specify differen
 
 Next, we create the dictionary with information for the mesh and create the mesh.
 For this example we use the uCRM-based geometry (undeflected Common Research Model) already defined and available in OpenAeroStruct.
-Alternatively, the user can provide their own mesh (see :ref:`Aerostructural_with_wingbox_(Q400)` for another example with a custom mesh).
+Alternatively, the user can provide their own mesh (see :ref:`Custom_Mesh` for another example with a custom mesh).
 Here we specify 15 as the number of spanwise nodes and 3 as the number of chordwise nodes for the VLM mesh.
 We also set `chord_cos_spacing` and `span_cos_spacing` to `0` for uniform panel spacing.
 The FEM model will use the spanwise spacing of the VLM mesh for the FEM mesh.
@@ -176,6 +176,7 @@ In this case, we're adding the engine mass, which is set to 10,000 kg, to an app
 The `point_mass_locations` coordinates are in the global frame.
 The loads caused by the point masses are transferred to the structural nodes based on the nodes' proximity to the point masses (using an inverse-distance approach).
 We then compute the actual `W0` value by summing the `point_masses` and `W0_without_point_masses`.
+We multiply the sum of `point_masses` by 2 because we are using symmetry.
 Thus, the `W0` value used in subsequent components includes the point masses, reserve fuel weight, and all weights of the aircraft except the wing structural mass and computed fuel burn.
 We add `point_masses` and `point_mass_locations` using `indep_var_comp` so that they can be changed during optimization (although they are not in this example).
 

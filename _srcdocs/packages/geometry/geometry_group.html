@@ -4,15 +4,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>geometry_group.py &#8212; OpenAeroStruct 2.1.0 documentation</title>
+    <title>geometry_group.py &#8212; OpenAeroStruct 2.2.1 documentation</title>
     <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="geometry_mesh.py" href="geometry_mesh.html" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="ffd_component.html" title="ffd_component.py"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../openaerostruct.geometry.html" accesskey="U">openaerostruct.geometry</a> &#187;</li> 
       </ul>
@@ -48,6 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
@@ -70,7 +71,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -92,8 +93,104 @@ This is especially true for all of the geometric manipulation types, such
 as twist, sweep, etc., in that we handle the creation of these parameters
 differently if the user wants to have them vary in the optimization problem.</p>
 <dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.abs_name_iter">
+<code class="sig-name descname">abs_name_iter</code><span class="sig-paren">(</span><em class="sig-param">iotype</em>, <em class="sig-param">local=True</em>, <em class="sig-param">cont=True</em>, <em class="sig-param">discrete=False</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.abs_name_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over absolute variable names for this System.</p>
+<p>By setting appropriate values for ‘cont’ and ‘discrete’, yielded variable
+names can be continuous only, discrete only, or both.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>iotype</strong><span class="classifier">str</span></dt><dd><p>Either ‘input’ or ‘output’.</p>
+</dd>
+<dt><strong>local</strong><span class="classifier">bool</span></dt><dd><p>If True, include only names of local variables. Default is True.</p>
+</dd>
+<dt><strong>cont</strong><span class="classifier">bool</span></dt><dd><p>If True, include names of continuous variables.  Default is True.</p>
+</dd>
+<dt><strong>discrete</strong><span class="classifier">bool</span></dt><dd><p>If True, include names of discrete variables.  Default is False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.convert2units">
+<code class="sig-name descname">convert2units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.convert2units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the given value to the specified units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Name of the variable.</p>
+</dd>
+<dt><strong>val</strong><span class="classifier">float or ndarray of float</span></dt><dd><p>The value of the variable.</p>
+</dd>
+<dt><strong>units</strong><span class="classifier">str</span></dt><dd><p>The units to convert to.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>float or ndarray of float</strong><span class="classifier"></span></dt><dd><p>The value converted to the specified units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.convert_from_units">
+<code class="sig-name descname">convert_from_units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.convert_from_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the given value from the specified units to those of the named variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Name of the variable.</p>
+</dd>
+<dt><strong>val</strong><span class="classifier">float or ndarray of float</span></dt><dd><p>The value of the variable.</p>
+</dd>
+<dt><strong>units</strong><span class="classifier">str</span></dt><dd><p>The units to convert to.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>float or ndarray of float</strong><span class="classifier"></span></dt><dd><p>The value converted to the specified units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.convert_units">
+<code class="sig-name descname">convert_units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units_from</em>, <em class="sig-param">units_to</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.convert_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap the utility convert_units and give a good error message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Name of the variable.</p>
+</dd>
+<dt><strong>val</strong><span class="classifier">float or ndarray of float</span></dt><dd><p>The value of the variable.</p>
+</dd>
+<dt><strong>units_from</strong><span class="classifier">str</span></dt><dd><p>The units to convert from.</p>
+</dd>
+<dt><strong>units_to</strong><span class="classifier">str</span></dt><dd><p>The units to convert to.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>float or ndarray of float</strong><span class="classifier"></span></dt><dd><p>The value converted to the specified units.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="openaerostruct.geometry.geometry_group.Geometry.declare_coloring">
-<code class="sig-name descname">declare_coloring</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">wrt=('*'</em>, <em class="sig-param">)</em>, <em class="sig-param">method='fd'</em>, <em class="sig-param">form=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">per_instance=True</em>, <em class="sig-param">num_full_jacs=3</em>, <em class="sig-param">tol=1e-25</em>, <em class="sig-param">orders=None</em>, <em class="sig-param">perturb_size=1e-09</em>, <em class="sig-param">min_improve_pct=5.0</em>, <em class="sig-param">show_summary=True</em>, <em class="sig-param">show_sparsity=False</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.declare_coloring" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">declare_coloring</code><span class="sig-paren">(</span><em class="sig-param">wrt=('*'</em>, <em class="sig-param">)</em>, <em class="sig-param">method='fd'</em>, <em class="sig-param">form=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">per_instance=True</em>, <em class="sig-param">num_full_jacs=3</em>, <em class="sig-param">tol=1e-25</em>, <em class="sig-param">orders=None</em>, <em class="sig-param">perturb_size=1e-09</em>, <em class="sig-param">min_improve_pct=5.0</em>, <em class="sig-param">show_summary=True</em>, <em class="sig-param">show_sparsity=False</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.declare_coloring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set options for deriv coloring of a set of wrt vars matching the given pattern(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -135,7 +232,7 @@ percentage, coloring will not be used.</p>
 
 <dl class="method">
 <dt id="openaerostruct.geometry.geometry_group.Geometry.get_approx_coloring_fname">
-<code class="sig-name descname">get_approx_coloring_fname</code><span class="sig-paren">(</span><em class="sig-param">self</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_approx_coloring_fname" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_approx_coloring_fname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_approx_coloring_fname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the full pathname to a coloring file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -147,6 +244,146 @@ percentage, coloring will not be used.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>str</strong><span class="classifier"></span></dt><dd><p>Full pathname of the coloring file.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.get_io_metadata">
+<code class="sig-name descname">get_io_metadata</code><span class="sig-paren">(</span><em class="sig-param">iotypes=('input'</em>, <em class="sig-param">'output')</em>, <em class="sig-param">metadata_keys=None</em>, <em class="sig-param">includes=None</em>, <em class="sig-param">excludes=None</em>, <em class="sig-param">tags=()</em>, <em class="sig-param">get_remote=False</em>, <em class="sig-param">rank=None</em>, <em class="sig-param">return_rel_names=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_io_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve metdata for a filtered list of variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>iotypes</strong><span class="classifier">str or iter of str</span></dt><dd><p>Will contain either ‘input’, ‘output’, or both.  Defaults to both.</p>
+</dd>
+<dt><strong>metadata_keys</strong><span class="classifier">iter of str or None</span></dt><dd><p>Names of metadata entries to be retrieved or None, meaning retrieve all
+available ‘allprocs’ metadata.  If ‘values’ or ‘src_indices’ are required,
+their keys must be provided explicitly since they are not found in the ‘allprocs’
+metadata and must be retrieved from local metadata located in each process.</p>
+</dd>
+<dt><strong>includes</strong><span class="classifier">str, iter of str or None</span></dt><dd><p>Collection of glob patterns for pathnames of variables to include. Default is None,
+which includes all variables.</p>
+</dd>
+<dt><strong>excludes</strong><span class="classifier">str, iter of str or None</span></dt><dd><p>Collection of glob patterns for pathnames of variables to exclude. Default is None.</p>
+</dd>
+<dt><strong>tags</strong><span class="classifier">str or iter of strs</span></dt><dd><p>User defined tags that can be used to filter what gets listed. Only inputs with the
+given tags will be listed.
+Default is None, which means there will be no filtering based on tags.</p>
+</dd>
+<dt><strong>get_remote</strong><span class="classifier">bool</span></dt><dd><p>If True, retrieve variables from other MPI processes as well.</p>
+</dd>
+<dt><strong>rank</strong><span class="classifier">int or None</span></dt><dd><p>If None, and get_remote is True, retrieve values from all MPI process to all other
+MPI processes.  Otherwise, if get_remote is True, retrieve values from all MPI
+processes only to the specified rank.</p>
+</dd>
+<dt><strong>return_rel_names</strong><span class="classifier">bool</span></dt><dd><p>If True, the names returned will be relative to the scope of this System. Otherwise
+they will be absolute names.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>dict</strong><span class="classifier"></span></dt><dd><p>A dict of metadata keyed on name, where name is either absolute or relative
+based on the value of the <cite>return_rel_names</cite> arg, and metadata is a dict containing
+entries based on the value of the metadata_keys arg.  Every metadata dict will
+always contain two entries, ‘promoted_name’ and ‘discrete’, to indicate a given
+variable’s promoted name and whether or not it is discrete.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.get_relevant_vars">
+<code class="sig-name descname">get_relevant_vars</code><span class="sig-paren">(</span><em class="sig-param">desvars</em>, <em class="sig-param">responses</em>, <em class="sig-param">mode</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_relevant_vars" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find all relevant vars between desvars and responses.</p>
+<p>Both vars are assumed to be outputs (either design vars or responses).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>desvars</strong><span class="classifier">list of str</span></dt><dd><p>Names of design variables.</p>
+</dd>
+<dt><strong>responses</strong><span class="classifier">list of str</span></dt><dd><p>Names of response variables.</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">str</span></dt><dd><p>Direction of derivatives, either ‘fwd’ or ‘rev’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>dict</strong><span class="classifier"></span></dt><dd><p>Dict of ({‘outputs’: dep_outputs, ‘inputs’: dep_inputs, dep_systems)
+keyed by design vars and responses.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.get_source">
+<code class="sig-name descname">get_source</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the source variable connected to the given named variable.</p>
+<p>The name can be a promoted name or an absolute name.
+If the given variable is an input, the absolute name of the connected source will
+be returned.  If the given variable itself is a source, its own absolute name will
+be returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Absolute or promoted name of the variable.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>str</strong><span class="classifier"></span></dt><dd><p>The absolute name of the source variable.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.get_val">
+<code class="sig-name descname">get_val</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">units=None</em>, <em class="sig-param">indices=None</em>, <em class="sig-param">get_remote=False</em>, <em class="sig-param">rank=None</em>, <em class="sig-param">vec_name='nonlinear'</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">flat=False</em>, <em class="sig-param">from_src=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.get_val" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an output/input/residual variable.</p>
+<p>Function is used if you want to specify display units.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Promoted or relative variable name in the root system’s namespace.</p>
+</dd>
+<dt><strong>units</strong><span class="classifier">str, optional</span></dt><dd><p>Units to convert to before return.</p>
+</dd>
+<dt><strong>indices</strong><span class="classifier">int or list of ints or tuple of ints or int ndarray or Iterable or None, optional</span></dt><dd><p>Indices or slice to return.</p>
+</dd>
+<dt><strong>get_remote</strong><span class="classifier">bool or None</span></dt><dd><p>If True, retrieve the value even if it is on a remote process.  Note that if the
+variable is remote on ANY process, this function must be called on EVERY process
+in the Problem’s MPI communicator.
+If False, only retrieve the value if it is on the current process, or only the part
+of the value that’s on the current process for a distributed variable.
+If None and the variable is remote or distributed, a RuntimeError will be raised.</p>
+</dd>
+<dt><strong>rank</strong><span class="classifier">int or None</span></dt><dd><p>If not None, only gather the value to this rank.</p>
+</dd>
+<dt><strong>vec_name</strong><span class="classifier">str</span></dt><dd><p>Name of the vector to use.   Defaults to ‘nonlinear’.</p>
+</dd>
+<dt><strong>kind</strong><span class="classifier">str or None</span></dt><dd><p>Kind of variable (‘input’, ‘output’, or ‘residual’).  If None, returned value
+will be either an input or output.</p>
+</dd>
+<dt><strong>flat</strong><span class="classifier">bool</span></dt><dd><p>If True, return the flattened version of the value.</p>
+</dd>
+<dt><strong>from_src</strong><span class="classifier">bool</span></dt><dd><p>If True, retrieve value of an input variable from its connected source.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>object</strong><span class="classifier"></span></dt><dd><p>The value of the requested output/input variable.</p>
 </dd>
 </dl>
 </dd>
@@ -168,8 +405,88 @@ percentage, coloring will not be used.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.promotes">
+<code class="sig-name descname">promotes</code><span class="sig-paren">(</span><em class="sig-param">subsys_name</em>, <em class="sig-param">any=None</em>, <em class="sig-param">inputs=None</em>, <em class="sig-param">outputs=None</em>, <em class="sig-param">src_indices=None</em>, <em class="sig-param">flat_src_indices=None</em>, <em class="sig-param">src_shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.promotes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Promote a variable in the model tree.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>subsys_name</strong><span class="classifier">str</span></dt><dd><p>The name of the child subsystem whose inputs/outputs are being promoted.</p>
+</dd>
+<dt><strong>any</strong><span class="classifier">Sequence of str or tuple</span></dt><dd><p>A Sequence of variable names (or tuples) to be promoted, regardless
+of if they are inputs or outputs. This is equivalent to the items
+passed via the <cite>promotes=</cite> argument to add_subsystem.  If given as a
+tuple, we use the “promote as” standard of (‘real name’, ‘promoted name’)*[]:</p>
+</dd>
+<dt><strong>inputs</strong><span class="classifier">Sequence of str or tuple</span></dt><dd><p>A Sequence of input names (or tuples) to be promoted. Tuples are
+used for the “promote as” capability.</p>
+</dd>
+<dt><strong>outputs</strong><span class="classifier">Sequence of str or tuple</span></dt><dd><p>A Sequence of output names (or tuples) to be promoted. Tuples are
+used for the “promote as” capability.</p>
+</dd>
+<dt><strong>src_indices</strong><span class="classifier">int or list of ints or tuple of ints or int ndarray or Iterable or None</span></dt><dd><p>This argument applies only to promoted inputs.
+The global indices of the source variable to transfer data from.
+A value of None implies this input depends on all entries of source.
+Default is None. The shapes of the target and src_indices must match,
+and form of the entries within is determined by the value of ‘flat_src_indices’.</p>
+</dd>
+<dt><strong>flat_src_indices</strong><span class="classifier">bool</span></dt><dd><p>This argument applies only to promoted inputs.
+If True, each entry of src_indices is assumed to be an index into the
+flattened source.  Otherwise each entry must be a tuple or list of size equal
+to the number of dimensions of the source.</p>
+</dd>
+<dt><strong>src_shape</strong><span class="classifier">int or tuple</span></dt><dd><p>Assumed shape of any connected source or higher level promoted input.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.set_input_defaults">
+<code class="sig-name descname">set_input_defaults</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val=UNDEFINED</em>, <em class="sig-param">units=None</em>, <em class="sig-param">src_shape=None</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.set_input_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify metadata to be assumed when multiple inputs are promoted to the same name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>Promoted input name.</p>
+</dd>
+<dt><strong>val</strong><span class="classifier">object</span></dt><dd><p>Value to assume for the promoted input.</p>
+</dd>
+<dt><strong>units</strong><span class="classifier">str or None</span></dt><dd><p>Units to assume for the promoted input.</p>
+</dd>
+<dt><strong>src_shape</strong><span class="classifier">int or tuple</span></dt><dd><p>Assumed shape of any connected source or higher level promoted input.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="openaerostruct.geometry.geometry_group.Geometry.set_solver_print">
+<code class="sig-name descname">set_solver_print</code><span class="sig-paren">(</span><em class="sig-param">level=2</em>, <em class="sig-param">depth=1e+99</em>, <em class="sig-param">type_='all'</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.set_solver_print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Control printing for solvers and subsolvers in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>level</strong><span class="classifier">int</span></dt><dd><p>iprint level. Set to 2 to print residuals each iteration; set to 1
+to print just the iteration totals; set to 0 to disable all printing
+except for failures, and set to -1 to disable all printing including failures.</p>
+</dd>
+<dt><strong>depth</strong><span class="classifier">int</span></dt><dd><p>How deep to recurse. For example, you can set this to 0 if you only want
+to print the top level linear and nonlinear solver messages. Default
+prints everything.</p>
+</dd>
+<dt><strong>type_</strong><span class="classifier">str</span></dt><dd><p>Type of solver to set: ‘LN’ for linear, ‘NL’ for nonlinear, or ‘all’ for all.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="openaerostruct.geometry.geometry_group.Geometry.use_fixed_coloring">
-<code class="sig-name descname">use_fixed_coloring</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">coloring=&lt;object object at 0x7f6b23fe5b40&gt;</em>, <em class="sig-param">recurse=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.use_fixed_coloring" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">use_fixed_coloring</code><span class="sig-paren">(</span><em class="sig-param">coloring=&lt;object object&gt;</em>, <em class="sig-param">recurse=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.geometry.geometry_group.Geometry.use_fixed_coloring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use a precomputed coloring for this System.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -212,15 +529,15 @@ if a specific coloring is passed in.</p>
         <li class="right" >
           <a href="ffd_component.html" title="ffd_component.py"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../openaerostruct.geometry.html" >openaerostruct.geometry</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2020.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+      Last updated on Jan 29, 2021.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
     </div>
   </body>
 </html>
