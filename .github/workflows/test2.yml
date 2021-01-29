@@ -1,4 +1,4 @@
-name: OpenAeroStruct_test
+name: OpenAeroStruct_test2
 
 on: [push]
 
@@ -62,10 +62,7 @@ jobs:
     - name: Build docs
       uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: |
-          sudo apt-get install openmpi-bin libopenmpi-dev
-          pip install mpi4py
-          pip install .
+        pre-build-command: "pip install mock==2.0 && pip install ."
         docs-folder: "./openaerostruct/docs/"
 
     - name: Commit doc changes
