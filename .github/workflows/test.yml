@@ -63,7 +63,7 @@ jobs:
       uses: ammaraskar/sphinx-action@master
       with:
         pre-build-command: |
-          sudo apt-get install openmpi-bin libopenmpi-dev
+          apt-get install openmpi-bin libopenmpi-dev
           pip install mpi4py
           pip install .
         docs-folder: "./openaerostruct/docs/"
