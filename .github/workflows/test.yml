@@ -50,10 +50,14 @@ jobs:
 
     # build and deploy docs
     - name: Build docs
-      uses: ammaraskar/sphinx-action@master
-      with:
-        pre-build-command: "pip install ."
-        docs-folder: "./openaerostruct/docs/"
+    #  uses: ammaraskar/sphinx-action@master
+    #  with:
+    #    pre-build-command: "pip install ."
+    #    docs-folder: "./openaerostruct/docs/"
+      run: |
+        cd openaerostruct/docs
+        make clean
+        make html
 
     - name: Commit doc changes
       run: |
