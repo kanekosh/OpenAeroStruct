@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Aerodynamic Optimization Walkthrough &#8212; OpenAeroStruct 2.2.1 documentation</title>
-    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/style.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Structural Optimization Example" href="struct_example.html" />
@@ -33,51 +33,10 @@
         <li class="right" >
           <a href="quick_example.html" title="Quick Example"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Aerodynamic Optimization Walkthrough</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h3><a href="index.html">Table of Contents</a></h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quick_example.html">Quick Example</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Aerodynamic Optimization Walkthrough</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#openmdao-basics">OpenMDAO basics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#intro-to-the-structure-of-the-openaerostruct-problem">Intro to the structure of the OpenAeroStruct problem</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#investigation-of-the-problem-structure-n2-diagram">Investigation of the problem structure – N2 diagram</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#how-to-visualize-results">How to visualize results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="struct_example.html">Structural Optimization Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="custom_mesh_example.html">User-Provided Mesh Example</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="more_examples.html">More Examples</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="specialty_topics.html">Specialty Topics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="_srcdocs/index.html">Source Docs</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -314,7 +273,17 @@ If you only wanted to perform analysis, not optimization, you could use <cite>pr
 <span class="n">prob</span><span class="o">.</span><span class="n">run_driver</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
+<div class="cell border-box-sizing code_cell rendered"><div class="output_area"><pre>Optimization terminated successfully    (Exit mode 0)
+            Current function value: [333.89699872]
+            Iterations: 18
+            Function evaluations: 18
+            Gradient evaluations: 18
+Optimization Complete
+-----------------------------------
+0.0333896998716508
+0.49999999999999667
+-1.788555037237238
+</pre></div></div></div>
 </div>
 <div class="section" id="investigation-of-the-problem-structure-n2-diagram">
 <h2>Investigation of the problem structure – N2 diagram<a class="headerlink" href="#investigation-of-the-problem-structure-n2-diagram" title="Permalink to this headline">¶</a></h2>
@@ -349,7 +318,50 @@ You can monitor the results from your optimization as it progresses by checking 
 </div>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quick_example.html">Quick Example</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Aerodynamic Optimization Walkthrough</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#openmdao-basics">OpenMDAO basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#intro-to-the-structure-of-the-openaerostruct-problem">Intro to the structure of the OpenAeroStruct problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#investigation-of-the-problem-structure-n2-diagram">Investigation of the problem structure – N2 diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-visualize-results">How to visualize results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="struct_example.html">Structural Optimization Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_mesh_example.html">User-Provided Mesh Example</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="more_examples.html">More Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="specialty_topics.html">Specialty Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -369,13 +381,14 @@ You can monitor the results from your optimization as it progresses by checking 
         <li class="right" >
           <a href="quick_example.html" title="Quick Example"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Aerodynamic Optimization Walkthrough</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2021.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Last updated on Jan 30, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

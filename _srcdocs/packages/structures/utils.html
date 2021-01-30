@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>utils.py &#8212; OpenAeroStruct 2.2.1 documentation</title>
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="vonmises_tube.py" href="vonmises_tube.html" />
@@ -35,9 +35,58 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" accesskey="U">openaerostruct.structures</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" accesskey="U">openaerostruct.structures</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">utils.py</a></li> 
       </ul>
-    </div>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-openaerostruct.structures.utils">
+<span id="utils-py"></span><span id="openaerostruct-structures-utils-py"></span><span id="index-0"></span><h1>utils.py<a class="headerlink" href="#module-openaerostruct.structures.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.cross_d">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">cross_d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#cross_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.cross_d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.norm">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.norm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.norm_d">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">norm_d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#norm_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.norm_d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.radii">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">radii</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mesh</span></em>, <em class="sig-param"><span class="n">t_c</span><span class="o">=</span><span class="default_value">0.15</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#radii"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.radii" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the radii of the FEM element based on local chord.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.unit">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">unit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="openaerostruct.structures.utils.unit_d">
+<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">unit_d</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vec</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#unit_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.unit_d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><a href="../../../index.html">Table of Contents</a></h3>
@@ -74,53 +123,6 @@
 <script>$('#searchbox').show(0);</script>
         </div>
       </div>
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <div class="section" id="module-openaerostruct.structures.utils">
-<span id="utils-py"></span><span id="openaerostruct-structures-utils-py"></span><span id="index-0"></span><h1>utils.py<a class="headerlink" href="#module-openaerostruct.structures.utils" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="openaerostruct.structures.utils.cross_d">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">cross_d</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#cross_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.cross_d" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="openaerostruct.structures.utils.norm">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">norm</code><span class="sig-paren">(</span><em class="sig-param">vec</em>, <em class="sig-param">axis=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.norm" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="openaerostruct.structures.utils.norm_d">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">norm_d</code><span class="sig-paren">(</span><em class="sig-param">vec</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#norm_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.norm_d" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="openaerostruct.structures.utils.radii">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">radii</code><span class="sig-paren">(</span><em class="sig-param">mesh</em>, <em class="sig-param">t_c=0.15</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#radii"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.radii" title="Permalink to this definition">¶</a></dt>
-<dd><p>Obtain the radii of the FEM element based on local chord.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="openaerostruct.structures.utils.unit">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">unit</code><span class="sig-paren">(</span><em class="sig-param">vec</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.unit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="openaerostruct.structures.utils.unit_d">
-<code class="sig-prename descclassname">openaerostruct.structures.utils.</code><code class="sig-name descname">unit_d</code><span class="sig-paren">(</span><em class="sig-param">vec</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/utils.html#unit_d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.utils.unit_d" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<div class="toctree-wrapper compound">
-</div>
-</div>
-
-
-          </div>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -140,13 +142,14 @@
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" >openaerostruct.structures</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" >openaerostruct.structures</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">utils.py</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2021.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Last updated on Jan 30, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

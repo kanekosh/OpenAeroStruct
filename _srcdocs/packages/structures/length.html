@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>length.py &#8212; OpenAeroStruct 2.2.1 documentation</title>
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="local_stiff.py" href="local_stiff.html" />
@@ -35,45 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" accesskey="U">openaerostruct.structures</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" accesskey="U">openaerostruct.structures</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">length.py</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index.html">Table of Contents</a></h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
-</ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Source Docs</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -82,13 +47,13 @@
             
   <div class="section" id="module-openaerostruct.structures.length">
 <span id="length-py"></span><span id="openaerostruct-structures-length-py"></span><span id="index-0"></span><h1>length.py<a class="headerlink" href="#module-openaerostruct.structures.length" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="openaerostruct.structures.length.Length">
-<em class="property">class </em><code class="sig-prename descclassname">openaerostruct.structures.length.</code><code class="sig-name descname">Length</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/length.html#Length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.length.Length" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">openaerostruct.structures.length.</code><code class="sig-name descname">Length</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/openaerostruct/structures/length.html#Length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#openaerostruct.structures.length.Length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">openmdao.core.explicitcomponent.ExplicitComponent</span></code></p>
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.abs_name_iter">
-<code class="sig-name descname">abs_name_iter</code><span class="sig-paren">(</span><em class="sig-param">iotype</em>, <em class="sig-param">local=True</em>, <em class="sig-param">cont=True</em>, <em class="sig-param">discrete=False</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.abs_name_iter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">abs_name_iter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iotype</span></em>, <em class="sig-param"><span class="n">local</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">cont</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">discrete</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.abs_name_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over absolute variable names for this System.</p>
 <p>By setting appropriate values for ‘cont’ and ‘discrete’, yielded variable
 names can be continuous only, discrete only, or both.</p>
@@ -108,9 +73,9 @@ names can be continuous only, discrete only, or both.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.add_discrete_input">
-<code class="sig-name descname">add_discrete_input</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">desc=''</em>, <em class="sig-param">tags=None</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.add_discrete_input" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_discrete_input</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">desc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.add_discrete_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a discrete input variable to the component.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -135,9 +100,9 @@ list_inputs and list_outputs.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.add_discrete_output">
-<code class="sig-name descname">add_discrete_output</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">desc=''</em>, <em class="sig-param">tags=None</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.add_discrete_output" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_discrete_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">desc</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.add_discrete_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add an output variable to the component.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -162,9 +127,9 @@ list_inputs and list_outputs.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.convert2units">
-<code class="sig-name descname">convert2units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert2units" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">convert2units</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">units</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert2units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the given value to the specified units.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -186,9 +151,9 @@ list_inputs and list_outputs.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.convert_from_units">
-<code class="sig-name descname">convert_from_units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert_from_units" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">convert_from_units</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">units</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert_from_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the given value from the specified units to those of the named variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -210,9 +175,9 @@ list_inputs and list_outputs.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.convert_units">
-<code class="sig-name descname">convert_units</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">val</em>, <em class="sig-param">units_from</em>, <em class="sig-param">units_to</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert_units" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">convert_units</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">val</span></em>, <em class="sig-param"><span class="n">units_from</span></em>, <em class="sig-param"><span class="n">units_to</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.convert_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap the utility convert_units and give a good error message.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -236,9 +201,9 @@ list_inputs and list_outputs.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.declare_coloring">
-<code class="sig-name descname">declare_coloring</code><span class="sig-paren">(</span><em class="sig-param">wrt=('*'</em>, <em class="sig-param">)</em>, <em class="sig-param">method='fd'</em>, <em class="sig-param">form=None</em>, <em class="sig-param">step=None</em>, <em class="sig-param">per_instance=True</em>, <em class="sig-param">num_full_jacs=3</em>, <em class="sig-param">tol=1e-25</em>, <em class="sig-param">orders=None</em>, <em class="sig-param">perturb_size=1e-09</em>, <em class="sig-param">min_improve_pct=5.0</em>, <em class="sig-param">show_summary=True</em>, <em class="sig-param">show_sparsity=False</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.declare_coloring" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">declare_coloring</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wrt</span><span class="o">=</span><span class="default_value">('*')</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'fd'</span></em>, <em class="sig-param"><span class="n">form</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">per_instance</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">num_full_jacs</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">1e-25</span></em>, <em class="sig-param"><span class="n">orders</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">perturb_size</span><span class="o">=</span><span class="default_value">1e-09</span></em>, <em class="sig-param"><span class="n">min_improve_pct</span><span class="o">=</span><span class="default_value">5.0</span></em>, <em class="sig-param"><span class="n">show_summary</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">show_sparsity</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.declare_coloring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set options for deriv coloring of a set of wrt vars matching the given pattern(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -278,7 +243,7 @@ percentage, coloring will not be used.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.get_approx_coloring_fname">
 <code class="sig-name descname">get_approx_coloring_fname</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_approx_coloring_fname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the full pathname to a coloring file.</p>
@@ -298,9 +263,9 @@ percentage, coloring will not be used.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.get_io_metadata">
-<code class="sig-name descname">get_io_metadata</code><span class="sig-paren">(</span><em class="sig-param">iotypes=('input'</em>, <em class="sig-param">'output')</em>, <em class="sig-param">metadata_keys=None</em>, <em class="sig-param">includes=None</em>, <em class="sig-param">excludes=None</em>, <em class="sig-param">tags=()</em>, <em class="sig-param">get_remote=False</em>, <em class="sig-param">rank=None</em>, <em class="sig-param">return_rel_names=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_io_metadata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_io_metadata</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iotypes</span><span class="o">=</span><span class="default_value">('input', 'output')</span></em>, <em class="sig-param"><span class="n">metadata_keys</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">includes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">excludes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tags</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">get_remote</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_rel_names</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_io_metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve metdata for a filtered list of variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -345,9 +310,9 @@ variable’s promoted name and whether or not it is discrete.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.get_relevant_vars">
-<code class="sig-name descname">get_relevant_vars</code><span class="sig-paren">(</span><em class="sig-param">desvars</em>, <em class="sig-param">responses</em>, <em class="sig-param">mode</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_relevant_vars" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_relevant_vars</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">desvars</span></em>, <em class="sig-param"><span class="n">responses</span></em>, <em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_relevant_vars" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all relevant vars between desvars and responses.</p>
 <p>Both vars are assumed to be outputs (either design vars or responses).</p>
 <dl class="field-list simple">
@@ -371,9 +336,9 @@ keyed by design vars and responses.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.get_source">
-<code class="sig-name descname">get_source</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_source" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_source</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_source" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the source variable connected to the given named variable.</p>
 <p>The name can be a promoted name or an absolute name.
 If the given variable is an input, the absolute name of the connected source will
@@ -395,9 +360,9 @@ be returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.get_val">
-<code class="sig-name descname">get_val</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">units=None</em>, <em class="sig-param">indices=None</em>, <em class="sig-param">get_remote=False</em>, <em class="sig-param">rank=None</em>, <em class="sig-param">vec_name='nonlinear'</em>, <em class="sig-param">kind=None</em>, <em class="sig-param">flat=False</em>, <em class="sig-param">from_src=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_val" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_val</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">units</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">get_remote</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">rank</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vec_name</span><span class="o">=</span><span class="default_value">'nonlinear'</span></em>, <em class="sig-param"><span class="n">kind</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">flat</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">from_src</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.get_val" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an output/input/residual variable.</p>
 <p>Function is used if you want to specify display units.</p>
 <dl class="field-list simple">
@@ -438,7 +403,7 @@ will be either an input or output.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.msginfo">
 <em class="property">property </em><code class="sig-name descname">msginfo</code><a class="headerlink" href="#openaerostruct.structures.length.Length.msginfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Our instance pathname, if available, or our class name.  For use in error messages.</p>
@@ -452,9 +417,9 @@ will be either an input or output.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.set_solver_print">
-<code class="sig-name descname">set_solver_print</code><span class="sig-paren">(</span><em class="sig-param">level=2</em>, <em class="sig-param">depth=1e+99</em>, <em class="sig-param">type_='all'</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.set_solver_print" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_solver_print</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">depth</span><span class="o">=</span><span class="default_value">1e+99</span></em>, <em class="sig-param"><span class="n">type_</span><span class="o">=</span><span class="default_value">'all'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.set_solver_print" title="Permalink to this definition">¶</a></dt>
 <dd><p>Control printing for solvers and subsolvers in the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -474,7 +439,7 @@ prints everything.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.setup_partials">
 <code class="sig-name descname">setup_partials</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.setup_partials" title="Permalink to this definition">¶</a></dt>
 <dd><p>Declare partials.</p>
@@ -483,7 +448,7 @@ declared here since this is called after all size/shape information is known for
 all variables.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="openaerostruct.structures.length.Length.use_fixed_coloring">
 <code class="sig-name descname">use_fixed_coloring</code><span class="sig-paren">(</span><em class="sig-param">coloring=&lt;object object&gt;</em>, <em class="sig-param">recurse=True</em><span class="sig-paren">)</span><a class="headerlink" href="#openaerostruct.structures.length.Length.use_fixed_coloring" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use a precomputed coloring for this System.</p>
@@ -508,7 +473,44 @@ if a specific coloring is passed in.</p>
 </div>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Source Docs</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -530,13 +532,14 @@ if a specific coloring is passed in.</p>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Source Docs</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" >openaerostruct.structures</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../openaerostruct.structures.html" >openaerostruct.structures</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">length.py</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2021.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Last updated on Jan 30, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

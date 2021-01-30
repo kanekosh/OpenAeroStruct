@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>openmdao.core.system &#8212; OpenAeroStruct 2.2.1 documentation</title>
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head><body>
@@ -26,45 +26,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">openmdao.core.system</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index.html">Table of Contents</a></h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -566,11 +531,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pathname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pathname</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;model&gt; &lt;class {type(self).__name__}&gt;&quot;</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{self.pathname}</span><span class="s2">&#39; &lt;class {type(self).__name__}&gt;&quot;</span>
+                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;model&gt; &lt;class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pathname</span><span class="si">}</span><span class="s2">&#39; &lt;class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{self.name}</span><span class="s2">&#39; &lt;class {type(self).__name__}&gt;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;class {type(self).__name__}&gt;&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; &lt;class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_get_inst_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pathname</span>
@@ -741,7 +706,7 @@
 <span class="sd">            The absolute name of the source variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_problem_meta</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s1">&#39;prom2abs&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_problem_meta</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: get_source cannot be called for variable </span><span class="si">{name}</span><span class="s2"> &quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: get_source cannot be called for variable </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> &quot;</span>
                                <span class="s2">&quot;before Problem.setup is complete.&quot;</span><span class="p">)</span>
 
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_problem_meta</span><span class="p">[</span><span class="s1">&#39;model_ref&#39;</span><span class="p">]()</span>
@@ -1591,7 +1556,7 @@
 
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="n">typ</span> <span class="o">=</span> <span class="s1">&#39;design variable&#39;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;fwd&#39;</span> <span class="k">else</span> <span class="s1">&#39;response&#39;</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Output not found for </span><span class="si">{typ}</span><span class="s2"> {str(err)}.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Output not found for </span><span class="si">{</span><span class="n">typ</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_init_relevance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1949,7 +1914,7 @@
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">yield</span> <span class="n">_MatchType</span><span class="o">.</span><span class="n">RENAME</span><span class="p">,</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pinfo</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;when adding subsystem &#39;</span><span class="si">{self.pathname}</span><span class="s2">&#39;, entry &#39;</span><span class="si">{key}</span><span class="s2">&#39;&quot;</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;when adding subsystem &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pathname</span><span class="si">}</span><span class="s2">&#39;, entry &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                                     <span class="s2">&quot; is not a string or tuple of size 2.&quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="nf">_dup</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">matches</span><span class="p">,</span> <span class="n">match_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">tup</span><span class="p">):</span>
@@ -1977,27 +1942,27 @@
             <span class="k">if</span> <span class="n">old_match_type</span> <span class="o">==</span> <span class="n">_MatchType</span><span class="o">.</span><span class="n">RENAME</span><span class="p">:</span>
                 <span class="n">old_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">old_name</span><span class="p">,</span> <span class="n">old_key</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">old_using</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{old_key}</span><span class="s2">&#39;&quot;</span>
+                <span class="n">old_using</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">old_key</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
             <span class="k">if</span> <span class="n">match_type</span> <span class="o">==</span> <span class="n">_MatchType</span><span class="o">.</span><span class="n">RENAME</span><span class="p">:</span>
                 <span class="n">new_using</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_using</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{tup[0]}</span><span class="s2">&#39;&quot;</span>
+                <span class="n">new_using</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
 
             <span class="n">mismatch</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">old_info</span><span class="p">)</span> <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">()</span>
             <span class="k">if</span> <span class="n">mismatch</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: </span><span class="si">{io}</span><span class="s2"> variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;, promoted using &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{new_using}</span><span class="s2">, was already promoted using </span><span class="si">{old_using}</span><span class="s2"> with &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;different values for </span><span class="si">{mismatch}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">io</span><span class="si">}</span><span class="s2"> variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;, promoted using &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_using</span><span class="si">}</span><span class="s2">, was already promoted using </span><span class="si">{</span><span class="n">old_using</span><span class="si">}</span><span class="s2"> with &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;different values for </span><span class="si">{</span><span class="n">mismatch</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">old_match_type</span> <span class="o">!=</span> <span class="n">_MatchType</span><span class="o">.</span><span class="n">PATTERN</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">old_key</span> <span class="o">!=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t alias promoted </span><span class="si">{io}</span><span class="s2"> &#39;</span><span class="si">{name}</span><span class="s2">&#39; to &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{tup[0]}</span><span class="s2">&#39; because &#39;</span><span class="si">{name}</span><span class="s2">&#39; has already been promoted as &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{old_key}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t alias promoted </span><span class="si">{</span><span class="n">io</span><span class="si">}</span><span class="s2"> &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; to &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; because &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; has already been promoted as &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">old_key</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">old_key</span> <span class="o">!=</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span>
-                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: </span><span class="si">{io}</span><span class="s2"> variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;, promoted using &quot;</span>
-                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{new_using}</span><span class="s2">, was already promoted using </span><span class="si">{old_using}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">io</span><span class="si">}</span><span class="s2"> variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;, promoted using &quot;</span>
+                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_using</span><span class="si">}</span><span class="s2">, was already promoted using </span><span class="si">{</span><span class="n">old_using</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">match_type</span> <span class="o">==</span> <span class="n">_MatchType</span><span class="o">.</span><span class="n">PATTERN</span>
 
@@ -2058,8 +2023,8 @@
                     <span class="n">call</span> <span class="o">=</span> <span class="s1">&#39;promotes_</span><span class="si">%s</span><span class="s1">s&#39;</span> <span class="o">%</span> <span class="n">io_types</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
                 <span class="n">not_found</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">not_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: &#39;</span><span class="si">{call}</span><span class="s2">&#39; failed to find any matches for the &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;following names or patterns: </span><span class="si">{not_found}</span><span class="s2">.</span><span class="si">{empty_group_msg}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">call</span><span class="si">}</span><span class="s2">&#39; failed to find any matches for the &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;following names or patterns: </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">empty_group_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">maps</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">{},</span> <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="p">{}}</span>
 
@@ -2266,7 +2231,7 @@
             <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">err</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">err_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Error calling </span><span class="si">{fname}</span><span class="s2">(), </span><span class="si">{err}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">err_type</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Error calling </span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">(), </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span><span class="o">.</span><span class="n">read_only</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2594,12 +2559,12 @@
 
         <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The units argument should be a str or None for &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;design_var &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The units argument should be a str or None for &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;design_var &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_units</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The units &#39;</span><span class="si">{units}</span><span class="s2">&#39; are invalid for &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;design_var &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The units &#39;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&#39; are invalid for &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;design_var &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
             <span class="n">units</span> <span class="o">=</span> <span class="n">simplify_unit</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
 
         <span class="c1"># Convert ref/ref0 to ndarray/float as necessary</span>
@@ -2754,12 +2719,12 @@
 
         <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The units argument should be a str or None for &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;response &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The units argument should be a str or None for &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;response &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_units</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The units &#39;</span><span class="si">{units}</span><span class="s2">&#39; are invalid for &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;response &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The units &#39;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&#39; are invalid for &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;response &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="n">units</span> <span class="o">=</span> <span class="n">simplify_unit</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
 
@@ -3375,7 +3340,7 @@
             <span class="n">keyset</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metadata_keys</span><span class="p">)</span>
             <span class="n">diff</span> <span class="o">=</span> <span class="n">keyset</span> <span class="o">-</span> <span class="n">allowed_meta_names</span>
             <span class="k">if</span> <span class="n">diff</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: {sorted(diff)} are not valid metadata entry &quot;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span><span class="si">}</span><span class="s2"> are not valid metadata entry &quot;</span>
                                    <span class="s2">&quot;names.&quot;</span><span class="p">)</span>
         <span class="n">need_local_meta</span> <span class="o">=</span> <span class="n">metadata_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">gather_keys</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">keyset</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="n">nodyn</span> <span class="o">=</span> <span class="n">metadata_keys</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">keyset</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">dynset</span><span class="p">)</span>
@@ -3411,8 +3376,8 @@
                     <span class="k">if</span> <span class="n">nodyn</span><span class="p">:</span>
                         <span class="n">a2m</span> <span class="o">=</span> <span class="n">all2meta</span><span class="p">[</span><span class="n">iotype</span><span class="p">][</span><span class="n">abs_name</span><span class="p">]</span>
                         <span class="k">if</span> <span class="n">a2m</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">a2m</span><span class="p">[</span><span class="s1">&#39;shape_by_conn&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">a2m</span><span class="p">[</span><span class="s1">&#39;copy_shape&#39;</span><span class="p">]):</span>
-                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t retrieve shape, size, or &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;value for dynamically sized variable &#39;</span><span class="si">{prom}</span><span class="s2">&#39; &quot;</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t retrieve shape, size, or &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;value for dynamically sized variable &#39;</span><span class="si">{</span><span class="n">prom</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
                                                <span class="s2">&quot;because they aren&#39;t known yet.&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># discrete</span>
                     <span class="k">if</span> <span class="n">need_local_meta</span><span class="p">:</span>  <span class="c1"># use relative name for discretes</span>
@@ -4288,14 +4253,14 @@
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">vars_to_gather</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_problem_meta</span><span class="p">[</span><span class="s1">&#39;vars_to_gather&#39;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">vars_to_gather</span> <span class="ow">and</span> <span class="n">vars_to_gather</span><span class="p">[</span><span class="n">abs_name</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Variable &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; is not local to &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;rank </span><span class="si">{self.comm.rank}</span><span class="s2">. You can retrieve values from &quot;</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Variable &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; is not local to &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;rank </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span><span class="si">}</span><span class="s2">. You can retrieve values from &quot;</span>
                                        <span class="s2">&quot;other processes using `get_val(&lt;name&gt;, get_remote=True)`.&quot;</span><span class="p">)</span>
 
                 <span class="n">meta</span> <span class="o">=</span> <span class="n">my_meta</span><span class="p">[</span><span class="n">abs_name</span><span class="p">]</span>
                 <span class="n">distrib</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;distributed&#39;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">distrib</span> <span class="ow">and</span> <span class="n">get_remote</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Variable &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; is a distributed &quot;</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Variable &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; is a distributed &quot;</span>
                                        <span class="s2">&quot;variable. You can retrieve values from all processes &quot;</span>
                                        <span class="s2">&quot;using `get_val(&lt;name&gt;, get_remote=True)` or from the &quot;</span>
                                        <span class="s2">&quot;local process using `get_val(&lt;name&gt;, get_remote=False)`.&quot;</span><span class="p">)</span>
@@ -4311,7 +4276,7 @@
             <span class="k">elif</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_allprocs_discrete</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
                 <span class="k">pass</span>  <span class="c1"># non-local discrete input</span>
             <span class="k">elif</span> <span class="n">get_remote</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t find variable named &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t find variable named &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">_UNDEFINED</span>
 
@@ -4327,7 +4292,7 @@
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">my_meta</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">vec_name</span> <span class="o">!=</span> <span class="s1">&#39;nonlinear&#39;</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t get variable named &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; &quot;</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t get variable named &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
                                          <span class="s2">&quot;because linear vectors are not available before &quot;</span>
                                          <span class="s2">&quot;final_setup.&quot;</span><span class="p">)</span>
                     <span class="n">val</span> <span class="o">=</span> <span class="n">my_meta</span><span class="p">[</span><span class="n">abs_name</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
@@ -4557,14 +4522,14 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">distrib</span> <span class="ow">and</span> <span class="n">get_remote</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Variable &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; is a distributed &quot;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Variable &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; is a distributed &quot;</span>
                                    <span class="s2">&quot;variable. You can retrieve values from all processes &quot;</span>
                                    <span class="s2">&quot;using `get_val(&lt;name&gt;, get_remote=True)` or from the &quot;</span>
                                    <span class="s2">&quot;local process using `get_val(&lt;name&gt;, get_remote=False)`.&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">sdistrib</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">distrib</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">get_remote</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Non-distributed variable &#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; has &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;a distributed source, &#39;</span><span class="si">{src}</span><span class="s2">&#39;, so you must retrieve its value &quot;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Non-distributed variable &#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; has &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;a distributed source, &#39;</span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&#39;, so you must retrieve its value &quot;</span>
                                    <span class="s2">&quot;using &#39;get_remote=True&#39;.&quot;</span><span class="p">)</span>
 
         <span class="c1"># get value of the source</span>
@@ -4591,8 +4556,8 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">fail</span> <span class="o">=</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">allreduce</span><span class="p">(</span><span class="n">fail</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t retrieve distributed variable &quot;</span>
-                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{abs_name}</span><span class="s2">&#39; because its src_indices reference &quot;</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t retrieve distributed variable &quot;</span>
+                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">abs_name</span><span class="si">}</span><span class="s2">&#39; because its src_indices reference &quot;</span>
                                            <span class="s2">&quot;entries from other processes. You can retrieve values &quot;</span>
                                            <span class="s2">&quot;from all processes using &quot;</span>
                                            <span class="s2">&quot;`get_val(&lt;name&gt;, get_remote=True)`.&quot;</span><span class="p">)</span>
@@ -4668,8 +4633,8 @@
                     <span class="n">global_size</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_var_allprocs_abs2meta</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="n">src</span><span class="p">][</span><span class="s1">&#39;global_size&#39;</span><span class="p">]</span>
                     <span class="n">global_shape</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_var_allprocs_abs2meta</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="n">src</span><span class="p">][</span><span class="s1">&#39;global_shape&#39;</span><span class="p">]</span>
                 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t compute src_indices array from &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;src_slice for input &#39;</span><span class="si">{varname}</span><span class="s2">&#39; because we don&#39;t know &quot;</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t compute src_indices array from &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;src_slice for input &#39;</span><span class="si">{</span><span class="n">varname</span><span class="si">}</span><span class="s2">&#39; because we don&#39;t know &quot;</span>
                                        <span class="s2">&quot;the global shape of its source yet.&quot;</span><span class="p">)</span>
                 <span class="n">src_indices</span> <span class="o">=</span> <span class="n">_slice_indices</span><span class="p">(</span><span class="n">src_slice</span><span class="p">,</span> <span class="n">global_size</span><span class="p">,</span> <span class="n">global_shape</span><span class="p">)</span>
 
@@ -4855,8 +4820,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">scale</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">unit_conversion</span><span class="p">(</span><span class="n">units_from</span><span class="p">,</span> <span class="n">units_to</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t set variable &#39;</span><span class="si">{name}</span><span class="s2">&#39; with units &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{units_from}</span><span class="s2">&#39; to value with units &#39;</span><span class="si">{units_to}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t set variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; with units &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">units_from</span><span class="si">}</span><span class="s2">&#39; to value with units &#39;</span><span class="si">{</span><span class="n">units_to</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="n">val</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale</span>
 
@@ -4909,20 +4874,20 @@
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vars_to_gather</span><span class="p">:</span>
                     <span class="c1"># TODO: fix this</span>
                     <span class="c1"># cause a failure in all procs to avoid a hang</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msgifo}</span><span class="s2">: No support yet for retrieving local &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;metadata key &#39;</span><span class="si">{key}</span><span class="s2">&#39; from a remote proc.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msgifo</span><span class="si">}</span><span class="s2">: No support yet for retrieving local &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;metadata key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; from a remote proc.&quot;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">meta_loc</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">meta_loc</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="n">abs_name</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Metadata key &#39;</span><span class="si">{key}</span><span class="s2">&#39; not found for &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Metadata key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found for &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="n">meta_loc</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
                     <span class="k">try</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">meta_loc</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">abs_name</span><span class="p">][</span><span class="n">key</span><span class="p">]</span>
                     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Metadata key &#39;</span><span class="si">{key}</span><span class="s2">&#39; not found for &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Metadata key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found for &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">abs_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_allprocs_discrete</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
@@ -4944,10 +4909,10 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Metadata key &#39;</span><span class="si">{key}</span><span class="s2">&#39; not found for &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Metadata key &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; not found for &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Metadata for variable &#39;</span><span class="si">{name}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Metadata for variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_resolve_ambiguous_input_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
@@ -5115,7 +5080,44 @@
         <span class="k">return</span> <span class="n">relevant</span>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -5130,13 +5132,14 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">openmdao.core.system</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2021.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Last updated on Jan 30, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>

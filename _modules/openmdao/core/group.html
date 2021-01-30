@@ -1,18 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>openmdao.core.group &#8212; OpenAeroStruct 2.2.1 documentation</title>
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
   </head><body>
@@ -26,45 +26,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">openmdao.core.group</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h3><a href="../../../index.html">Table of Contents</a></h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
-</ul>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
-</ul>
-
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -145,8 +110,8 @@
         <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">src_shape</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_PromotesInfo(</span><span class="si">{self.src_indices}</span><span class="s2">, </span><span class="si">{self.flat}</span><span class="s2">, </span><span class="si">{self.src_shape}</span><span class="s2">, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.parent}</span><span class="s2">, </span><span class="si">{self.prom}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_PromotesInfo(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">src_indices</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">src_shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prom</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">prom_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">prom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -361,8 +326,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
             <span class="k">if</span> <span class="n">src_shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: value was set in set_input_defaults, so ignoring &quot;</span>
-                               <span class="sa">f</span><span class="s2">&quot;value </span><span class="si">{src_shape}</span><span class="s2"> of src_shape.&quot;</span><span class="p">)</span>
+                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: value was set in set_input_defaults, so ignoring &quot;</span>
+                               <span class="sa">f</span><span class="s2">&quot;value </span><span class="si">{</span><span class="n">src_shape</span><span class="si">}</span><span class="s2"> of src_shape.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="n">src_shape</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">shape</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
@@ -371,7 +336,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: The units argument should be a str or None&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_units</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The units &#39;</span><span class="si">{units}</span><span class="s2">&#39; are invalid.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The units &#39;</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">&#39; are invalid.&quot;</span><span class="p">)</span>
             <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">simplify_unit</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">src_shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -386,8 +351,8 @@
             <span class="n">old</span> <span class="o">=</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">overlap</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">old</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">overlap</span><span class="p">:</span>
-                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Setting input defaults for input &#39;</span><span class="si">{name}</span><span class="s2">&#39; which &quot;</span>
-                               <span class="sa">f</span><span class="s2">&quot;override previously set defaults for </span><span class="si">{overlap}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Setting input defaults for input &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; which &quot;</span>
+                               <span class="sa">f</span><span class="s2">&quot;override previously set defaults for </span><span class="si">{</span><span class="n">overlap</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="n">old</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">meta</span><span class="p">]</span>
@@ -809,14 +774,14 @@
                 <span class="k">if</span> <span class="n">absname</span> <span class="ow">in</span> <span class="n">prom2abs_in</span><span class="p">:</span>
                     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">prom2abs_in</span><span class="p">[</span><span class="n">absname</span><span class="p">]:</span>
                         <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="n">absname</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Absolute variable name &#39;</span><span class="si">{absname}</span><span class="s2">&#39;&quot;</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Absolute variable name &#39;</span><span class="si">{</span><span class="n">absname</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                                                <span class="s2">&quot; is masked by a matching promoted name. Try&quot;</span>
                                                <span class="s2">&quot; promoting to a different name. This can be caused&quot;</span>
                                                <span class="s2">&quot; by promoting &#39;*&#39; at group level or promoting using&quot;</span>
                                                <span class="s2">&quot; dotted names.&quot;</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">absname</span> <span class="ow">in</span> <span class="n">prom2abs_out</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">absname</span> <span class="o">!=</span> <span class="n">prom2abs_out</span><span class="p">[</span><span class="n">absname</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Absolute variable name &#39;</span><span class="si">{absname}</span><span class="s2">&#39; is&quot;</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Absolute variable name &#39;</span><span class="si">{</span><span class="n">absname</span><span class="si">}</span><span class="s2">&#39; is&quot;</span>
                                            <span class="s2">&quot; masked by a matching promoted name. Try&quot;</span>
                                            <span class="s2">&quot; promoting to a different name. This can be caused&quot;</span>
                                            <span class="s2">&quot; by promoting &#39;*&#39; at group level or promoting using&quot;</span>
@@ -928,11 +893,11 @@
                             <span class="n">oldprom</span> <span class="o">=</span> <span class="n">prom</span>
                             <span class="n">oldpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pathname</span>
                         <span class="k">if</span> <span class="n">parent_src_shape</span> <span class="o">!=</span> <span class="n">pinfo</span><span class="o">.</span><span class="n">src_shape</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Promoted src_shape of </span><span class="si">{pinfo.src_shape}</span><span class="s2"> for &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{subprom}</span><span class="s2">&#39; in &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;&#39;{&#39;.&#39;.join((self.pathname, subname)).lstrip(&#39;.&#39;)}&#39; &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;differs from src_shape </span><span class="si">{parent_src_shape}</span><span class="s2"> for &#39;</span><span class="si">{oldprom}</span><span class="s2">&#39; in &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{oldpath}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Promoted src_shape of </span><span class="si">{</span><span class="n">pinfo</span><span class="o">.</span><span class="n">src_shape</span><span class="si">}</span><span class="s2"> for &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">subprom</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">pathname</span><span class="p">,</span> <span class="n">subname</span><span class="p">))</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;differs from src_shape </span><span class="si">{</span><span class="n">parent_src_shape</span><span class="si">}</span><span class="s2"> for &#39;</span><span class="si">{</span><span class="n">oldprom</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">oldpath</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
                             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">parent_src_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -950,20 +915,20 @@
                             <span class="n">src</span> <span class="o">=</span> <span class="n">conns</span><span class="p">[</span><span class="n">tgt</span><span class="p">]</span>
                             <span class="n">owner</span><span class="p">,</span> <span class="n">sprom</span><span class="p">,</span> <span class="n">tprom</span> <span class="o">=</span> <span class="n">get_connection_owner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
                             <span class="k">if</span> <span class="n">owner</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In connection from &#39;</span><span class="si">{sprom}</span><span class="s2">&#39; to &#39;</span><span class="si">{tprom}</span><span class="s2">&#39; in group &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{owner}</span><span class="s2">&#39;, &quot;</span><span class="p">)</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;In connection from &#39;</span><span class="si">{</span><span class="n">sprom</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">tprom</span><span class="si">}</span><span class="s2">&#39; in group &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s2">&#39;, &quot;</span><span class="p">)</span>
                             <span class="k">else</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;In connection from &#39;</span><span class="si">{src}</span><span class="s2">&#39; to &#39;</span><span class="si">{tgt}</span><span class="s2">&#39;, &quot;</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;In connection from &#39;</span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
 
-                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{msg}</span><span class="s2">input &#39;</span><span class="si">{parinput}</span><span class="s2">&#39; src_indices are &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{oldinfo.src_indices}</span><span class="s2"> and indexing into those &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;failed using src_indices </span><span class="si">{pinfo.src_indices}</span><span class="s2"> from &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;input &#39;{pinfo.prom_path()}&#39;. Error was: </span><span class="si">{err}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">input &#39;</span><span class="si">{</span><span class="n">parinput</span><span class="si">}</span><span class="s2">&#39; src_indices are &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">oldinfo</span><span class="o">.</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> and indexing into those &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;failed using src_indices </span><span class="si">{</span><span class="n">pinfo</span><span class="o">.</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> from &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;input &#39;</span><span class="si">{</span><span class="n">pinfo</span><span class="o">.</span><span class="n">prom_path</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;. Error was: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{parinput}</span><span class="s2">&#39; src_indices are &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{oldinfo.src_indices}</span><span class="s2"> and indexing into those &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;failed using src_indices </span><span class="si">{pinfo.src_indices}</span><span class="s2"> from &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;input &#39;{pinfo.prom_path()}&#39;. Error was: </span><span class="si">{err}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">parinput</span><span class="si">}</span><span class="s2">&#39; src_indices are &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">oldinfo</span><span class="o">.</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> and indexing into those &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;failed using src_indices </span><span class="si">{</span><span class="n">pinfo</span><span class="o">.</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> from &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;input &#39;</span><span class="si">{</span><span class="n">pinfo</span><span class="o">.</span><span class="n">prom_path</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;. Error was: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">pinfo</span> <span class="o">=</span> <span class="n">oldinfo</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -1173,8 +1138,8 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">ex</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ex</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The following group inputs, passed to &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;set_input_defaults(), could not be found: {sorted(ex)}.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The following group inputs, passed to &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;set_input_defaults(), could not be found: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_discrete</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_discrete</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_discrete_inputs</span> <span class="o">=</span> <span class="n">_DictValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_var_discrete</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span>
@@ -1220,9 +1185,9 @@
                             <span class="n">origin_prom</span> <span class="o">=</span> <span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;prom&#39;</span><span class="p">]</span>
                             <span class="n">val</span> <span class="o">=</span> <span class="n">fullmeta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">submeta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                             <span class="k">if</span> <span class="n">origin</span> <span class="o">!=</span> <span class="n">top_origin</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group &#39;</span><span class="si">{top_origin}</span><span class="s2">&#39; did not set a default &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{key}</span><span class="s2">&#39; for input &#39;</span><span class="si">{top_prom}</span><span class="s2">&#39;, so the value of &quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{val}</span><span class="s2">) from group &#39;</span><span class="si">{origin}</span><span class="s2">&#39; will be used.&quot;</span><span class="p">)</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Group &#39;</span><span class="si">{</span><span class="n">top_origin</span><span class="si">}</span><span class="s2">&#39; did not set a default &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; for input &#39;</span><span class="si">{</span><span class="n">top_prom</span><span class="si">}</span><span class="s2">&#39;, so the value of &quot;</span>
+                                       <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">) from group &#39;</span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2">&#39; will be used.&quot;</span><span class="p">)</span>
                                 <span class="k">if</span> <span class="n">show_warnings</span><span class="p">:</span>
                                     <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
@@ -1235,10 +1200,10 @@
                             <span class="k">if</span> <span class="ow">not</span> <span class="n">eq</span><span class="p">:</span>
                                 <span class="c1"># first, see if origin is an ancestor</span>
                                 <span class="k">if</span> <span class="ow">not</span> <span class="n">origin</span> <span class="ow">or</span> <span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">origin</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
-                                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Groups &#39;</span><span class="si">{origin}</span><span class="s2">&#39; and &#39;</span><span class="si">{submeta[&#39;path&#39;]}</span><span class="s2">&#39; &quot;</span>
+                                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Groups &#39;</span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
                                            <span class="sa">f</span><span class="s2">&quot;called set_input_defaults for the input &quot;</span>
-                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{origin_prom}</span><span class="s2">&#39; with conflicting &#39;</span><span class="si">{key}</span><span class="s2">&#39;. &quot;</span>
-                                           <span class="sa">f</span><span class="s2">&quot;The value (</span><span class="si">{val}</span><span class="s2">) from &#39;</span><span class="si">{origin}</span><span class="s2">&#39; will be &quot;</span>
+                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">origin_prom</span><span class="si">}</span><span class="s2">&#39; with conflicting &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                                           <span class="sa">f</span><span class="s2">&quot;The value (</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">) from &#39;</span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2">&#39; will be &quot;</span>
                                            <span class="s2">&quot;used.&quot;</span><span class="p">)</span>
                                     <span class="k">if</span> <span class="n">show_warnings</span><span class="p">:</span>
                                         <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1246,9 +1211,9 @@
                                         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_ivc_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>  <span class="c1"># origin is not an ancestor, so we have an ambiguity</span>
                                     <span class="k">if</span> <span class="n">origin_prom</span> <span class="o">!=</span> <span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;prom&#39;</span><span class="p">]:</span>
-                                        <span class="n">prm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{origin_prom}</span><span class="s2">&#39; / &#39;</span><span class="si">{submeta[&#39;prom&#39;]}</span><span class="s2">&#39;)&quot;</span>
+                                        <span class="n">prm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(&#39;</span><span class="si">{</span><span class="n">origin_prom</span><span class="si">}</span><span class="s2">&#39; / &#39;</span><span class="si">{</span><span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;prom&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
                                     <span class="k">else</span><span class="p">:</span>
-                                        <span class="n">prm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{origin_prom}</span><span class="s2">&#39;&quot;</span>
+                                        <span class="n">prm</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">origin_prom</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                                     <span class="n">common</span> <span class="o">=</span> <span class="n">common_subpath</span><span class="p">((</span><span class="n">origin</span><span class="p">,</span> <span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]))</span>
                                     <span class="k">if</span> <span class="n">common</span><span class="p">:</span>
                                         <span class="n">sub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subsystem</span><span class="p">(</span><span class="n">common</span><span class="p">)</span>
@@ -1258,14 +1223,14 @@
                                                     <span class="n">prom</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">_var_abs2prom</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">a</span><span class="p">]</span>
                                                     <span class="k">break</span>
 
-                                    <span class="n">gname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Group named &#39;</span><span class="si">{common}</span><span class="s2">&#39;&quot;</span> <span class="k">if</span> <span class="n">common</span> <span class="k">else</span> <span class="s1">&#39;model&#39;</span>
-                                    <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The subsystems </span><span class="si">{origin}</span><span class="s2"> &quot;</span>
-                                                      <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{submeta[&#39;path&#39;]}</span><span class="s2"> called &quot;</span>
+                                    <span class="n">gname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Group named &#39;</span><span class="si">{</span><span class="n">common</span><span class="si">}</span><span class="s2">&#39;&quot;</span> <span class="k">if</span> <span class="n">common</span> <span class="k">else</span> <span class="s1">&#39;model&#39;</span>
+                                    <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The subsystems </span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s2"> &quot;</span>
+                                                      <span class="sa">f</span><span class="s2">&quot;and </span><span class="si">{</span><span class="n">submeta</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> called &quot;</span>
                                                       <span class="sa">f</span><span class="s2">&quot;set_input_defaults for promoted input &quot;</span>
-                                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prm}</span><span class="s2"> with conflicting values for &quot;</span>
-                                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{key}</span><span class="s2">&#39;. Call &lt;group&gt;.set_input_defaults(&quot;</span>
-                                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{prom}</span><span class="s2">&#39;, </span><span class="si">{key}</span><span class="s2">=?), where &lt;group&gt; is the &quot;</span>
-                                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{gname}</span><span class="s2"> to remove the ambiguity.&quot;</span><span class="p">)</span>
+                                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prm</span><span class="si">}</span><span class="s2"> with conflicting values for &quot;</span>
+                                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;. Call &lt;group&gt;.set_input_defaults(&quot;</span>
+                                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">prom</span><span class="si">}</span><span class="s2">&#39;, </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=?), where &lt;group&gt; is the &quot;</span>
+                                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">gname</span><span class="si">}</span><span class="s2"> to remove the ambiguity.&quot;</span><span class="p">)</span>
 
             <span class="c1"># update all metadata dicts with any missing metadata that was filled in elsewhere</span>
             <span class="k">for</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">metalist</span><span class="p">:</span>
@@ -1499,8 +1464,8 @@
             <span class="c1"># (not traceable to a connect statement, so provide context)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">prom_out</span> <span class="ow">in</span> <span class="n">allprocs_prom2abs_list_out</span> <span class="ow">or</span> <span class="n">prom_out</span> <span class="ow">in</span> <span class="n">allprocs_discrete_out</span><span class="p">):</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">prom_out</span> <span class="ow">in</span> <span class="n">allprocs_prom2abs_list_in</span> <span class="ow">or</span> <span class="n">prom_out</span> <span class="ow">in</span> <span class="n">allprocs_discrete_in</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;, but &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; is an input. &quot;</span> <span class="o">+</span> \
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;, but &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; is an input. &quot;</span> <span class="o">+</span> \
                           <span class="s2">&quot;All connections must be from an output to an input.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1508,8 +1473,8 @@
                         <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                         <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;, but &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;, but &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1518,8 +1483,8 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">prom_in</span> <span class="ow">in</span> <span class="n">allprocs_prom2abs_list_in</span> <span class="ow">or</span> <span class="n">prom_in</span> <span class="ow">in</span> <span class="n">allprocs_discrete_in</span><span class="p">):</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">prom_in</span> <span class="ow">in</span> <span class="n">allprocs_prom2abs_list_out</span> <span class="ow">or</span> <span class="n">prom_in</span> <span class="ow">in</span> <span class="n">allprocs_discrete_out</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;, but &#39;</span><span class="si">{prom_in}</span><span class="s2">&#39; is an output. &quot;</span> <span class="o">+</span> \
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;, but &#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39; is an output. &quot;</span> <span class="o">+</span> \
                           <span class="s2">&quot;All connections must be from an output to an input.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1527,8 +1492,8 @@
                         <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                         <span class="k">continue</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;, but &#39;</span><span class="si">{prom_in}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Attempted to connect from &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;, but &#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1546,8 +1511,8 @@
                 <span class="n">inparts</span> <span class="o">=</span> <span class="n">abs_in</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
                 <span class="n">in_subsys</span> <span class="o">=</span> <span class="n">inparts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">out_subsys</span> <span class="o">==</span> <span class="n">in_subsys</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Output and input are in the same System for &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;connection from &#39;</span><span class="si">{prom_out}</span><span class="s2">&#39; to &#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Output and input are in the same System for &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;connection from &#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1557,16 +1522,16 @@
                 <span class="k">if</span> <span class="n">src_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">a2m</span> <span class="o">=</span> <span class="n">allprocs_abs2meta</span><span class="p">[</span><span class="n">abs_in</span><span class="p">]</span>
                     <span class="k">if</span> <span class="p">(</span><span class="n">a2m</span><span class="p">[</span><span class="s1">&#39;shape_by_conn&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">a2m</span><span class="p">[</span><span class="s1">&#39;copy_shape&#39;</span><span class="p">]):</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Setting of &#39;src_indices&#39; along with &quot;</span>
-                                         <span class="sa">f</span><span class="s2">&quot;&#39;shape_by_conn&#39; or &#39;copy_shape&#39; for variable &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39; &quot;</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Setting of &#39;src_indices&#39; along with &quot;</span>
+                                         <span class="sa">f</span><span class="s2">&quot;&#39;shape_by_conn&#39; or &#39;copy_shape&#39; for variable &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
                                          <span class="s2">&quot;is currently unsupported.&quot;</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">abs_in</span> <span class="ow">in</span> <span class="n">abs2meta</span><span class="p">:</span>
                         <span class="n">meta</span> <span class="o">=</span> <span class="n">abs2meta</span><span class="p">[</span><span class="n">abs_in</span><span class="p">]</span>
                         <span class="k">if</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;src_indices&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: src_indices has been defined in both &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;connect(&#39;</span><span class="si">{prom_out}</span><span class="s2">&#39;, &#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;) and &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;add_input(&#39;</span><span class="si">{prom_in}</span><span class="s2">&#39;, ...).&quot;</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: src_indices has been defined in both &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;connect(&#39;</span><span class="si">{</span><span class="n">prom_out</span><span class="si">}</span><span class="s2">&#39;, &#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;) and &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;add_input(&#39;</span><span class="si">{</span><span class="n">prom_in</span><span class="si">}</span><span class="s2">&#39;, ...).&quot;</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                             <span class="k">else</span><span class="p">:</span>
@@ -1581,8 +1546,8 @@
                     <span class="n">src_ind_inputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">abs_in</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">abs_in</span> <span class="ow">in</span> <span class="n">abs_in2out</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39; cannot be connected to &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; because it&#39;s already connected to &#39;</span><span class="si">{abs_in2out[abs_in]}</span><span class="s2">&#39;&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39; cannot be connected to &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; because it&#39;s already connected to &#39;</span><span class="si">{</span><span class="n">abs_in2out</span><span class="p">[</span><span class="n">abs_in</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1622,8 +1587,8 @@
             <span class="n">dup_info</span> <span class="o">=</span> <span class="p">[(</span><span class="n">n</span><span class="p">,</span> <span class="n">srcs</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">srcs</span> <span class="ow">in</span> <span class="n">dup_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">srcs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">dup_info</span><span class="p">:</span>
                 <span class="n">dup</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> from </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">srcs</span><span class="p">))</span> <span class="k">for</span> <span class="n">tgt</span><span class="p">,</span> <span class="n">srcs</span> <span class="ow">in</span> <span class="n">dup_info</span><span class="p">]</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The following inputs have multiple connections: &quot;</span> <span class="o">+</span> \
-                      <span class="sa">f</span><span class="s2">&quot;{&#39;, &#39;.join(dup)}&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The following inputs have multiple connections: &quot;</span> <span class="o">+</span> \
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dup</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -1803,8 +1768,8 @@
                                 <span class="k">if</span> <span class="n">all_abs2meta_in</span><span class="p">[</span><span class="n">inp</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                                     <span class="n">knowns</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
                         <span class="k">elif</span> <span class="ow">not</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;copy_shape&#39;</span><span class="p">]:</span>
-                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: &#39;shape_by_conn&#39; was set for &quot;</span>
-                                               <span class="sa">f</span><span class="s2">&quot;unconnected variable &#39;</span><span class="si">{name}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: &#39;shape_by_conn&#39; was set for &quot;</span>
+                                               <span class="sa">f</span><span class="s2">&quot;unconnected variable &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;copy_shape&#39;</span><span class="p">]:</span>
                     <span class="c1"># variable whose shape is being copied must be on the same component, and</span>
@@ -1817,8 +1782,8 @@
                         <span class="k">if</span> <span class="n">a2m</span><span class="p">[</span><span class="n">abs_from</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">knowns</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">abs_from</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t copy shape of variable &quot;</span>
-                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{abs_from}</span><span class="s2">&#39;. Variable doesn&#39;t exist.&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t copy shape of variable &quot;</span>
+                                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">abs_from</span><span class="si">}</span><span class="s2">&#39;. Variable doesn&#39;t exist.&quot;</span><span class="p">)</span>
 
                 <span class="c1"># store known distributed size info needed for computing shapes</span>
                 <span class="k">if</span> <span class="n">nprocs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;distributed&#39;</span><span class="p">]:</span>
@@ -1870,9 +1835,9 @@
                             <span class="c1"># can&#39;t compare shapes if one is dist and other is not. The mismatch</span>
                             <span class="c1"># will be caught later in setup_connections in that case.</span>
                             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dist</span> <span class="o">^</span> <span class="n">known_dist</span><span class="p">):</span>
-                                <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Shape mismatch,  &quot;</span>
-                                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{a2m[node][&#39;shape&#39;]}</span><span class="s2"> vs. &quot;</span>
-                                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{known_shape}</span><span class="s2"> for variable &#39;</span><span class="si">{node}</span><span class="s2">&#39; during &quot;</span>
+                                <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Shape mismatch,  &quot;</span>
+                                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a2m</span><span class="p">[</span><span class="n">node</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> vs. &quot;</span>
+                                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">known_shape</span><span class="si">}</span><span class="s2"> for variable &#39;</span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s2">&#39; during &quot;</span>
                                                   <span class="s2">&quot;dynamic shape determination.&quot;</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="c1"># transfer the known shape info to the unshaped variable</span>
@@ -1886,7 +1851,7 @@
 
         <span class="k">if</span> <span class="n">unresolved</span><span class="p">:</span>
             <span class="n">unresolved</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">unresolved</span><span class="p">)</span>
-            <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Failed to resolve shapes for </span><span class="si">{unresolved}</span><span class="s2">. &quot;</span>
+            <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Failed to resolve shapes for </span><span class="si">{</span><span class="n">unresolved</span><span class="si">}</span><span class="s2">. &quot;</span>
                               <span class="s2">&quot;To see the dynamic shape dependency graph, &quot;</span>
                               <span class="s2">&quot;do &#39;openmdao view_dyn_shapes &lt;your_py_file&gt;&#39;.&quot;</span><span class="p">)</span>
 
@@ -1935,8 +1900,8 @@
                 <span class="k">if</span> <span class="n">abs_in</span> <span class="ow">in</span> <span class="n">allprocs_discrete_in</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_conn_discrete_in2out</span><span class="p">[</span><span class="n">abs_in</span><span class="p">]</span> <span class="o">=</span> <span class="n">abs_out</span>
                 <span class="k">elif</span> <span class="n">abs_out</span> <span class="ow">in</span> <span class="n">allprocs_discrete_out</span><span class="p">:</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t connect discrete output &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;to continuous input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t connect discrete output &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;to continuous input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -1993,15 +1958,15 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">out_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_var_allprocs_discrete</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="n">abs_out</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Can&#39;t connect continuous output &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
-                      <span class="sa">f</span><span class="s2">&quot;to discrete input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Can&#39;t connect continuous output &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
+                      <span class="sa">f</span><span class="s2">&quot;to discrete input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">in_type</span><span class="p">,</span> <span class="n">out_type</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Type &#39;</span><span class="si">{out_type.__name__}</span><span class="s2">&#39; of output &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; is &quot;</span> <span class="o">+</span> \
-                      <span class="sa">f</span><span class="s2">&quot;incompatible with type &#39;</span><span class="si">{in_type.__name__}</span><span class="s2">&#39; of input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;.&quot;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Type &#39;</span><span class="si">{</span><span class="n">out_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; of output &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; is &quot;</span> <span class="o">+</span> \
+                      <span class="sa">f</span><span class="s2">&quot;incompatible with type &#39;</span><span class="si">{</span><span class="n">in_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; of input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -2021,20 +1986,20 @@
             <span class="k">if</span> <span class="n">out_units</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">in_units</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_unitless</span><span class="p">(</span><span class="n">out_units</span><span class="p">):</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Output &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; with units of &#39;</span><span class="si">{out_units}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
-                            <span class="sa">f</span><span class="s2">&quot;is connected to input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39; which has no units.&quot;</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Output &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; with units of &#39;</span><span class="si">{</span><span class="n">out_units</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
+                            <span class="sa">f</span><span class="s2">&quot;is connected to input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39; which has no units.&quot;</span>
                         <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_compatible</span><span class="p">(</span><span class="n">in_units</span><span class="p">,</span> <span class="n">out_units</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Output units of &#39;</span><span class="si">{out_units}</span><span class="s2">&#39; for &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
-                          <span class="sa">f</span><span class="s2">&quot;are incompatible with input units of &#39;</span><span class="si">{in_units}</span><span class="s2">&#39; for &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Output units of &#39;</span><span class="si">{</span><span class="n">out_units</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="o">+</span> \
+                          <span class="sa">f</span><span class="s2">&quot;are incompatible with input units of &#39;</span><span class="si">{</span><span class="n">in_units</span><span class="si">}</span><span class="s2">&#39; for &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">in_units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_unitless</span><span class="p">(</span><span class="n">in_units</span><span class="p">):</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Input &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39; with units of &#39;</span><span class="si">{in_units}</span><span class="s2">&#39; is &quot;</span> <span class="o">+</span> \
-                        <span class="sa">f</span><span class="s2">&quot;connected to output &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; which has no units.&quot;</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Input &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39; with units of &#39;</span><span class="si">{</span><span class="n">in_units</span><span class="si">}</span><span class="s2">&#39; is &quot;</span> <span class="o">+</span> \
+                        <span class="sa">f</span><span class="s2">&quot;connected to output &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; which has no units.&quot;</span>
                     <span class="n">simple_warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
             <span class="n">fail</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2063,10 +2028,10 @@
                     <span class="c1"># out_shape != in_shape is allowed if</span>
                     <span class="c1"># there&#39;s no ambiguity in storage order</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">array_connection_compatible</span><span class="p">(</span><span class="n">in_shape</span><span class="p">,</span> <span class="n">out_shape</span><span class="p">):</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source and target shapes do not match or &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;are ambiguous for the connection &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; to &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;The source shape is {tuple([int(s) for s in out_shape])} &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;but the target shape is {tuple([int(s) for s in in_shape])}.&quot;</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source and target shapes do not match or &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;are ambiguous for the connection &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;The source shape is </span><span class="si">{</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">out_shape</span><span class="p">])</span><span class="si">}</span><span class="s2"> &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;but the target shape is </span><span class="si">{</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">in_shape</span><span class="p">])</span><span class="si">}</span><span class="s2">.&quot;</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
@@ -2087,11 +2052,11 @@
                         <span class="c1"># initial dimensions of indices shape must be same shape as target</span>
                         <span class="k">for</span> <span class="n">idx_d</span><span class="p">,</span> <span class="n">inp_d</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">):</span>
                             <span class="k">if</span> <span class="n">idx_d</span> <span class="o">!=</span> <span class="n">inp_d</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{src_indices}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;. The target shape is &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{in_shape}</span><span class="s2"> but indices are </span><span class="si">{src_indices.shape}</span><span class="s2">.&quot;</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;. The target shape is &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">in_shape</span><span class="si">}</span><span class="s2"> but indices are </span><span class="si">{</span><span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
                                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
@@ -2104,11 +2069,11 @@
                         <span class="n">source_dimensions</span> <span class="o">=</span> <span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">in_shape</span><span class="p">)]</span>
                         <span class="k">if</span> <span class="n">source_dimensions</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_shape</span><span class="p">):</span>
                             <span class="n">str_indices</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">src_indices</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{str_indices}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; to &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;The source has {len(out_shape)} dimensions but the &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;indices expect </span><span class="si">{source_dimensions}</span><span class="s2">.&quot;</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_indices</span><span class="si">}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;The source has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions but the &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;indices expect </span><span class="si">{</span><span class="n">source_dimensions</span><span class="si">}</span><span class="s2">.&quot;</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                             <span class="k">else</span><span class="p">:</span>
@@ -2134,10 +2099,10 @@
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="n">bad_idx</span> <span class="o">=</span> <span class="kc">None</span>
                             <span class="k">if</span> <span class="n">bad_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source indices do not specify &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;a valid index for the connection &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;. Index &#39;</span><span class="si">{bad_idx}</span><span class="s2">&#39; is out of range for &quot;</span> <span class="o">+</span> \
-                                      <span class="sa">f</span><span class="s2">&quot;source dimension of size </span><span class="si">{out_size}</span><span class="s2">.&quot;</span>
+                                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source indices do not specify &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;a valid index for the connection &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;. Index &#39;</span><span class="si">{</span><span class="n">bad_idx</span><span class="si">}</span><span class="s2">&#39; is out of range for &quot;</span> <span class="o">+</span> \
+                                      <span class="sa">f</span><span class="s2">&quot;source dimension of size </span><span class="si">{</span><span class="n">out_size</span><span class="si">}</span><span class="s2">.&quot;</span>
                                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                                 <span class="k">else</span><span class="p">:</span>
@@ -2149,9 +2114,9 @@
                             <span class="n">meta_in</span><span class="p">[</span><span class="s1">&#39;src_indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">src_indices</span>
 
                         <span class="k">if</span> <span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">in_shape</span> <span class="ow">and</span> <span class="n">flat_array_slice_check</span><span class="p">:</span>
-                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: src_indices shape &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{src_indices.shape}</span><span class="s2"> does not match </span><span class="si">{abs_in}</span><span class="s2"> shape &quot;</span> <span class="o">+</span> \
-                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{in_shape}</span><span class="s2">.&quot;</span>
+                            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: src_indices shape &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> does not match </span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2"> shape &quot;</span> <span class="o">+</span> \
+                                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">in_shape</span><span class="si">}</span><span class="s2">.&quot;</span>
                             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                             <span class="k">else</span><span class="p">:</span>
@@ -2169,11 +2134,11 @@
                                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">arr</span><span class="o">.</span><span class="n">flat</span><span class="p">:</span>
                                     <span class="n">size_check</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">d_size</span>
                                     <span class="k">if</span> <span class="n">size_check</span><span class="p">:</span>
-                                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
+                                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
                                               <span class="sa">f</span><span class="s2">&quot;do not specify a valid index for the &quot;</span> <span class="o">+</span> \
-                                              <span class="sa">f</span><span class="s2">&quot;connection &#39;</span><span class="si">{abs_out}</span><span class="s2">&#39; to &#39;</span><span class="si">{abs_in}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
-                                              <span class="sa">f</span><span class="s2">&quot;Index &#39;</span><span class="si">{i}</span><span class="s2">&#39; is out of range for source &quot;</span> <span class="o">+</span> \
-                                              <span class="sa">f</span><span class="s2">&quot;dimension of size </span><span class="si">{d_size}</span><span class="s2">.&quot;</span>
+                                              <span class="sa">f</span><span class="s2">&quot;connection &#39;</span><span class="si">{</span><span class="n">abs_out</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">abs_in</span><span class="si">}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span> \
+                                              <span class="sa">f</span><span class="s2">&quot;Index &#39;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&#39; is out of range for source &quot;</span> <span class="o">+</span> \
+                                              <span class="sa">f</span><span class="s2">&quot;dimension of size </span><span class="si">{</span><span class="n">d_size</span><span class="si">}</span><span class="s2">.&quot;</span>
                                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raise_connection_errors</span><span class="p">:</span>
                                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
                                         <span class="k">else</span><span class="p">:</span>
@@ -2358,13 +2323,13 @@
 <span class="sd">            Assumed shape of any connected source or higher level promoted input.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">any</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Trying to promote any=&#39;</span><span class="si">{any}</span><span class="s2">&#39;, &quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Trying to promote any=&#39;</span><span class="si">{</span><span class="nb">any</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
                                <span class="s2">&quot;but an iterator of strings and/or tuples is required.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Trying to promote inputs=&#39;</span><span class="si">{inputs}</span><span class="s2">&#39;, &quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Trying to promote inputs=&#39;</span><span class="si">{</span><span class="n">inputs</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
                                <span class="s2">&quot;but an iterator of strings and/or tuples is required.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Trying to promote outputs=&#39;</span><span class="si">{outputs}</span><span class="s2">&#39;, &quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Trying to promote outputs=&#39;</span><span class="si">{</span><span class="n">outputs</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
                                <span class="s2">&quot;but an iterator of strings and/or tuples is required.&quot;</span><span class="p">)</span>
 
         <span class="n">src_shape</span> <span class="o">=</span> <span class="n">shape2tuple</span><span class="p">(</span><span class="n">src_shape</span><span class="p">)</span>
@@ -2372,31 +2337,31 @@
         <span class="k">if</span> <span class="n">src_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">prominfo</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">flat_src_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">src_shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: ignored flat_src_indices and/or src_shape because&quot;</span>
+                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: ignored flat_src_indices and/or src_shape because&quot;</span>
                                <span class="s2">&quot; src_indices was not specified.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">outputs</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Trying to promote outputs </span><span class="si">{outputs}</span><span class="s2"> while &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;specifying src_indices </span><span class="si">{src_indices}</span><span class="s2"> is not meaningful.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Trying to promote outputs </span><span class="si">{</span><span class="n">outputs</span><span class="si">}</span><span class="s2"> while &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;specifying src_indices </span><span class="si">{</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> is not meaningful.&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src_indices</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">src_indices</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: src_indices must contain integers, but &quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot;src_indices for promotes from &#39;</span><span class="si">{subsys_name}</span><span class="s2">&#39; are type &quot;</span>
-                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{src_indices.dtype.type}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: src_indices must contain integers, but &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;src_indices for promotes from &#39;</span><span class="si">{</span><span class="n">subsys_name</span><span class="si">}</span><span class="s2">&#39; are type &quot;</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">src_indices</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">src_indices</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The src_indices argument should be an int, &quot;</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The src_indices argument should be an int, &quot;</span>
                                 <span class="sa">f</span><span class="s2">&quot;list, tuple, ndarray or Iterable, but src_indices for &quot;</span>
-                                <span class="sa">f</span><span class="s2">&quot;promotes from &#39;</span><span class="si">{subsys_name}</span><span class="s2">&#39; are {type(src_indices)}.&quot;</span><span class="p">)</span>
+                                <span class="sa">f</span><span class="s2">&quot;promotes from &#39;</span><span class="si">{</span><span class="n">subsys_name</span><span class="si">}</span><span class="s2">&#39; are </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">src_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">any</span><span class="p">:</span>
-                    <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: src_indices have been specified with promotes&quot;</span>
+                    <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: src_indices have been specified with promotes&quot;</span>
                                    <span class="s2">&quot; &#39;any&#39;. Note that src_indices only apply to matching inputs.&quot;</span><span class="p">)</span>
 
             <span class="n">prominfo</span> <span class="o">=</span> <span class="n">_PromotesInfo</span><span class="p">(</span><span class="n">src_indices</span><span class="p">,</span> <span class="n">flat_src_indices</span><span class="p">,</span> <span class="n">src_shape</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">flat_src_indices</span> <span class="ow">and</span> <span class="n">_is_slicer_op</span><span class="p">(</span><span class="n">src_indices</span><span class="p">):</span>
                 <span class="n">promoted</span> <span class="o">=</span> <span class="n">inputs</span> <span class="k">if</span> <span class="n">inputs</span> <span class="k">else</span> <span class="nb">any</span>
-                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: When promoting </span><span class="si">{promoted}</span><span class="s2">, slice src_indices were &quot;</span>
+                <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: When promoting </span><span class="si">{</span><span class="n">promoted</span><span class="si">}</span><span class="s2">, slice src_indices were &quot;</span>
                                <span class="s2">&quot;specified, so flat_src_indices is ignored.&quot;</span><span class="p">)</span>
 
         <span class="n">subsys</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subsys_name</span><span class="p">)</span>
@@ -2582,8 +2547,8 @@
                                                                       <span class="n">src_name</span><span class="p">,</span> <span class="n">tgt_name</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">flat_src_indices</span> <span class="ow">and</span> <span class="n">_is_slicer_op</span><span class="p">(</span><span class="n">src_indices</span><span class="p">):</span>
-            <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: Connection from &#39;</span><span class="si">{src_name}</span><span class="s2">&#39; to &quot;</span>
-                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{tgt_name}</span><span class="s2">&#39; was added with slice src_indices, so &quot;</span>
+            <span class="n">simple_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: Connection from &#39;</span><span class="si">{</span><span class="n">src_name</span><span class="si">}</span><span class="s2">&#39; to &quot;</span>
+                           <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tgt_name</span><span class="si">}</span><span class="s2">&#39; was added with slice src_indices, so &quot;</span>
                            <span class="s2">&quot;flat_src_indices is ignored.&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_static_mode</span><span class="p">:</span>
@@ -3324,7 +3289,7 @@
             <span class="k">if</span> <span class="n">all_meta</span><span class="p">[</span><span class="s1">&#39;distributed&#39;</span><span class="p">]:</span>
                 <span class="c1"># OpenMDAO currently can&#39;t create an automatic IndepVarComp for inputs on</span>
                 <span class="c1"># distributed components.</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Distributed component input &quot;</span><span class="si">{tgt}</span><span class="s1">&quot; requires an IndepVarComp.&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Distributed component input &quot;</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s1">&quot; requires an IndepVarComp.&#39;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">tgt</span> <span class="ow">in</span> <span class="n">vars_to_gather</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="n">vars_to_gather</span><span class="p">[</span><span class="n">tgt</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="mi">0</span> <span class="o">&gt;</span> <span class="n">max_size</span><span class="p">:</span>
@@ -3359,11 +3324,11 @@
                         <span class="n">src_indices</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;src_indices&#39;</span><span class="p">]</span>
                         <span class="k">if</span> <span class="n">_is_slicer_op</span><span class="p">(</span><span class="n">src_indices</span><span class="p">):</span>
                             <span class="n">src_indices</span> <span class="o">=</span> <span class="n">_slice_indices</span><span class="p">(</span><span class="n">src_indices</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">])</span>
-                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{src_indices}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{src}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{tgt}</span><span class="s2">&#39;. The target shape is &quot;</span> <span class="o">+</span> \
-                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{meta[&#39;shape&#39;]}</span><span class="s2"> but indices have shape </span><span class="si">{src_indices.shape}</span><span class="s2">.&quot;</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The source indices &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">src_indices</span><span class="si">}</span><span class="s2"> do not specify a &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;valid shape for the connection &#39;</span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2">&#39; to &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">tgt</span><span class="si">}</span><span class="s2">&#39;. The target shape is &quot;</span> <span class="o">+</span> \
+                              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> but indices have shape </span><span class="si">{</span><span class="n">src_indices</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3379,7 +3344,7 @@
                 <span class="n">info</span> <span class="o">=</span> <span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">src_idx_found</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">found_dup</span><span class="p">:</span>  <span class="c1"># auto_ivc connected to local vars with src_indices</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following inputs </span><span class="si">{src_idx_found}</span><span class="s2"> are defined using &quot;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The following inputs </span><span class="si">{</span><span class="n">src_idx_found</span><span class="si">}</span><span class="s2"> are defined using &quot;</span>
                                <span class="s2">&quot;src_indices but the total source size is undetermined.  You can &quot;</span>
                                <span class="s2">&quot;specify the src size by setting &#39;val&#39; or &#39;src_shape&#39; in &quot;</span>
                                <span class="s2">&quot;a call to set_input_defaults, or by adding &quot;</span>
@@ -3420,7 +3385,7 @@
                 <span class="n">src</span> <span class="o">=</span> <span class="n">prom2auto</span><span class="p">[</span><span class="n">prom</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">auto_conns</span><span class="p">[</span><span class="n">tgt</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_auto_ivc.v</span><span class="si">{count}</span><span class="s2">&quot;</span>
+                <span class="n">src</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_auto_ivc.v</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">prom2auto</span><span class="p">[</span><span class="n">prom</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="p">)</span>
                 <span class="n">auto_conns</span><span class="p">[</span><span class="n">tgt</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span>
@@ -3475,7 +3440,7 @@
                     <span class="c1"># a group input defined that sets the default, else it&#39;s an error</span>
                     <span class="n">conns</span><span class="p">[</span><span class="n">abs_in</span><span class="p">]</span> <span class="o">=</span> <span class="n">prom2auto</span><span class="p">[</span><span class="n">prom</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ivc_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_auto_ivc.v</span><span class="si">{count}</span><span class="s2">&quot;</span>
+                    <span class="n">ivc_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_auto_ivc.v</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">loc_out_name</span> <span class="o">=</span> <span class="n">ivc_name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">prom2auto</span><span class="p">[</span><span class="n">prom</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">ivc_name</span><span class="p">,</span> <span class="n">abs_in</span><span class="p">)</span>
@@ -3640,15 +3605,52 @@
         <span class="k">if</span> <span class="n">gprom</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">gprom</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">_var_allprocs_abs2prom</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 
-        <span class="n">gname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Group named &#39;</span><span class="si">{gpath}</span><span class="s2">&#39;&quot;</span> <span class="k">if</span> <span class="n">gpath</span> <span class="k">else</span> <span class="s1">&#39;model&#39;</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{n}</span><span class="s1">=?&#39;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">errs</span><span class="p">])</span>
-        <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.msginfo}</span><span class="s2">: The following inputs, </span><span class="si">{inputs}</span><span class="s2">, promoted &quot;</span>
-                          <span class="sa">f</span><span class="s2">&quot;to &#39;</span><span class="si">{prom}</span><span class="s2">&#39;, are connected but their metadata entries </span><span class="si">{meta}</span><span class="s2">&quot;</span>
-                          <span class="sa">f</span><span class="s2">&quot; differ. Call &lt;group&gt;.set_input_defaults(&#39;</span><span class="si">{gprom}</span><span class="s2">&#39;, </span><span class="si">{args}</span><span class="s2">), &quot;</span>
-                          <span class="sa">f</span><span class="s2">&quot;where &lt;group&gt; is the </span><span class="si">{gname}</span><span class="s2"> to remove the ambiguity.&quot;</span><span class="p">)</span>
+        <span class="n">gname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Group named &#39;</span><span class="si">{</span><span class="n">gpath</span><span class="si">}</span><span class="s2">&#39;&quot;</span> <span class="k">if</span> <span class="n">gpath</span> <span class="k">else</span> <span class="s1">&#39;model&#39;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">=?&#39;</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">errs</span><span class="p">])</span>
+        <span class="n">conditional_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">msginfo</span><span class="si">}</span><span class="s2">: The following inputs, </span><span class="si">{</span><span class="n">inputs</span><span class="si">}</span><span class="s2">, promoted &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;to &#39;</span><span class="si">{</span><span class="n">prom</span><span class="si">}</span><span class="s2">&#39;, are connected but their metadata entries </span><span class="si">{</span><span class="n">meta</span><span class="si">}</span><span class="s2">&quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot; differ. Call &lt;group&gt;.set_input_defaults(&#39;</span><span class="si">{</span><span class="n">gprom</span><span class="si">}</span><span class="s2">&#39;, </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">), &quot;</span>
+                          <span class="sa">f</span><span class="s2">&quot;where &lt;group&gt; is the </span><span class="si">{</span><span class="n">gname</span><span class="si">}</span><span class="s2"> to remove the ambiguity.&quot;</span><span class="p">)</span>
 </pre></div>
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../../index.html">Table of Contents</a></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quick_example.html">Quick Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aero_walkthrough.html">Aerodynamic Optimization Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../struct_example.html">Structural Optimization Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_walkthrough.html">Aerostructural Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aerostructural_wingbox_walkthrough.html">Aerostructural with Wingbox Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../custom_mesh_example.html">User-Provided Mesh Example</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../more_examples.html">More Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../specialty_topics.html">Specialty Topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../v1_v2_conversion.html">OpenAeroStruct v1 to v2 Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../how_to_contribute.html">How to Contribute to OpenAeroStruct</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -3663,13 +3665,14 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">OpenAeroStruct 2.2.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">openmdao.core.group</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, John Jasa, Dr. John Hwang, Justin S. Gray.
-      Last updated on Jan 29, 2021.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.
+      Last updated on Jan 30, 2021.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.4.3.
     </div>
   </body>
 </html>
