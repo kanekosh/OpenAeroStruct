@@ -1,14 +1,11 @@
-from __future__ import division, print_function
-
 # Ignore the #docs checkpoint comments. They are just used to split up the code for the documentation webpage.
 #docs checkpoint 0
 
 import numpy as np
 from openaerostruct.geometry.utils import generate_mesh
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
-import openmdao.api as om
 from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
-from openaerostruct.utils.constants import grav_constant
+import openmdao.api as om
 
 #docs checkpoint 1
 
@@ -126,7 +123,7 @@ indep_var_comp.add_output('speed_of_sound', val= np.array([295.07, 340.294]), un
 
 indep_var_comp.add_output('CT', val=0.53/3600, units='1/s')
 indep_var_comp.add_output('R', val=14.307e6, units='m')
-indep_var_comp.add_output('W0_without_point_masses', val=148000 + surf_dict['Wf_reserve'] - 10.e3,  units='kg')
+indep_var_comp.add_output('W0_without_point_masses', val=128000 + surf_dict['Wf_reserve'],  units='kg')
 
 #docs checkpoint 11
 
@@ -155,7 +152,7 @@ indep_var_comp.add_output('point_mass_locations', val=point_mass_locations, unit
 
 # Compute the actual W0 to be used within OAS based on the sum of the point mass and other W0 weight
 prob.model.add_subsystem('W0_comp',
-    om.ExecComp('W0 = W0_without_point_masses + sum(point_masses)', units='kg'),
+    om.ExecComp('W0 = W0_without_point_masses + 2 * sum(point_masses)', units='kg'),
     promotes=['*'])
 
 #docs checkpoint 13

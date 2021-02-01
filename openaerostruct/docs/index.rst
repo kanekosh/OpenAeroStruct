@@ -13,6 +13,15 @@ The analysis and optimization results can be visualized using included tools, pr
    :width: 100%
    :alt: sample visualization of aerostructural system
 
+   Aerostructural optimization of the Common Research Model (CRM) wing.
+
+.. figure:: aerostruct_xdsm.pdf
+   :align: center
+   :width: 70%
+   :alt: sample XDSM of aerostructural system
+
+   The eXtended Design Structure Matrix (XDSM) of the aerostructural system.
+
 Walkthroughs and Examples
 =========================
 
@@ -28,6 +37,7 @@ Please review these at a minimum to understand how aerodynamic, structural, and 
    struct_example.rst
    aerostructural_walkthrough.rst
    aerostructural_wingbox_walkthrough.rst
+   custom_mesh_example.rst
 
 Once you have reviewed and understand these examples, you can move on to some more advanced examples below.
 

@@ -45,12 +45,17 @@ In the simplest case, you can add a single lifting surface that represents the w
 To define a lifting surface, you first need to produce a computational mesh that represents that surface.
 
 OpenAeroStruct contains a helper function to create these meshes or you can create your own array of points through another method.
-If you want to create your own mesh, see :ref:`Geometry_Creation_and_Manipulation`.
-To use OpenAeroStruct's helper function, you need to give it the number of spanwise points, `num_y`, as well as the number of chordwise points, `num_x`.
+To use OpenAeroStruct's helper function, you need to give it the number of spanwise points, `num_y`, the number of chordwise points, `num_x`, and the type of baseline planform to start with, `wing_type`.
+There are two main options for `wing_type`: `rect`, which is a rectangular wing, and `CRM`, which is based on the Common Research Model wing.
+This example uses the `CRM` option.
+See the `run_scaneagle.py` example in the `examples/` directory for an example that uses the `rect` option.
+The `rect` option is convenient for simple rectangular and trapezoidal planforms.
+Alternatively, if you want to create your own custom mesh, see :ref:`Custom_Mesh`.
+
 In the code block shown below, we call the helper function to define a mesh and get a starting twist distribution.
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_1.py
+    aero_walkthrough/part_1.py
 
 There are many options for each surface, and they are loosely organized into the following categories:
 
@@ -62,7 +67,7 @@ There are many options for each surface, and they are loosely organized into the
 - Options for constraints (KS aggregation, monotonic design variables)
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_2.py
+    aero_walkthrough/part_2.py
 
 2. Initialize your problem and add problem conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +77,7 @@ Set the values for these parameters that you want to use here.
 We then add this component to the OpenMDAO model.
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_3.py
+    aero_walkthrough/part_3.py
 
 We now need to provide the geometry and analysis groups to the OpenMDAO problem.
 
@@ -87,7 +92,7 @@ We need to connect some of the variables from the `Geometry` group into the `Aer
 These connections allow information about the mesh to flow through the model correctly.
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_4.py
+    aero_walkthrough/part_4.py
 
 3. Add your design variables, constraints, and objective
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,7 +134,7 @@ We also tell the OpenMDAO problem to record information about each optimization 
 This will allow us to visualize the history during and after the optimization.
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_5.py
+    aero_walkthrough/part_5.py
 
 4. Set up and run the optimization problem
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -140,7 +145,7 @@ If you only wanted to perform analysis, not optimization, you could use `prob.ru
 The code below find the lowest `CD` value while providing a certain amount of lift by constraining `CL`.
 
 .. embed-code::
-    openaerostruct/docs/aero_walkthrough/part_6.py
+    aero_walkthrough/part_6.py
 
 .. embed-code::
     openaerostruct.tests.test_aero.Test.test
@@ -153,8 +158,8 @@ Investigation of the problem structure -- N2 diagram
 
 We'll now take a moment to explain the organization of the aerodynamic model.
 
-.. raw:: html
-    :file: aero_n2.html
+.. embed-n2::
+    aero_walkthrough/generate_n2.py
 
 Mouse over components and parameters to see the data-passing connections between them.
 You can expand this view, click on boxes to zoom in, or right-click to collapse boxes.
@@ -165,8 +170,8 @@ To create this diagram for any OpenMDAO problem, add these two lines after you c
 
 .. code-block:: python
 
-  from openmdao.api import view_model
-  view_model(prob)
+  from openmdao.api import n2
+  n2(prob)
 
 Use any web browser to open the `.html` file and you can examine your problem layout.
 This diagram shows groups in dark blue, components in light blue, as organized by your actual problem hierarchy.

@@ -12,8 +12,6 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     - gfortran
-    - libblas-dev
-    - liblapack-dev
     - libopenmpi-dev
     - openmpi-bin
 
@@ -24,34 +22,41 @@ before_install:
 - export PATH=/home/travis/miniconda/bin:$PATH;
 
 install:
-- conda install --yes python=$PY numpy scipy nose sphinx mock swig pip matplotlib numpydoc;
+# - conda install --yes python=$PY nose sphinx mock swig pip numpydoc;
+- conda install --yes python=$PY pip;
 - pip install --upgrade pip;
+
+# install openaerostruct itself. NOTE: required packages (e.g. openmdao, numpy) are specified in setup.py.
+- pip install .;
+
+# install pyGeo and pySpline to run FFD tests. pyspline requires fortran compilations
 - pip install mpi4py;
-
-# install pyoptsparse
-- git clone https://github.com/mdolab/pyoptsparse.git;
-- cd pyoptsparse;
-- python setup.py install;
+- git clone https://github.com/mdolab/pyspline.git;
+- cd pyspline;
+- cp config/defaults/config.LINUX_GFORTRAN.mk config/config.mk;
+- make;
+- pip install -e .;
 - cd ..;
+- git clone https://github.com/mdolab/pygeo.git;
+- pip install -e ./pygeo;
 
+# install packages required for tests and docs build etc
 - pip install coverage;
 - pip install coveralls;
-- pip install testflo==1.3.6;
-- export PATH=$HOME/.local/bin:$PATH;
-
-# install openmdao and sphinx-travis
-- pip install openmdao
+- pip install testflo;
 - pip install --user travis-sphinx;
-- pip install redbaron
-
-# install openaerostruct itself
-- pip install -e .;
 
 script:
-- export PYTHONPATH=$PYTHONPATH:$PWD
-- testflo -n 1 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*;
-- travis-sphinx build --source=openaerostruct/docs;
+# prevent OpenMPI warning messages
+- export OMPI_MCA_btl=^openib
+# run tests
+- cd openaerostruct
+- testflo -n 2 openaerostruct --coverage --coverpkg openaerostruct --cover-omit \*tests/\* --cover-omit \*docs/\*;
+# make docs
+- cd docs;
+- travis-sphinx build --source=.;
 
 after_success:
 - travis-sphinx deploy;
-- coveralls;
+- cd ../;
+- coveralls --rcfile=../.coveragerc;

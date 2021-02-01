@@ -1,4 +1,3 @@
-from __future__ import division, print_function
 from openmdao.utils.assert_utils import assert_rel_error
 import unittest
 import numpy as np
@@ -77,6 +76,7 @@ class Test(unittest.TestCase):
         indep_var_comp = om.IndepVarComp()
         indep_var_comp.add_output('v', val=248.136, units='m/s')
         indep_var_comp.add_output('alpha', val=5., units='deg')
+        indep_var_comp.add_output('beta', val=0., units='deg')
         indep_var_comp.add_output('Mach_number', val=0.84)
         indep_var_comp.add_output('re', val=1.e6, units='1/m')
         indep_var_comp.add_output('rho', val=0.38, units='kg/m**3')
@@ -117,6 +117,7 @@ class Test(unittest.TestCase):
             # Connect flow properties to the analysis point
             prob.model.connect('v', point_name + '.v')
             prob.model.connect('alpha', point_name + '.alpha')
+            prob.model.connect('beta', point_name + '.beta')
             prob.model.connect('Mach_number', point_name + '.Mach_number')
             prob.model.connect('re', point_name + '.re')
             prob.model.connect('rho', point_name + '.rho')
@@ -149,8 +150,8 @@ class Test(unittest.TestCase):
 
         prob.run_model()
 
-        assert_rel_error(self, prob['AS_point_0.fuelburn'][0], 234725.35871961166, 1e-4)
-        assert_rel_error(self, prob['AS_point_0.CM'][1], -0.7848616090025305, 1e-5)
+        assert_rel_error(self, prob['AS_point_0.fuelburn'][0], 224407.92673401345, 1e-4)
+        assert_rel_error(self, prob['AS_point_0.CM'][1], -0.8308573193422, 1e-5)
 
 
 if __name__ == '__main__':

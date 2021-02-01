@@ -1,4 +1,3 @@
-from __future__ import division, print_function
 from openmdao.utils.assert_utils import assert_rel_error
 import unittest
 import numpy as np
@@ -229,8 +228,8 @@ class Test(unittest.TestCase):
         # print(prob['AS_point_0.fuelburn'][0])
         # print(prob['wing.structural_mass'][0]/1.25)
 
-        assert_rel_error(self, prob['AS_point_0.fuelburn'][0], 85029.7479699, 1e-5)
-        assert_rel_error(self, prob['wing.structural_mass'][0]/1.25, 18927.5387802, 1e-5)
+        assert_rel_error(self, prob['AS_point_0.fuelburn'][0], 83383.555232, 1e-5)
+        assert_rel_error(self, prob['wing.structural_mass'][0]/1.25, 16219.119311, 1e-5)
 
 
 if __name__ == '__main__':

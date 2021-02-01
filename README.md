@@ -7,16 +7,22 @@ OpenAeroStruct
 OpenAeroStruct is a lightweight tool that performs aerostructural optimization using OpenMDAO.
 It couples a vortex-lattice method (VLM) and a 6 degrees of freedom 3-dimensional spatial beam model to simulate aerodynamic and structural analyses using lifting surfaces.
 These simulations are wrapped with an optimizer using NASA's OpenMDAO framework.
-The analysis and optimization results can be visualized using included tools, producing figures such as this:
+The analysis and optimization results can be visualized using included tools, producing figures such as these:
 
+*With a tubular structure*
 ![Example](openaerostruct/docs/example.png)
+
+*With a wingbox structure*
+![Example2](openaerostruct/docs/wingbox_fine.png)
+
+Please note that this repository is provided as is without any guaranteed support.
+If you would like to highlight issues, ask questions, or make changes, please do so using GitHub Issues and Pull Requests.
+The developers will address them at their discretion.
 
 Install OpenAeroStruct by cloning this repository and entering the folder it generates.
 Then do:
 
 `pip install -e .`
-
-If you encounter any problems while using OpenAeroStruct, please create an issue on this GitHub repository.
 
 Documentation
 -------------
@@ -26,7 +32,7 @@ Please see the [documentation](https://mdolab.github.io/OpenAeroStruct/) for mor
 Citation
 --------
 
-For more background, theory, and figures, see the [OpenAeroStruct journal article](http://mdolab.engin.umich.edu/sites/default/files/OAS_SMO_preprint_0.pdf).
+For more background, theory, and figures, see the [OpenAeroStruct journal article](https://mdolab.engin.umich.edu/bibliography/Jasa2018a.html).
 Please cite this article when using OpenAeroStruct in your research or curricula.
 
 John P. Jasa, John T. Hwang, and Joaquim R. R. A. Martins. "Open-source coupled aerostructural optimization using Python." Structural and Multidisciplinary Optimization 57.4 (2018): 1815-1827. DOI: 10.1007/s00158-018-1912-8
@@ -45,7 +51,7 @@ John P. Jasa, John T. Hwang, and Joaquim R. R. A. Martins. "Open-source coupled 
 	Year = {2018}}
 ```
 
-If using the wingbox model, please cite the following conference paper.
+If using the wingbox model, please cite the following [conference paper](https://www.researchgate.net/publication/327654423_Low-Fidelity_Aerostructural_Optimization_of_Aircraft_Wings_with_a_Simplified_Wingbox_Model_Using_OpenAeroStruct).
 
 Shamsheer S. Chauhan and Joaquim R. R. A. Martins, “Low-Fidelity Aerostructural Optimization of Aircraft Wings with a Simplified Wingbox Model Using OpenAeroStruct,” Proceedings of the 6th International Conference on Engineering Optimization, EngOpt 2018, Springer, Lisbon, Portugal, September 2018, pp. 418–431. doi:10.1007/978-3-319-97773-7 38
 
@@ -63,8 +69,9 @@ Shamsheer S. Chauhan and Joaquim R. R. A. Martins, “Low-Fidelity Aerostructura
 
 Version Information
 -------------------
-This version of OpenAeroStruct requires [OpenMDAO](https://github.com/OpenMDAO/openmdao) 3.1+ and Python3.
+This version of OpenAeroStruct requires [OpenMDAO](https://github.com/OpenMDAO/openmdao) 3.2+ and Python3.
 Python2 is no longer supported.
+It also requires the folloing packages: `numpy, scipy, matplotlib`.
 If you are looking to use the previous version of OpenAeroStruct which uses OpenMDAO 1.7.4, use OpenAeroStruct 1.0 from [here](https://github.com/mdolab/OpenAeroStruct/releases).
 
 License

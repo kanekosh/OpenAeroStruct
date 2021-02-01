@@ -1,4 +1,3 @@
-from __future__ import division, print_function
 from openmdao.utils.assert_utils import assert_rel_error
 import numpy as np
 import unittest
@@ -6,7 +5,7 @@ import unittest
 try:
     import pygeo
     pygeo_flag = True
-except:
+except ModuleNotFoundError:
     pygeo_flag = False
 
 @unittest.skipUnless(pygeo_flag, "pyGeo is required.")
@@ -16,13 +15,10 @@ class Test(unittest.TestCase):
 
         from openaerostruct.geometry.utils import generate_mesh, write_FFD_file
         from openaerostruct.geometry.geometry_group import Geometry
-        from openaerostruct.transfer.displacement_transfer import DisplacementTransfer
 
         from openaerostruct.aerodynamics.aero_groups import AeroPoint
 
         import openmdao.api as om
-        from openmdao.devtools import iprofile
-        from six import iteritems
         from pygeo import DVGeometry
 
         # Create a dictionary to store options about the surface
@@ -127,10 +123,7 @@ class Test(unittest.TestCase):
 
                 prob.model.connect(name + '.t_over_c', point_name + '.' + name + '_perf.' + 't_over_c')
 
-        prob.driver = om.pyOptSparseDriver()
-        prob.driver.options['optimizer'] = "SNOPT"
-        prob.driver.opt_settings = {'Major optimality tolerance': 1.0e-6,
-                                    'Major feasibility tolerance': 1.0e-6}
+        prob.driver = om.ScipyOptimizeDriver()
 
         # Setup problem and add design variables, constraint, and objective
         prob.model.add_design_var('alpha', lower=-15, upper=15)
@@ -150,7 +143,7 @@ class Test(unittest.TestCase):
 
         assert_rel_error(self, prob['aero_point_0.wing_perf.CD'][0], 0.03398038, 1e-6)
         assert_rel_error(self, prob['aero_point_0.wing_perf.CL'][0], 0.5, 1e-6)
-        assert_rel_error(self, prob['aero_point_0.CM'][1], -1.7736315914915437, 1e-5)
+        assert_rel_error(self, prob['aero_point_0.CM'][1], -1.773632, 1e-5)
 
 
 if __name__ == '__main__':
