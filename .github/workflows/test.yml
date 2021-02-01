@@ -17,11 +17,12 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Echo github.event obj
-      run: echo ${{ toJson(github.event) }}
+    #- name: Echo github.event obj
+    #  run: echo ${{ toJson(github.event) }}
 
     # OAS dependencies are specified in setup.py.
     - name: Install OAS and its dependencies
+      if: ${{ github.event_name == 'push' && github.event.branch == 'github_action' }}
       run: |
         python -m pip install --upgrade pip wheel
         pip install .
