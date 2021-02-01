@@ -22,8 +22,8 @@ jobs:
 
     # OAS dependencies are specified in setup.py.
     - name: Install OAS and its dependencies
-      # if: ${{ github.event_name == 'push' && github.event.branch == 'github_action' }}
-      if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' && github.event.push.branch == 'github_action' }}
+      # if: ${{ github.event_name == 'push' }}
       run: |
         python -m pip install --upgrade pip wheel
         pip install .
