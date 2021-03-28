@@ -60,8 +60,15 @@ class SolveMatrix(om.ImplicitComponent):
         residuals['circulations'] = inputs['mtx'].dot(outputs['circulations']) - inputs['rhs']
 
     def solve_nonlinear(self, inputs, outputs):
-        self.lu = lu_factor(inputs['mtx'])
-
+        # ----- NOTE modified here -----
+        if np.linalg.det(inputs['mtx']) == 0:
+            # AIC is singular. need a hack here to make block-Jacobi work... (at first iteration, for some reason, inputs['mtx'] = all zeros)
+            print('AIC is singular... just replace with an identity matrix')
+            self.lu = lu_factor(np.eye(inputs['mtx'].shape[0]))
+        else:
+            self.lu = lu_factor(inputs['mtx'])
+        # _----------------------------
+        
         outputs['circulations'] = lu_solve(self.lu, inputs['rhs'])
 
     def linearize(self, inputs, outputs, partials):
