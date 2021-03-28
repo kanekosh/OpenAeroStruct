@@ -295,3 +295,174 @@ class AerostructPoint(om.Group):
                  internally_connect_fuelburn=self.options['internally_connect_fuelburn']),
                  promotes_inputs=['v', 'rho', 'empty_cg', 'total_weight', 'CT', 'speed_of_sound', 'R', 'Mach_number', 'W0', 'load_factor', 'S_ref_total'],
                  promotes_outputs=['L_equals_W', 'fuelburn', 'CL', 'CD', 'CM', 'cg'])
+
+
+class AerostructDecoupledPoint(om.Group):
+
+    def initialize(self):
+        self.options.declare('surfaces', types=list)
+        self.options.declare('user_specified_Sref', types=bool, default=False)
+        self.options.declare('internally_connect_fuelburn', types=bool, default=True)
+        self.options.declare('compressible', types=bool, default=False,
+                             desc='Turns on compressibility correction for moderate Mach number '
+                             'flows. Defaults to False.')
+        self.options.declare('rotational', False, types=bool,
+                             desc="Set to True to turn on support for computing angular velocities")
+
+    def setup(self):
+        surfaces = self.options['surfaces']
+        rotational = self.options['rotational']
+
+        coupled = om.Group()
+
+        # -----------------------------
+        # add indepvarcomp to store the pre-solved AS solution (def_mesh and loads)
+        indep = coupled.add_subsystem('indep_coupled_solution', om.IndepVarComp())
+        # SHAPE hardcoded!!!
+        indep.add_output('def_mesh', shape=(2,11,3), units='m')  
+        indep.add_output('normals', shape=(1,10,3), units=None)
+        indep.add_output('loads', shape=(11,6), units='N')
+
+        # ----------------------------
+
+
+        for surface in surfaces:
+
+            name = surface['name']
+
+            # Connect the output of the loads component with the FEM
+            # displacement parameter. This links the coupling within the coupled
+            # group that necessitates the subgroup solver.
+            ##### coupled.connect(name + '_loads.loads', name + '.loads')  # NOTE: removed connection
+            coupled.connect('indep_coupled_solution.loads', name + '.loads')  # instead, connect from indep to loads in FEM module.
+
+            # Perform the connections with the modified names within the
+            # 'aero_states' group.
+            ##### coupled.connect(name + '.normals', 'aero_states.' + name + '_normals') # NOTE: removed connection
+            ##### coupled.connect(name + '.def_mesh', 'aero_states.' + name + '_def_mesh') # NOTE: removed connection
+            coupled.connect('indep_coupled_solution.normals', 'aero_states.' + name + '_normals')   # instead, from indep to aero_states
+            coupled.connect('indep_coupled_solution.def_mesh', 'aero_states.' + name + '_def_mesh') # instead, from indep to aero_states
+
+            # Connect the results from 'coupled' to the performance groups
+            ##### coupled.connect(name + '.def_mesh', name + '_loads.def_mesh') # NOTE: removed connection
+            coupled.connect('indep_coupled_solution.def_mesh', name + '_loads.def_mesh') # instead, from indep to load-transfer-def-mesh
+
+            coupled.connect('aero_states.' + name + '_sec_forces', name + '_loads.sec_forces')
+
+            # Connect the results from 'aero_states' to the performance groups
+            self.connect('coupled.aero_states.' + name + '_sec_forces', name + '_perf' + '.sec_forces')
+
+            # Connection performance functional variables
+            self.connect(name + '_perf.CL', 'total_perf.' + name + '_CL')
+            self.connect(name + '_perf.CD', 'total_perf.' + name + '_CD')
+            self.connect('coupled.aero_states.' + name + '_sec_forces', 'total_perf.' + name + '_sec_forces')
+            self.connect('coupled.' + name + '.chords', name + '_perf.aero_funcs.chords')
+
+            # Connect parameters from the 'coupled' group to the performance
+            # groups for the individual surfaces.
+            self.connect('coupled.' + name + '.disp', name + '_perf.disp')
+            self.connect('coupled.' + name + '.S_ref', name + '_perf.S_ref')
+            self.connect('coupled.' + name + '.widths', name + '_perf.widths')
+            # self.connect('coupled.' + name + '.chords', name + '_perf.chords')
+            self.connect('coupled.' + name + '.lengths', name + '_perf.lengths')
+            self.connect('coupled.' + name + '.cos_sweep', name + '_perf.cos_sweep')
+
+            # Connect parameters from the 'coupled' group to the total performance group.
+            self.connect('coupled.' + name + '.S_ref', 'total_perf.' + name + '_S_ref')
+            self.connect('coupled.' + name + '.widths', 'total_perf.' + name + '_widths')
+            self.connect('coupled.' + name + '.chords', 'total_perf.' + name + '_chords')
+            self.connect('coupled.' + name + '.b_pts', 'total_perf.' + name + '_b_pts')
+
+            # Add components to the 'coupled' group for each surface.
+            # The 'coupled' group must contain all components and parameters
+            # needed to converge the aerostructural system.
+            coupled_AS_group = CoupledAS(surface=surface)
+
+            if surface['distributed_fuel_weight'] or 'n_point_masses' in surface.keys() or surface['struct_weight_relief']:
+                prom_in = ['load_factor']
+            else:
+                prom_in = []
+
+            coupled.add_subsystem(name, coupled_AS_group, promotes_inputs=prom_in)
+
+        # check for ground effect and if so, promote
+        ground_effect = False
+        for surface in surfaces:
+            if surface.get('groundplane', False):
+                ground_effect = True
+
+        if self.options['compressible'] == True:
+            aero_states = CompressibleVLMStates(surfaces=surfaces, rotational=rotational)
+            prom_in = ['v', 'alpha', 'beta', 'rho', 'Mach_number']
+        else:
+            aero_states = VLMStates(surfaces=surfaces, rotational=rotational)
+            prom_in = ['v', 'alpha', 'beta', 'rho']
+        if ground_effect:
+            prom_in.append('height_agl')
+
+        # Add a single 'aero_states' component for the whole system within the
+        # coupled group.
+        coupled.add_subsystem('aero_states', aero_states,
+            promotes_inputs=prom_in)
+
+        # Explicitly connect parameters from each surface's group and the common
+        # 'aero_states' group.
+        for surface in surfaces:
+            name = surface['name']
+
+            # Add a loads component to the coupled group
+            coupled.add_subsystem(name + '_loads', LoadTransfer(surface=surface))
+
+        """
+        ### Change the solver settings here ###
+        """
+
+        # Set solver properties for the coupled group
+        # coupled.linear_solver = ScipyKrylov()
+        # coupled.linear_solver.precon = om.LinearRunOnce()
+
+        coupled.nonlinear_solver = om.NonlinearBlockGS(use_aitken=True)
+        coupled.nonlinear_solver.options['maxiter'] = 100
+        coupled.nonlinear_solver.options['atol'] = 1e-7
+        coupled.nonlinear_solver.options['rtol'] = 1e-30
+        coupled.nonlinear_solver.options['iprint'] = 2
+        coupled.nonlinear_solver.options['err_on_non_converge'] = True
+
+        # coupled.linear_solver = om.DirectSolver()
+
+        coupled.linear_solver = om.DirectSolver(assemble_jac=True)
+        coupled.options['assembled_jac_type'] = 'csc'
+
+        # coupled.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
+        # coupled.nonlinear_solver.options['maxiter'] = 50
+
+        """
+        ### End change of solver settings ###
+        """
+        prom_in = ['v', 'alpha', 'beta', 'rho']
+        if self.options['compressible'] == True:
+            prom_in.append('Mach_number')
+        if ground_effect:
+            prom_in.append('height_agl')
+
+        # Add the coupled group to the model problem
+        self.add_subsystem('coupled', coupled, promotes_inputs=prom_in)
+
+        for surface in surfaces:
+            name = surface['name']
+
+            # Add a performance group which evaluates the data after solving
+            # the coupled system
+            perf_group = CoupledPerformance(surface=surface)
+
+            self.add_subsystem(name + '_perf', perf_group, promotes_inputs=['rho', 'v', 'alpha', 'beta', 're', 'Mach_number'])
+
+        # Add functionals to evaluate performance of the system.
+        # Note that only the interesting results are promoted here; not all
+        # of the parameters.
+        self.add_subsystem('total_perf',
+                 TotalPerformance(surfaces=surfaces,
+                 user_specified_Sref=self.options['user_specified_Sref'],
+                 internally_connect_fuelburn=self.options['internally_connect_fuelburn']),
+                 promotes_inputs=['v', 'rho', 'empty_cg', 'total_weight', 'CT', 'speed_of_sound', 'R', 'Mach_number', 'W0', 'load_factor', 'S_ref_total'],
+                 promotes_outputs=['L_equals_W', 'fuelburn', 'CL', 'CD', 'CM', 'cg'])
