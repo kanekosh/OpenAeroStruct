@@ -116,6 +116,38 @@ class CoupledAS(om.Group):
 
         self.linear_solver = om.LinearRunOnce()
 
+class DeCoupledAS(om.Group):
+
+    def initialize(self):
+        self.options.declare('surface', types=dict)
+
+    def setup(self):
+        surface = self.options['surface']
+
+        promotes = []
+        if surface['struct_weight_relief']:
+            promotes = promotes + list(set(['nodes', 'element_mass', 'load_factor']))
+        if surface['distributed_fuel_weight']:
+            promotes = promotes + list(set(['nodes', 'load_factor']))
+        if 'n_point_masses' in surface.keys():
+            promotes = promotes + list(set(['point_mass_locations',
+                'point_masses', 'nodes', 'load_factor', 'engine_thrusts']))
+
+        self.add_subsystem('struct_states',
+            SpatialBeamStates(surface=surface),
+            # promotes_inputs=['local_stiff_transformed', 'forces', 'loads'] + promotes, promotes_outputs=['disp'])
+            promotes_inputs=['local_stiff_transformed', 'forces', 'loads'] + promotes)
+            # NOTE: no promotion of 'disp' here so that I can de-connect
+            
+        self.add_subsystem('def_mesh',
+            DisplacementTransferGroup(surface=surface),
+            promotes_inputs=['nodes', 'mesh', 'disp'], promotes_outputs=['def_mesh'])
+
+        self.add_subsystem('aero_geom',
+            VLMGeometry(surface=surface),
+            promotes_inputs=['def_mesh'], promotes_outputs=['b_pts', 'widths', 'cos_sweep', 'lengths', 'chords', 'normals', 'S_ref'])
+
+        self.linear_solver = om.LinearRunOnce()
 
 class CoupledPerformance(om.Group):
 
@@ -316,12 +348,15 @@ class AerostructDecoupledPoint(om.Group):
         coupled = om.Group()
 
         # -----------------------------
-        # add indepvarcomp to store the pre-solved AS solution (def_mesh and loads)
+        # add indepvarcomp to store the pre-solved AS solution (disp and loads)
         indep = coupled.add_subsystem('indep_coupled_solution', om.IndepVarComp())
-        # SHAPE hardcoded!!!
-        indep.add_output('def_mesh', shape=(2,11,3), units='m')  
-        indep.add_output('normals', shape=(1,10,3), units=None)
-        indep.add_output('loads', shape=(11,6), units='N')
+        # SHAPE hardcoded for 11x2 mesh
+        # indep.add_output('disp', shape=(11,6), units='m')  
+        # indep.add_output('loads', shape=(11,6), units='N')
+
+        # SHAPE hardcoded for 41x2 mesh (no symmetry)
+        indep.add_output('disp', shape=(41, 6), units='m')  
+        indep.add_output('loads', shape=(41, 6), units='N')
 
         # ----------------------------
 
@@ -338,14 +373,11 @@ class AerostructDecoupledPoint(om.Group):
 
             # Perform the connections with the modified names within the
             # 'aero_states' group.
-            ##### coupled.connect(name + '.normals', 'aero_states.' + name + '_normals') # NOTE: removed connection
-            ##### coupled.connect(name + '.def_mesh', 'aero_states.' + name + '_def_mesh') # NOTE: removed connection
-            coupled.connect('indep_coupled_solution.normals', 'aero_states.' + name + '_normals')   # instead, from indep to aero_states
-            coupled.connect('indep_coupled_solution.def_mesh', 'aero_states.' + name + '_def_mesh') # instead, from indep to aero_states
-
+            coupled.connect(name + '.normals', 'aero_states.' + name + '_normals')
+            coupled.connect(name + '.def_mesh', 'aero_states.' + name + '_def_mesh')
+            
             # Connect the results from 'coupled' to the performance groups
-            ##### coupled.connect(name + '.def_mesh', name + '_loads.def_mesh') # NOTE: removed connection
-            coupled.connect('indep_coupled_solution.def_mesh', name + '_loads.def_mesh') # instead, from indep to load-transfer-def-mesh
+            coupled.connect(name + '.def_mesh', name + '_loads.def_mesh')
 
             coupled.connect('aero_states.' + name + '_sec_forces', name + '_loads.sec_forces')
 
@@ -360,7 +392,8 @@ class AerostructDecoupledPoint(om.Group):
 
             # Connect parameters from the 'coupled' group to the performance
             # groups for the individual surfaces.
-            self.connect('coupled.' + name + '.disp', name + '_perf.disp')
+            ##### self.connect('coupled.' + name + '.disp', name + '_perf.disp') # NOTE: modified here
+            self.connect('coupled.indep_coupled_solution.disp', name + '_perf.disp')  # NEW
             self.connect('coupled.' + name + '.S_ref', name + '_perf.S_ref')
             self.connect('coupled.' + name + '.widths', name + '_perf.widths')
             # self.connect('coupled.' + name + '.chords', name + '_perf.chords')
@@ -376,7 +409,7 @@ class AerostructDecoupledPoint(om.Group):
             # Add components to the 'coupled' group for each surface.
             # The 'coupled' group must contain all components and parameters
             # needed to converge the aerostructural system.
-            coupled_AS_group = CoupledAS(surface=surface)
+            coupled_AS_group = DeCoupledAS(surface=surface)   # NOTE: modified here
 
             if surface['distributed_fuel_weight'] or 'n_point_masses' in surface.keys() or surface['struct_weight_relief']:
                 prom_in = ['load_factor']
@@ -384,6 +417,8 @@ class AerostructDecoupledPoint(om.Group):
                 prom_in = []
 
             coupled.add_subsystem(name, coupled_AS_group, promotes_inputs=prom_in)
+            # connection from indepvar's disp to decoupled
+            coupled.connect('indep_coupled_solution.disp', name + '.disp')  # NOTE: instead, connect from indep to disp in mesh deformation.
 
         # check for ground effect and if so, promote
         ground_effect = False

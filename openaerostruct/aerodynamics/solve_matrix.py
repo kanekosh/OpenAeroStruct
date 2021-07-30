@@ -43,43 +43,56 @@ class SolveMatrix(om.ImplicitComponent):
         self.add_input('rhs', shape=system_size, units='m/s')
         self.add_output('circulations', shape=system_size, units='m**2/s')
 
-        self.declare_partials('circulations', 'circulations',
+        self.declare_partials(
+            'circulations',
+            'circulations',
             rows=np.outer(np.arange(system_size), np.ones(system_size, int)).flatten(),
             cols=np.outer(np.ones(system_size, int), np.arange(system_size)).flatten(),
         )
-        self.declare_partials('circulations', 'mtx',
-            rows=np.outer(np.arange(system_size), np.ones(system_size, int)).flatten(),
-            cols=np.arange(system_size ** 2),
+        self.declare_partials(
+            'circulations', 'mtx', rows=np.outer(np.arange(system_size), np.ones(system_size, int)).flatten(), cols=np.arange(system_size ** 2),
         )
-        self.declare_partials('circulations', 'rhs', val=-1.,
-            rows=np.arange(system_size),
-            cols=np.arange(system_size),
+        self.declare_partials(
+            'circulations', 'rhs', val=-1.0, rows=np.arange(system_size), cols=np.arange(system_size),
         )
 
     def apply_nonlinear(self, inputs, outputs, residuals):
+        print('apply_nonlinear aero')
         residuals['circulations'] = inputs['mtx'].dot(outputs['circulations']) - inputs['rhs']
 
     def solve_nonlinear(self, inputs, outputs):
+        print('solve_nonlinear aero')
+
         # ----- NOTE modified here -----
+        # self.lu = lu_factor(inputs['mtx'])
         if np.linalg.det(inputs['mtx']) == 0:
             # AIC is singular. need a hack here to make block-Jacobi work... (at first iteration, for some reason, inputs['mtx'] = all zeros)
-            print('AIC is singular... just replace with an identity matrix')
+            print('AIC is singular in solve_nonlinear()... just replace with an identity matrix')
             self.lu = lu_factor(np.eye(inputs['mtx'].shape[0]))
         else:
             self.lu = lu_factor(inputs['mtx'])
-        # _----------------------------
-        
+        # -----------------------------
+
         outputs['circulations'] = lu_solve(self.lu, inputs['rhs'])
 
     def linearize(self, inputs, outputs, partials):
+        print('linearize aero')
         system_size = self.system_size
-        self.lu = lu_factor(inputs['mtx'])
+        # ----- NOTE modified here -----
+        # self.lu = lu_factor(inputs['mtx'])
+        if np.linalg.det(inputs['mtx']) == 0:
+            # AIC is singular. need a hack here to make block-Jacobi work... (at first iteration, for some reason, inputs['mtx'] = all zeros)
+            print('AIC is singular in linearize() ... just replace with an identity matrix')
+            self.lu = lu_factor(np.eye(inputs['mtx'].shape[0]))
+        else:
+            self.lu = lu_factor(inputs['mtx'])
+        # -----------------------------
 
         partials['circulations', 'circulations'] = inputs['mtx'].flatten()
-        partials['circulations', 'mtx'] = \
-            np.outer(np.ones(system_size), outputs['circulations']).flatten()
+        partials['circulations', 'mtx'] = np.outer(np.ones(system_size), outputs['circulations']).flatten()
 
     def solve_linear(self, d_outputs, d_residuals, mode):
+        print('solve_linear aero')
         if mode == 'fwd':
             d_outputs['circulations'] = lu_solve(self.lu, d_residuals['circulations'], trans=0)
         else:
