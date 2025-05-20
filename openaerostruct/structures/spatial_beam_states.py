@@ -1,7 +1,7 @@
 import openmdao.api as om
 from openaerostruct.structures.create_rhs import CreateRHS
 from openaerostruct.structures.fem import FEM
-from openaerostruct.structures.fem_truss_braced import FEMTrussBraced
+from openaerostruct.structures.fem_strut_braced import FEMStrutBraced
 from openaerostruct.structures.disp import Disp
 from openaerostruct.structures.wing_weight_loads import StructureWeightLoads
 from openaerostruct.structures.fuel_loads import FuelLoads
@@ -99,25 +99,25 @@ class SpatialBeamStates(om.Group):
 
     def initialize(self):
         self.options.declare("surface", types=(dict, list))
-        self.options.declare("truss_braced", default=False, types=bool)
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surface = self.options["surface"]
 
-        if not self.options["truss_braced"]:
+        if not self.options["strut_braced"]:
             self.add_subsystem('forces', FEMloads(surface=surface), promotes_inputs=["*"], promotes_outputs=["forces"])
             self.add_subsystem("fem", FEM(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
             self.add_subsystem("disp", Disp(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
 
         else:
-            # compute RHS force vector for wing and truss, respectively
+            # compute RHS force vector for wing and strut, respectively
             for surf in surface:
                 name = surf["name"]
                 self.add_subsystem(f'forces_{name}', FEMloads(surface=surf))
                 self.connect(f"forces_{name}.forces", f"fem.forces_{name}")
 
-            # FEM of wing-truss system
-            self.add_subsystem("fem", FEMTrussBraced(surfaces=surface), promotes_inputs=["local_stiff_transformed_*"])
+            # FEM of wing-strut system
+            self.add_subsystem("fem", FEMStrutBraced(surfaces=surface), promotes_inputs=["local_stiff_transformed_*"])
             
             # reshape displacements and remove Lagrange multipliers from disp_aug
             for surf in surface:

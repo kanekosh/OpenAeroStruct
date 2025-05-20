@@ -8,13 +8,17 @@ import openmdao.api as om
 
 from .fem import get_drdu_sparsity_pattern, get_drdK_sparsity_pattern
 
+# TODO:
+# - implement ball and pin joint (current pin joint should be renamed to ball)
+# - implement pin/ball joint for the root symmetric boundary
 
-class FEMTrussBraced(om.ImplicitComponent):
+
+class FEMStrutBraced(om.ImplicitComponent):
     """
     Component that solves an FEM linear system, K u = f.
-    This component is a customization of original fem.py to solve truss-braced wing structure.
+    This component is a customization of original fem.py to solve strut-braced wing structure.
 
-    This solve the following linear system for the wing-truss joint problem:
+    This solve the following linear system for the wing-strut joint problem:
     
     [ K1 | 0  | C1^T ] [u1]       [f1]
     [ 0  | K2 | C2^T ] [u2]     = [f2]
@@ -24,10 +28,10 @@ class FEMTrussBraced(om.ImplicitComponent):
         K1     = the stiffness matrix of the wing + additional entries for wing root boundary conditions
         u1     = augmented displacement of the wing (includes Lagrange multipliers for boundary conditions)
         f1     = augmented force vector of the wing (includes zeros at the end for boundary conditions)
-        K2     = the stiffness matrix of the truss + additional entries for truss root boundary conditions
-        u2     = augmented displacement of the truss (includes Lagrange multipliers for boundary conditions)
-        f2     = augmented force vector of the truss (includes zeros at the end for boundary conditions)
-        C1, C2 = constraint matrix for the wing-truss joint
+        K2     = the stiffness matrix of the strut + additional entries for strut root boundary conditions
+        u2     = augmented displacement of the strut (includes Lagrange multipliers for boundary conditions)
+        f2     = augmented force vector of the strut (includes zeros at the end for boundary conditions)
+        C1, C2 = constraint matrix for the wing-strut joint
         lambda = Lagrange multipliers for the joint constraints (physically these are joint reaction forces)
 
     Attributes
@@ -51,7 +55,7 @@ class FEMTrussBraced(om.ImplicitComponent):
         kwargs : dict of keyword arguments
             Keyword arguments that will be mapped into the Component options.
         """
-        super(FEMTrussBraced, self).__init__(**kwargs)
+        super(FEMStrutBraced, self).__init__(**kwargs)
         self._lup = None
         self.k_cols = None
         self.k_rows = None
@@ -71,7 +75,7 @@ class FEMTrussBraced(om.ImplicitComponent):
         vec_size = self.options["vec_size"]
         self.surfaces = self.options["surfaces"]
         if len(self.surfaces) != 2:
-            raise ValueError("FEMTrussBraced component requires exactly two surfaces (wing and truss).")
+            raise ValueError("FEMStrutBraced component requires exactly two surfaces (wing and strut).")
         self.surface_names = [self.surfaces[0]["name"], self.surfaces[1]["name"]]
         self.ny = []  # number of spanwise nodes
         self.size = []   # size of assembled K matrix for each surface
@@ -79,7 +83,7 @@ class FEMTrussBraced(om.ImplicitComponent):
         self._lup = []
         k_cols = []  # column indices for stiffness matrix sparsity pattern
         k_rows = []  # row indices for stiffness matrix sparsity pattern
-        joint_indices = []   # node index for the joint between wing and truss
+        joint_indices = []   # node index for the joint between wing and strut
 
         for i, surface in enumerate(self.surfaces):
             name = surface["name"]
@@ -105,7 +109,7 @@ class FEMTrussBraced(om.ImplicitComponent):
             # sparsity pattern here and when constucting the sparse matrix, so save rows and cols.
             rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, surface["symmetry"])
             if i == 1:
-                # the second surface (truss) goes to the lower-right block of the entire stiffness matrix
+                # the second surface (strut) goes to the lower-right block of the entire stiffness matrix
                 rows += self.size[0]
                 cols += self.size[0]
             k_rows.append(rows)
@@ -137,7 +141,7 @@ class FEMTrussBraced(om.ImplicitComponent):
             # find the node index for the joint
             joint_y = surface["joint_y"]
             if not surface["symmetry"]:
-                raise NotImplementedError("Truss-braced wing joint is only implemented for symmetric surfaces.")
+                raise NotImplementedError("Strut-braced wing joint is only implemented for symmetric surfaces.")
             # check sign convention for y (spanwise coordinate)
             if joint_y * surface["mesh"][0, 0, 1] < 0:
                 joint_y *= -1
@@ -172,10 +176,10 @@ class FEMTrussBraced(om.ImplicitComponent):
             k_cols_joint.append(rows)
             self.k_data_joint.append(vals)
 
-        # row and col indices for the entire stiffness matrix (that combines wing, truss, and joint constraints)
+        # row and col indices for the entire stiffness matrix (that combines wing, strut, and joint constraints)
         self.k_cols = np.concatenate(k_cols + k_cols_joint)
         self.k_rows = np.concatenate(k_rows + k_rows_joint)
-        self.total_size = sum(self.size) + n_con   # size of total stiffness matrix (wing + truss + constraints)
+        self.total_size = sum(self.size) + n_con   # size of total stiffness matrix (wing + strut + constraints)
 
     def apply_nonlinear(self, inputs, outputs, residuals):
         """
@@ -333,7 +337,7 @@ class FEMTrussBraced(om.ImplicitComponent):
             data6 = np.full((6,), 1e9)
             data[name] = np.concatenate([data1, data2, data3, data4, data5, data6, data6])
 
-        # combine matrices for wing, truss, and joint constraints
+        # combine matrices for wing, strut, and joint constraints
         self.k_data = np.concatenate(list(data.values()) + self.k_data_joint)
 
         return coo_matrix((self.k_data, (self.k_rows, self.k_cols)), shape=(self.total_size, self.total_size)).tocsc()
