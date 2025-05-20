@@ -1,6 +1,7 @@
 import openmdao.api as om
 from openaerostruct.structures.create_rhs import CreateRHS
 from openaerostruct.structures.fem import FEM
+from openaerostruct.structures.fem_truss_braced import FEMTrussBraced
 from openaerostruct.structures.disp import Disp
 from openaerostruct.structures.wing_weight_loads import StructureWeightLoads
 from openaerostruct.structures.fuel_loads import FuelLoads
@@ -9,8 +10,35 @@ from openaerostruct.structures.compute_point_mass_loads import ComputePointMassL
 from openaerostruct.structures.compute_thrust_loads import ComputeThrustLoads
 
 
-class SpatialBeamStates(om.Group):
-    """Group that contains the spatial beam states."""
+class FEMloads(om.Group):
+    """
+    Compute FEM right-hand side force vector
+
+    Parameters
+    ----------
+    nodes : ndarray
+        The coordinates of the FEM nodes.
+    load_factor : float
+        The load factor applied to the structure.
+    element_mass : ndarray
+        The mass of each element in the structure for bending relief.
+    fuel_mass : ndarray
+        Total fuel mass for bendling relief
+    fuel_vols : ndarray
+        The feul volume of each element
+    point_mass_locations : ndarray
+        The locations of the point masses.
+    point_masses : ndarray
+        Point masses as point load
+    engine_thrusts : ndarray
+        Engine thrusts as point load
+
+    Returns
+    -------
+    forces : ndarray
+        The right-hand side force vector for the FEM. This is a flattened array of loads
+        plus zeros at the end for boundary condition
+    """
 
     def initialize(self):
         self.options.declare("surface", types=dict)
@@ -65,6 +93,34 @@ class SpatialBeamStates(om.Group):
             "create_rhs", CreateRHS(surface=surface), promotes_inputs=["total_loads"], promotes_outputs=["forces"]
         )
 
-        self.add_subsystem("fem", FEM(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
 
-        self.add_subsystem("disp", Disp(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
+class SpatialBeamStates(om.Group):
+    """Group that contains the spatial beam states."""
+
+    def initialize(self):
+        self.options.declare("surface", types=(dict, list))
+        self.options.declare("truss_braced", default=False, types=bool)
+
+    def setup(self):
+        surface = self.options["surface"]
+
+        if not self.options["truss_braced"]:
+            self.add_subsystem('forces', FEMloads(surface=surface), promotes_inputs=["*"], promotes_outputs=["forces"])
+            self.add_subsystem("fem", FEM(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
+            self.add_subsystem("disp", Disp(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
+
+        else:
+            # compute RHS force vector for wing and truss, respectively
+            for surf in surface:
+                name = surf["name"]
+                self.add_subsystem(f'forces_{name}', FEMloads(surface=surf))
+                self.connect(f"forces_{name}.forces", f"fem.forces_{name}")
+
+            # FEM of wing-truss system
+            self.add_subsystem("fem", FEMTrussBraced(surfaces=surface), promotes_inputs=["local_stiff_transformed_*"])
+            
+            # reshape displacements and remove Lagrange multipliers from disp_aug
+            for surf in surface:
+                name = surf["name"]
+                self.add_subsystem(f"disp_{name}", Disp(surface=surf), promotes_outputs=[("disp", f"disp_{name}")])
+                self.connect(f"fem.disp_aug_{name}", f"disp_{name}.disp_aug")

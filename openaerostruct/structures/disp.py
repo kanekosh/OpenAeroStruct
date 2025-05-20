@@ -9,14 +9,15 @@ class Disp(om.ExplicitComponent):
     a 2D array so we can more easily use the results.
 
     The solution to the linear system has meaingless entires due to the
-    constraints on the FEM model. The displacements from this portion of
+    boundary conditions on the FEM model. The "displacements" from this portion of
     the linear system are not needed, so we select only the relevant
     portion of the displacements for further calculations.
 
     Parameters
     ----------
     disp_aug[6*(ny+1)] : numpy array
-        Augmented displacement array. Obtained by solving the system
+        Augmented displacement array with additional 6 Lagrange multipliers 
+        for clamp boundary conditions at the end. Obtained by solving the system
         K * disp_aug = forces, where forces is a flattened version of loads.
 
     Returns

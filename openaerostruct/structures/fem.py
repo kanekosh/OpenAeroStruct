@@ -7,6 +7,74 @@ from scipy.sparse.linalg import splu
 import openmdao.api as om
 
 
+def get_drdu_sparsity_pattern(ny, vec_size, symmetry):
+    """
+    return sparsity pattern of partials of residuals w.r.t. displacements = stiffness matrix
+    """
+    base_row = np.repeat(0, 6)
+    base_col = np.arange(6)
+
+    # Upper diagonal blocks
+    rows1 = np.tile(base_row, 6 * (ny - 1)) + np.repeat(np.arange(6 * (ny - 1)), 6)
+    col = np.tile(base_col + 6, 6)
+    cols1 = np.tile(col, ny - 1) + np.repeat(6 * np.arange(ny - 1), 36)
+
+    # Lower diagonal blocks
+    rows2 = np.tile(base_row + 6, 6 * (ny - 1)) + np.repeat(np.arange(6 * (ny - 1)), 6)
+    col = np.tile(base_col, 6)
+    cols2 = np.tile(col, ny - 1) + np.repeat(6 * np.arange(ny - 1), 36)
+
+    # Main diagonal blocks, root
+    rows3 = np.tile(base_row, 6) + np.repeat(np.arange(6), 6)
+    cols3 = np.tile(base_col, 6)
+
+    # Main diagonal blocks, tip
+    rows4 = np.tile(base_row + (ny - 1) * 6, 6) + np.repeat(np.arange(6), 6)
+    cols4 = np.tile(base_col + (ny - 1) * 6, 6)
+
+    # Main diagonal blocks, interior
+    rows5 = np.tile(base_row + 6, 6 * (ny - 2)) + np.repeat(np.arange(6 * (ny - 2)), 6)
+    col = np.tile(base_col + 6, 6)
+    cols5 = np.tile(col, ny - 2) + np.repeat(6 * np.arange(ny - 2), 36)
+
+    # Find constrained nodes based on closeness to specified cg point
+    if symmetry:
+        idx = ny - 1
+    else:
+        idx = (ny - 1) // 2
+
+    index = 6 * idx
+    num_dofs = 6 * ny
+    arange = np.arange(6)
+
+    # Fixed boundary condition.
+    rows6 = index + arange
+    cols6 = num_dofs + arange
+
+    rows = np.concatenate([rows1, rows2, rows3, rows4, rows5, rows6, cols6])
+    cols = np.concatenate([cols1, cols2, cols3, cols4, cols5, cols6, rows6])
+
+    # vectorize for multiple RHS
+    sp_size = len(rows)
+    vec_rows = np.tile(rows, vec_size) + np.repeat(sp_size * np.arange(vec_size), sp_size)
+    vec_cols = np.tile(cols, vec_size) + np.repeat(sp_size * np.arange(vec_size), sp_size)
+
+    return rows, cols, vec_rows, vec_cols
+
+
+def get_drdK_sparsity_pattern(ny):
+    """
+    return sparsity pattern of partials of residuals w.r.t. stiffness matrix
+    """
+    base_row = np.tile(0, 12)
+    base_col = np.arange(12)
+    row = np.tile(base_row, 12) + np.repeat(np.arange(12), 12)
+    col = np.tile(base_col, 12) + np.repeat(12 * np.arange(12), 12)
+    rows = np.tile(row, ny - 1) + np.repeat(6 * np.arange(ny - 1), 144)
+    cols = np.tile(col, ny - 1) + np.repeat(144 * np.arange(ny - 1), 144)
+    return rows, cols
+
+
 class FEM(om.ImplicitComponent):
     """
     Component that solves a linear system, Ax=b.
@@ -78,64 +146,12 @@ class FEM(om.ImplicitComponent):
 
         # The derivative of residual wrt displacements is the stiffness matrix K. We can use the
         # sparsity pattern here and when constucting the sparse matrix, so save rows and cols.
-
-        base_row = np.repeat(0, 6)
-        base_col = np.arange(6)
-
-        # Upper diagonal blocks
-        rows1 = np.tile(base_row, 6 * (ny - 1)) + np.repeat(np.arange(6 * (ny - 1)), 6)
-        col = np.tile(base_col + 6, 6)
-        cols1 = np.tile(col, ny - 1) + np.repeat(6 * np.arange(ny - 1), 36)
-
-        # Lower diagonal blocks
-        rows2 = np.tile(base_row + 6, 6 * (ny - 1)) + np.repeat(np.arange(6 * (ny - 1)), 6)
-        col = np.tile(base_col, 6)
-        cols2 = np.tile(col, ny - 1) + np.repeat(6 * np.arange(ny - 1), 36)
-
-        # Main diagonal blocks, root
-        rows3 = np.tile(base_row, 6) + np.repeat(np.arange(6), 6)
-        cols3 = np.tile(base_col, 6)
-
-        # Main diagonal blocks, tip
-        rows4 = np.tile(base_row + (ny - 1) * 6, 6) + np.repeat(np.arange(6), 6)
-        cols4 = np.tile(base_col + (ny - 1) * 6, 6)
-
-        # Main diagonal blocks, interior
-        rows5 = np.tile(base_row + 6, 6 * (ny - 2)) + np.repeat(np.arange(6 * (ny - 2)), 6)
-        col = np.tile(base_col + 6, 6)
-        cols5 = np.tile(col, ny - 2) + np.repeat(6 * np.arange(ny - 2), 36)
-
-        # Find constrained nodes based on closeness to specified cg point
-        symmetry = self.options["surface"]["symmetry"]
-        if symmetry:
-            idx = self.ny - 1
-        else:
-            idx = (self.ny - 1) // 2
-
-        index = 6 * idx
-        num_dofs = 6 * ny
-        arange = np.arange(6)
-
-        # Fixed boundary condition.
-        rows6 = index + arange
-        cols6 = num_dofs + arange
-
-        self.k_rows = rows = np.concatenate([rows1, rows2, rows3, rows4, rows5, rows6, cols6])
-        self.k_cols = cols = np.concatenate([cols1, cols2, cols3, cols4, cols5, cols6, rows6])
-
-        sp_size = len(rows)
-        vec_rows = np.tile(rows, vec_size) + np.repeat(sp_size * np.arange(vec_size), sp_size)
-        vec_cols = np.tile(cols, vec_size) + np.repeat(sp_size * np.arange(vec_size), sp_size)
-
+        rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, self.options["surface"]["symmetry"])
+        self.k_rows = rows
+        self.k_cols = cols
         self.declare_partials(of="disp_aug", wrt="disp_aug", rows=vec_rows, cols=vec_cols)
 
-        base_row = np.tile(0, 12)
-        base_col = np.arange(12)
-        row = np.tile(base_row, 12) + np.repeat(np.arange(12), 12)
-        col = np.tile(base_col, 12) + np.repeat(12 * np.arange(12), 12)
-        rows = np.tile(row, ny - 1) + np.repeat(6 * np.arange(ny - 1), 144)
-        cols = np.tile(col, ny - 1) + np.repeat(144 * np.arange(ny - 1), 144)
-
+        rows, cols = get_drdK_sparsity_pattern(ny)
         self.declare_partials("disp_aug", "local_stiff_transformed", rows=rows, cols=cols)
 
     def apply_nonlinear(self, inputs, outputs, residuals):
