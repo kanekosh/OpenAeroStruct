@@ -113,7 +113,7 @@ class SpatialBeamStates(om.Group):
             # compute RHS force vector for wing and strut, respectively
             for surf in surface:
                 name = surf["name"]
-                self.add_subsystem(f'forces_{name}', FEMloads(surface=surf))
+                self.add_subsystem(f'forces_{name}', FEMloads(surface=surf), promotes_inputs=["load_factor"])
                 self.connect(f"forces_{name}.forces", f"fem.forces_{name}")
 
             # FEM of wing-strut system

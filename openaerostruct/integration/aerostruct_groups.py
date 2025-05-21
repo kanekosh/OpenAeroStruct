@@ -104,8 +104,10 @@ class AerostructGeometry(om.Group):
 
 
 class CoupledAS(om.Group):
+    """ FEM + displacement transfer + VLM geometry property computations for single surface """
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("include_FEM", default=True, types=bool, desc="If False, skip the FEM subsystem under this group; FEM should be added external to this group")
 
     def setup(self):
         surface = self.options["surface"]
@@ -120,12 +122,13 @@ class CoupledAS(om.Group):
                 set(["point_mass_locations", "point_masses", "nodes", "load_factor", "engine_thrusts"])
             )
 
-        self.add_subsystem(
-            "struct_states",
-            SpatialBeamStates(surface=surface),
-            promotes_inputs=["local_stiff_transformed", "forces", "loads"] + promotes,
-            promotes_outputs=["disp"],
-        )
+        if self.options["include_FEM"]:
+            self.add_subsystem(
+                "struct_states",
+                SpatialBeamStates(surface=surface),
+                promotes_inputs=["local_stiff_transformed", "forces", "loads"] + promotes,
+                promotes_outputs=["disp"],
+            )
 
         self.add_subsystem(
             "def_mesh",
@@ -215,6 +218,7 @@ class AerostructPoint(om.Group):
         self.options.declare(
             "rotational", False, types=bool, desc="Set to True to turn on support for computing angular velocities"
         )
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surfaces = self.options["surfaces"]
@@ -222,13 +226,29 @@ class AerostructPoint(om.Group):
 
         coupled = om.Group()
 
+        if self.options["strut_braced"]:
+            if len(surfaces) != 2:
+                raise NameError("Strut-braced wing requires exactly two surfaces.")
+            # add FEM directly under the coupled group because multiple surfaces are coupled in the FEM level
+            coupled.add_subsystem(
+                "FEM_SBW",
+                SpatialBeamStates(surface=surfaces, strut_braced=True),
+                promotes_inputs=["*"],
+                promotes_outputs=["disp_*"]
+            )
+
         for surface in surfaces:
             name = surface["name"]
 
             # Connect the output of the loads component with the FEM
             # displacement parameter. This links the coupling within the coupled
             # group that necessitates the subgroup solver.
-            coupled.connect(name + "_loads.loads", name + ".loads")
+            loads_target = f"forces_{name}.loads" if self.options["strut_braced"] else f"{name}.loads"
+            coupled.connect(name + "_loads.loads", loads_target)
+
+            # Connect displacement from FEM to transfer model. This is automatically done by promotion for non-SBW cases
+            if self.options["strut_braced"]:
+                coupled.connect(f"disp_{name}", f"{name}.disp")
 
             # Perform the connections with the modified names within the
             # 'aero_states' group.
@@ -250,7 +270,8 @@ class AerostructPoint(om.Group):
 
             # Connect parameters from the 'coupled' group to the performance
             # groups for the individual surfaces.
-            self.connect("coupled." + name + ".disp", name + "_perf.disp")
+            disp_source = f"coupled.disp_{name}" if self.options["strut_braced"] else f"coupled.{name}.disp"
+            self.connect(disp_source, name + "_perf.disp")
             self.connect("coupled." + name + ".S_ref", name + "_perf.S_ref")
             self.connect("coupled." + name + ".widths", name + "_perf.widths")
             # self.connect('coupled.' + name + '.chords', name + '_perf.chords')
@@ -266,13 +287,14 @@ class AerostructPoint(om.Group):
             # Add components to the 'coupled' group for each surface.
             # The 'coupled' group must contain all components and parameters
             # needed to converge the aerostructural system.
-            coupled_AS_group = CoupledAS(surface=surface)
+            include_FEM = False if self.options["strut_braced"] else True   # For strut-braced case, FEM is already added outside of coupled AS
+            coupled_AS_group = CoupledAS(surface=surface, include_FEM=include_FEM)
 
             if (
                 surface["distributed_fuel_weight"]
                 or "n_point_masses" in surface.keys()
                 or surface["struct_weight_relief"]
-            ):
+            ) and not self.options["strut_braced"]:
                 prom_in = ["load_factor"]
             else:
                 prom_in = []
