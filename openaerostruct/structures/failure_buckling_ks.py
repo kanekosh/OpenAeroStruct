@@ -81,6 +81,8 @@ class FailureBucklingKS(om.ExplicitComponent):
         rib_pitch = self.options["surface"]["rib_pitch"]
         rho = self.options["rho"]  # KS aggregation parameter
 
+        safety_factor = 1.5
+
         # --- compute buckling stress ---
         # buckling model parameters
         eff_factor = 0.88  # stiffened panel efficiency for skin compression buckling. From Fig. 14.4.4 in Niu 1997
@@ -90,10 +92,10 @@ class FailureBucklingKS(om.ExplicitComponent):
         # Positive stress = compression.
         load_intensity_upper = inputs["skin_thickness"] * inputs["upper_skin_comp_stress"]  # Pa*m
         load_positive_upper = np.maximum(load_intensity_upper, 1.)  # NOTE: this is C1 discontinuous so may negatively affect convergence
-        sigma_max_upper = eff_factor * (load_positive_upper * E / rib_pitch)**0.5
+        sigma_max_upper = (eff_factor * (load_positive_upper * E / rib_pitch)**0.5) / safety_factor
         load_intensity_lower = inputs["skin_thickness"] * inputs["lower_skin_comp_stress"]
         load_positive_lower = np.maximum(load_intensity_lower, 1.)
-        sigma_max_lower = eff_factor * (load_positive_lower * E / rib_pitch)**0.5
+        sigma_max_lower = (eff_factor * (load_positive_lower * E / rib_pitch)**0.5) / safety_factor
 
         # shear buckling stress of spars. Eq. 14.4.3, Page 618 from Niu 1997
         t_over_c_orig = surface["original_wingbox_airfoil_t_over_c"]
@@ -101,8 +103,8 @@ class FailureBucklingKS(om.ExplicitComponent):
         spar_height_rear_nondim = (surface["data_y_upper"][-1] - surface["data_y_lower"][-1])
         spar_height_front = spar_height_front_nondim * inputs["fem_chords"] * (inputs["t_over_c"] / t_over_c_orig)
         spar_height_rear = spar_height_rear_nondim * inputs["fem_chords"] * (inputs["t_over_c"] / t_over_c_orig)
-        tau_max_front = Ks * E * (inputs["spar_thickness"] / spar_height_front)**2
-        tau_max_rear = Ks * E * (inputs["spar_thickness"] / spar_height_rear)**2
+        tau_max_front = (Ks * E * (inputs["spar_thickness"] / spar_height_front)**2) / safety_factor
+        tau_max_rear = (Ks * E * (inputs["spar_thickness"] / spar_height_rear)**2) / safety_factor
 
         # --- compute failure and stress margins ---
         outputs["upper_skin_buckling_margin"] = (sigma_max_upper - inputs["upper_skin_comp_stress"]) / sigma_max_upper
