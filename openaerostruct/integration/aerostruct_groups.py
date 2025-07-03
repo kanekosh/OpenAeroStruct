@@ -183,22 +183,17 @@ class CoupledPerformance(om.Group):
             )
 
         elif surface["fem_model_type"] == "wingbox":
+            promotes_inputs = ["Qz", "J", "A_enc", "spar_thickness", "htop", "hbottom", "hfront", "hrear", "nodes", "disp"]
+            promotes_outputs = ["vonmises", "failure"]
+            if "buckling" in surface and surface["buckling"]:
+                promotes_inputs += ["skin_thickness", "t_over_c", "fem_chords"]
+                promotes_outputs += ["failure_buckling"]
+
             self.add_subsystem(
                 "struct_funcs",
                 SpatialBeamFunctionals(surface=surface),
-                promotes_inputs=[
-                    "Qz",
-                    "J",
-                    "A_enc",
-                    "spar_thickness",
-                    "htop",
-                    "hbottom",
-                    "hfront",
-                    "hrear",
-                    "nodes",
-                    "disp",
-                ],
-                promotes_outputs=["vonmises", "failure"],
+                promotes_inputs=promotes_inputs,
+                promotes_outputs=promotes_outputs,
             )
         else:
             raise NameError("Please select a valid `fem_model_type` from either `tube` or `wingbox`.")

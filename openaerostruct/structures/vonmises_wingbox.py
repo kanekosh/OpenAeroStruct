@@ -42,6 +42,18 @@ class VonMisesWingbox(om.ExplicitComponent):
     -------
     vonmises[ny-1, 4] : numpy array
         von Mises stresses for 4 stress combinations for each FEM element.
+    upper_skin_comp_stress[ny-1] : numpy array
+        Optional output for buckling failure check.
+        Compression stress in the upper skin for each FEM element.
+    lower_skin_comp_stress[ny-1] : numpy array
+        Optional output for buckling failure check.
+        Compression stress in the lower skin for each FEM element.
+    front_spar_shear_stress[ny-1] : numpy array
+        Optional output for buckling failure check.
+        Shear stress in the front spar for each FEM element.
+    rear_spar_shear_stress[ny-1] : numpy array
+        Optional output for buckling failure check.
+        Shear stress in the rear spar for each FEM element.
 
     """
 
@@ -65,6 +77,14 @@ class VonMisesWingbox(om.ExplicitComponent):
         self.add_input("hrear", val=np.zeros((self.ny - 1)), units="m")
 
         self.add_output("vonmises", val=np.zeros((self.ny - 1, 4)), units="N/m**2")
+
+        # also output upper skin's compression stress and spar shear stress for buckling
+        if "buckling" in self.surface and self.surface["buckling"]:
+            # positive = compression
+            self.add_output("upper_skin_comp_stress", val=np.zeros(self.ny - 1), units="N/m**2")
+            self.add_output("lower_skin_comp_stress", val=np.zeros(self.ny - 1), units="N/m**2")
+            self.add_output("front_spar_shear_stress", val=np.zeros(self.ny - 1), units="N/m**2")
+            self.add_output("rear_spar_shear_stress", val=np.zeros(self.ny - 1), units="N/m**2")
 
         self.E = surface["E"]
         self.G = surface["G"]
@@ -164,3 +184,11 @@ class VonMisesWingbox(om.ExplicitComponent):
                 np.sqrt((rear_bending_stress + axial_stress) ** 2 + 3 * (torsion_stress + vertical_shear) ** 2)
                 / self.tssf
             )
+
+            # compute upper skin's compression stress and spar shear stress for buckling failure check
+            if "buckling" in self.surface and self.surface["buckling"]:
+                # flip sign to let positive = compression
+                outputs["upper_skin_comp_stress"][ielem] = -(axial_stress + top_bending_stress)
+                outputs["lower_skin_comp_stress"][ielem] = -(axial_stress + bottom_bending_stress)
+                outputs["front_spar_shear_stress"][ielem] = torsion_stress - vertical_shear
+                outputs["rear_spar_shear_stress"][ielem] = torsion_stress + vertical_shear
