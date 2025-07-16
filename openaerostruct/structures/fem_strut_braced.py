@@ -90,7 +90,14 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # --- inputs, outputs, partials of FEM system for each surface ---
             ny = surface["mesh"].shape[1]
-            size = int(6 * ny + 6)
+            if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+                # pin boundary condition at the root
+                size = int(6 * ny + 3)
+                root_BC_pin = True
+            else:
+                # rigid boundary condition at the root
+                size = int(6 * ny + 6)
+                root_BC_pin = False
             self.ny.append(ny)
             self.size.append(size)
             
@@ -107,7 +114,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # The derivative of residual wrt displacements is the stiffness matrix K. We can use the
             # sparsity pattern here and when constucting the sparse matrix, so save rows and cols.
-            rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, surface["symmetry"])
+            rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, surface["symmetry"], root_BC_pin)
             if i == 1:
                 # the second surface (strut) goes to the lower-right block of the entire stiffness matrix
                 rows += self.size[0]
@@ -334,7 +341,15 @@ class FEMStrutBraced(om.ImplicitComponent):
             data3 = k_loc[0, :6, :6].flatten()
             data4 = k_loc[-1, 6:, 6:].flatten()
             data5 = (k_loc[0:-1, 6:, 6:] + k_loc[1:, :6, :6]).flatten()
-            data6 = np.full((6,), 1e9)
+
+            # data6 corresponds to the root boundary condition
+            if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+                # for pin BC (constraint translation only)
+                data6 = np.full((3,), 1e9)
+            else:
+                # for rigid BC (constraint translation and rotation)
+                data6 = np.full((6,), 1e9)
+            
             data[name] = np.concatenate([data1, data2, data3, data4, data5, data6, data6])
 
         # combine matrices for wing, strut, and joint constraints

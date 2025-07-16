@@ -31,7 +31,15 @@ class CreateRHS(om.ExplicitComponent):
         self.ny = surface["mesh"].shape[1]
 
         self.add_input("total_loads", val=np.zeros((self.ny, 6)), units="N")
-        self.add_output("forces", val=np.ones(((self.ny + 1) * 6)), units="N")
+
+        # shape of forces depends on the root boundary condition type
+        if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+            self.root_BC_pin = True
+            forces_size = self.ny * 6 + 3
+        else:
+            self.root_BC_pin = False
+            forces_size = (self.ny + 1) * 6
+        self.add_output("forces", val=np.ones((forces_size)), units="N")
 
         n = self.ny * 6
         arange = np.arange((n))

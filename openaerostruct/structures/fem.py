@@ -7,7 +7,7 @@ from scipy.sparse.linalg import splu
 import openmdao.api as om
 
 
-def get_drdu_sparsity_pattern(ny, vec_size, symmetry):
+def get_drdu_sparsity_pattern(ny, vec_size, symmetry, root_BC_pin=False):
     """
     return sparsity pattern of partials of residuals w.r.t. displacements = stiffness matrix
     """
@@ -45,9 +45,12 @@ def get_drdu_sparsity_pattern(ny, vec_size, symmetry):
 
     index = 6 * idx
     num_dofs = 6 * ny
-    arange = np.arange(6)
 
-    # Fixed boundary condition.
+    # Fixed boundary condition. Number of additional "DoFs" varies depending on the root boundary condition type.
+    if root_BC_pin:
+        arange = np.arange(3)  # translation only
+    else:
+        arange = np.arange(6)  # translation and rotation
     rows6 = index + arange
     cols6 = num_dofs + arange
 
