@@ -8,9 +8,6 @@ import openmdao.api as om
 
 from .fem import get_drdu_sparsity_pattern, get_drdK_sparsity_pattern
 
-# TODO:
-# - implement ball and pin joint (current pin joint should be renamed to ball)
-
 
 class FEMStrutBraced(om.ImplicitComponent):
     """
@@ -133,10 +130,12 @@ class FEMStrutBraced(om.ImplicitComponent):
 
         # --- joint constraints (coupling terms between two surfaces) ---
         joint_type = self.surfaces[0]["joint_type"]
-        if joint_type == 'pin':
+        if joint_type == 'ball':
             self.n_con = n_con = 3   # number of joint constraints: translational only
+        elif joint_type == 'pin':
+            self.n_con = n_con = 5   # translational and rotational in y and z
         elif joint_type == 'rigid':
-            self.n_con = n_con = 6   # number of joint constraints: translational and rotational
+            self.n_con = n_con = 6   # ranslational and rotational in x, y, and z
         else:
             raise ValueError("Joint type must be either 'pin' or 'rigid'.")
 
@@ -163,7 +162,10 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # partials of joint constraint residuals w.r.t. displacement
             rows = np.arange(n_con)
-            cols = np.arange(n_con) + 6 * joint_idx
+            if joint_type in ['ball', 'rigid']:
+                cols = np.arange(n_con) + 6 * joint_idx
+            elif joint_type == 'pin':
+                cols = np.array([0, 1, 2, 4, 5]) + 6 * joint_idx  # exclude x-rotation
             if i == 0:
                 vals = np.ones(n_con) * 1e9
             else:
