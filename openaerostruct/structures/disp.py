@@ -36,13 +36,13 @@ class Disp(om.ExplicitComponent):
         self.ny = surface["mesh"].shape[1]
 
         # shape of disp_aug depends on the root boundary condition type
-        if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
-            self.root_BC_pin = True
-            disp_aug_size = self.ny * 6 + 3
+        if "root_BC_type" in surface and surface["root_BC_type"] == "ball":
+            dof_of_boundary = 3  # translation only
+        elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+            dof_of_boundary = 5  # translation and rotation in y and z
         else:
-            self.root_BC_pin = False
-            disp_aug_size = (self.ny + 1) * 6
-        self.add_input("disp_aug", val=np.zeros((disp_aug_size)), units="m")
+            dof_of_boundary = 6  # translation and rotation
+        self.add_input("disp_aug", val=np.zeros((self.ny * 6 + dof_of_boundary)), units="m")
 
         self.add_output("disp", val=np.zeros((self.ny, 6)), units="m")
 

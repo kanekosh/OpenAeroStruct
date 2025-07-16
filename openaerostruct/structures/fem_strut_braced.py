@@ -10,7 +10,6 @@ from .fem import get_drdu_sparsity_pattern, get_drdK_sparsity_pattern
 
 # TODO:
 # - implement ball and pin joint (current pin joint should be renamed to ball)
-# - implement pin/ball joint for the root symmetric boundary
 
 
 class FEMStrutBraced(om.ImplicitComponent):
@@ -90,15 +89,20 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # --- inputs, outputs, partials of FEM system for each surface ---
             ny = surface["mesh"].shape[1]
-            if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
-                # pin boundary condition at the root
-                size = int(6 * ny + 3)
-                root_BC_pin = True
+            if "root_BC_type" in surface and surface["root_BC_type"] == "ball":
+                # ball boundary condition at the root. Constrain translation only.
+                dof_of_boundary = 3
+                root_BC = "ball"
+            elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+                # pin boundary condition at the root. Constrain translation and rotation in y and z.
+                dof_of_boundary = 5
+                root_BC = "pin"
             else:
-                # rigid boundary condition at the root
-                size = int(6 * ny + 6)
-                root_BC_pin = False
+                # rigid boundary condition at the root. Constrain translation and rotation.
+                dof_of_boundary = 6
+                root_BC = "rigid"
             self.ny.append(ny)
+            size = int(6 * ny + dof_of_boundary)
             self.size.append(size)
             
             full_size = size * vec_size
@@ -114,7 +118,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # The derivative of residual wrt displacements is the stiffness matrix K. We can use the
             # sparsity pattern here and when constucting the sparse matrix, so save rows and cols.
-            rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, surface["symmetry"], root_BC_pin)
+            rows, cols, vec_rows, vec_cols = get_drdu_sparsity_pattern(ny, vec_size, surface["symmetry"], root_BC)
             if i == 1:
                 # the second surface (strut) goes to the lower-right block of the entire stiffness matrix
                 rows += self.size[0]
@@ -343,9 +347,12 @@ class FEMStrutBraced(om.ImplicitComponent):
             data5 = (k_loc[0:-1, 6:, 6:] + k_loc[1:, :6, :6]).flatten()
 
             # data6 corresponds to the root boundary condition
-            if "root_BC_type" in surface and surface["root_BC_type"] == "pin":
-                # for pin BC (constraint translation only)
+            if "root_BC_type" in surface and surface["root_BC_type"] == "ball":
+                # for ball BC (constraint translation only)
                 data6 = np.full((3,), 1e9)
+            elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+                # for pin BC (constraint translation and rotation in y and z)
+                data6 = np.full((5,), 1e9)
             else:
                 # for rigid BC (constraint translation and rotation)
                 data6 = np.full((6,), 1e9)
