@@ -187,7 +187,11 @@ class CoupledPerformance(om.Group):
             promotes_outputs = ["vonmises", "failure"]
             if "buckling" in surface and surface["buckling"]:
                 promotes_inputs += ["skin_thickness", "t_over_c", "fem_chords"]
-                promotes_outputs += ["failure_buckling"]
+                promotes_outputs += ["failure_local_buckling"]
+                if surface["name"] == "strut":
+                    # additional inputs/outputs for column buckling
+                    promotes_inputs += ["Iz", "joint_load"]
+                    promotes_outputs += ["failure_column_buckling"]
 
             self.add_subsystem(
                 "struct_funcs",

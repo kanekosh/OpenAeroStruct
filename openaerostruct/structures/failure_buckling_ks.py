@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 
 
-class FailureBucklingKS(om.ExplicitComponent):
+class PanelLocalBucklingFailureKS(om.ExplicitComponent):
     """
-    Buckling stress constraints for skin compression and spar shear buckling.
+    Panel local buckling stress constraints for skin compression and spar shear buckling.
     Returns KS-aggregated failure metric that should be constrained to be <= 0.
 
     Source: Michael Niu, Airframe Stress Analysis and Sizing, Hong Kong Conmilit Press Ltd., 1997
@@ -63,7 +63,7 @@ class FailureBucklingKS(om.ExplicitComponent):
         self.add_input("t_over_c", val=np.ones((self.ny - 1)))
         self.add_input("fem_chords", val=np.zeros(self.ny - 1), units="m")
 
-        self.add_output("failure_buckling", val=0.0)
+        self.add_output("failure_local_buckling", val=0.0, desc="Local buckling failure metric, should be <= 0")
         # also output margins for each element/buckling for post-processing
         # but don't declare partials for these outputs because we only use aggregated failure
         self.add_output("upper_skin_buckling_margin", val=np.zeros(self.ny - 1), desc='(buckling_limit - stress) / buckling_limit >= 0?')
@@ -73,7 +73,7 @@ class FailureBucklingKS(om.ExplicitComponent):
 
         self.rho = rho
 
-        self.declare_partials("failure_buckling", "*", method="cs")
+        self.declare_partials("failure_local_buckling", "*", method="cs")
 
     def compute(self, inputs, outputs):
         surface = self.options["surface"]
@@ -127,4 +127,88 @@ class FailureBucklingKS(om.ExplicitComponent):
 
         nlog, nsum, nexp = np.log, np.sum, np.exp
         ks = 1 / rho * nlog(nsum(nexp(rho * (failure_all - fmax))))
-        outputs["failure_buckling"] = fmax + ks
+        outputs["failure_local_buckling"] = fmax + ks
+
+
+class EulerColumnBucklingFailureKS(om.ExplicitComponent):
+    """
+    Euler column buckling.
+
+    Given the EI (which varies along the strut span) and strut length, it computes the buckling critical load.
+    The critical load varies along the strut span.
+    We them impose:
+        critical_load >= column_compression_load (which comes from the joint reaction force)
+    This is converted to a failure metric:
+        failure = (column_compression_load - critical_load) / column_compression_load <= 0.
+    and will be KS-aggregated.
+
+    Parameters
+    ----------
+    nodes[ny, 3] : numpy array
+        FEM node coordinates.
+    joint_load[3] : numpy array
+        Force vector applied to the strut at the joint.
+    Iz[ny-1] : numpy array
+        Moment of inertia of the strut about the z-axis.
+
+    Returns
+    -------
+    failure_Euler_buckling : float
+        Euler column buckling failure metric, should be <= 0
+    Euler_buckling_margin[ny-1] : numpy array
+    """
+
+    def initialize(self):
+        self.options.declare("surface", types=dict)
+        self.options.declare("rho", types=float, default=100.0, desc="KS aggregation smoothness parameter")
+
+    def setup(self):
+        surface = self.options["surface"]
+        ny = surface["mesh"].shape[1]
+
+        self.add_input("nodes", shape=(ny, 3), units="m", desc="FEM node coordinates")
+        self.add_input("joint_load", shape=3, desc="load vector applied to the strut at the joint")
+        self.add_input("Iz", shape=(ny - 1), units="m**4")  # use Iz because Iz < Iy
+
+        self.add_output("failure_column_buckling", val=0.0, desc="Euler column buckling failure metric, should be <= 0")
+        self.add_output("column_buckling_margin", shape=(ny - 1), desc="Euler column buckling margin, should be >= 0")
+        # this buckling margin is only for post-processing, so don't declare partials for it
+
+        self.declare_partials("failure_column_buckling", ["joint_load", "Iz"], method="cs")
+        # we only use nodes[0, :] and nodes[-1, :], so declare the sparse partials
+        col_indices = [0, 1, 2, (ny * 3) - 3, (ny * 3) - 2, (ny * 3) - 1]
+        self.declare_partials("column_buckling_margin", "nodes", method="cs", rows=np.zeros(6), cols=col_indices)
+
+    def compute(self, inputs, outputs):
+        nodes = inputs["nodes"]
+        E = self.options["surface"]["E"]
+        joint_load = inputs["joint_load"]
+        Iz = inputs["Iz"]
+
+        # convert joint load to N (FEM normalizes this by 1e9, so we apply it back)
+        joint_load *= 1e9
+
+        # strut length
+        # The length we compute from the FEM nodes are longer than the actual length because e.g. we don't model fuselage so the strut root is at the symmetry plane.
+        # To account for this, apply a factor < 1 to the strut length.
+        column_length_factor = self.options["surface"]["column_length_factor"]
+        strut_len = np.linalg.norm(nodes[0, :] - nodes[-1, :]) * column_length_factor
+
+        # compression load
+        strut_direction = (nodes[-1, :] - nodes[0, :])
+        strut_direction /= np.linalg.norm(strut_direction)  # unit magniture
+        comp_load = np.dot(joint_load, strut_direction)  # flip sign to make compression = positive
+        
+        # critical load with safety factor of 1.5
+        sf = 1.5
+        P_crit = np.pi**2 * E * Iz / strut_len**2 / sf
+
+        # failure metric
+        outputs["column_buckling_margin"] = (P_crit - comp_load) / P_crit
+        
+        # KS-aggregated failure metric (should be <= 0)
+        failure_all = comp_load / P_crit - 1
+        fmax = np.max(failure_all)
+        rho = self.options["rho"]
+        ks = 1 / rho * np.log(np.sum(np.exp(rho * (failure_all - fmax))))
+        outputs["failure_column_buckling"] = fmax + ks
