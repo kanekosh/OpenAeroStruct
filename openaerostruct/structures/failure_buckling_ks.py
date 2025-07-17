@@ -185,9 +185,6 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
         joint_load = inputs["joint_load"]
         Iz = inputs["Iz"]
 
-        # convert joint load to N (FEM normalizes this by 1e9, so we apply it back)
-        joint_load *= 1e9
-
         # strut length
         # The length we compute from the FEM nodes are longer than the actual length because e.g. we don't model fuselage so the strut root is at the symmetry plane.
         # To account for this, apply a factor < 1 to the strut length.
@@ -197,7 +194,8 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
         # compression load
         strut_direction = (nodes[-1, :] - nodes[0, :])
         strut_direction /= np.linalg.norm(strut_direction)  # unit magniture
-        comp_load = np.dot(joint_load, strut_direction)  # flip sign to make compression = positive
+        # multiply by 1e9 to make the units to N (FEM normalizes this by 1e9)
+        comp_load = np.dot(joint_load, strut_direction) * 1e9
         
         # critical load with safety factor of 1.5
         sf = 1.5
