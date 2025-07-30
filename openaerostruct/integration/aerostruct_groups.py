@@ -185,13 +185,14 @@ class CoupledPerformance(om.Group):
         elif surface["fem_model_type"] == "wingbox":
             promotes_inputs = ["Qz", "J", "A_enc", "spar_thickness", "htop", "hbottom", "hfront", "hrear", "nodes", "disp"]
             promotes_outputs = ["vonmises", "failure"]
-            if "buckling" in surface and surface["buckling"]:
+
+            # additional inputs/outputs for buckling
+            if "panel_buckling" in surface and surface["panel_buckling"]:
                 promotes_inputs += ["skin_thickness", "t_over_c", "fem_chords"]
                 promotes_outputs += ["failure_local_buckling"]
-                if surface["name"] == "strut":
-                    # additional inputs/outputs for column buckling
-                    promotes_inputs += ["Iz", "joint_load"]
-                    promotes_outputs += ["failure_column_buckling"]
+            if "column_buckling" in surface and surface["column_buckling"]:
+                promotes_inputs += ["Iz", "joint_load"]
+                promotes_outputs += ["failure_column_buckling"]
 
             self.add_subsystem(
                 "struct_funcs",

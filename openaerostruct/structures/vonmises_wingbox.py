@@ -79,7 +79,7 @@ class VonMisesWingbox(om.ExplicitComponent):
         self.add_output("vonmises", val=np.zeros((self.ny - 1, 4)), units="N/m**2")
 
         # also output upper skin's compression stress and spar shear stress for buckling
-        if "buckling" in self.surface and self.surface["buckling"]:
+        if "panel_buckling" in self.surface and self.surface["panel_buckling"]:
             # positive = compression
             self.add_output("upper_skin_comp_stress", val=np.zeros(self.ny - 1), units="N/m**2")
             self.add_output("lower_skin_comp_stress", val=np.zeros(self.ny - 1), units="N/m**2")
@@ -186,7 +186,7 @@ class VonMisesWingbox(om.ExplicitComponent):
             )
 
             # compute upper skin's compression stress and spar shear stress for buckling failure check
-            if "buckling" in self.surface and self.surface["buckling"]:
+            if "panel_buckling" in self.surface and self.surface["panel_buckling"]:
                 # flip sign to let positive = compression
                 outputs["upper_skin_comp_stress"][ielem] = -(axial_stress + top_bending_stress)
                 outputs["lower_skin_comp_stress"][ielem] = -(axial_stress + bottom_bending_stress)

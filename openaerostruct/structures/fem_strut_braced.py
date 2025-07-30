@@ -68,11 +68,52 @@ class FEMStrutBraced(om.ImplicitComponent):
         """
         Matrix and RHS are inputs, solution vector is the output.
         """
+        # --- input option check and processings ---
         vec_size = self.options["vec_size"]
         self.surfaces = self.options["surfaces"]
-        if len(self.surfaces) != 2:
-            raise ValueError("FEMStrutBraced component requires exactly two surfaces (wing and strut).")
-        self.surface_names = [self.surfaces[0]["name"], self.surfaces[1]["name"]]
+        self.surface_names = [surface["name"] for surface in self.surfaces]
+
+        # surfaces must be either [wing, strut] or [wing, strut, jury] in this order
+        if len(self.surfaces) == 2:
+            if self.surface_names != ["wing", "strut"]:
+                raise ValueError("FEMStrutBraced component requires the surfaces to be in the order of [wing, strut].")
+            include_jury = False
+            self.wing_surface = self.surfaces[0]
+            self.strut_surface = self.surfaces[1]
+        elif len(self.surfaces) == 3:
+            if self.surface_names != ["wing", "strut", "jury"]:
+                raise ValueError("FEMStrutBraced component requires the surfaces to be in the order of [wing, strut, jury].")
+            include_jury = True
+            self.wing_surface = self.surfaces[0]
+            self.strut_surface = self.surfaces[1]
+            self.jury_surface = self.surfaces[2]
+        else:
+            raise ValueError("FEMStrutBraced component requires exactly two or three surfaces (wing, strut, and/or jury).")
+
+        # no support for asymmetric surfaces
+        for surface in self.surfaces:
+            if not surface["symmetry"]:
+                raise NotImplementedError("Strut-braced wing joint is only implemented for symmetric surfaces.")
+
+        # We only support the surface name to be "wing" and "strut", and "jury" for now
+        for surface in self.surfaces:
+            if surface["name"] not in ["wing", "strut", "jury"]:
+                raise ValueError("FEMStrutBraced component does not support surface name: " + surface["name"])
+
+        # get joint information
+        wing_strut_joint_type = self.strut_surface["wing_strut_joint_type"]
+        wing_strut_joint_y = self.strut_surface["wing_strut_joint_y"]
+        # check sign convention for y (spanwise coordinate)
+        if wing_strut_joint_y * self.wing_surface["mesh"][0, 0, 1] < 0:
+            wing_strut_joint_y *= -1
+
+        if include_jury:
+            wing_jury_joint_type = self.jury_surface["wing_strut_joint_type"]
+            wing_jury_joint_y = self.jury_surface["wing_strut_joint_y"]
+            strut_jury_joint_type = self.jury_surface["strut_joint_type"]
+            strut_jury_joint_y = self.jury_surface["strut_joint_y"]
+
+        # prepare inputs
         self.ny = []  # number of spanwise nodes
         self.size = []   # size of assembled K matrix for each surface
         self.num_k_data = []  # number of non-zero entries for assembled K matrix for each surface
@@ -128,13 +169,12 @@ class FEMStrutBraced(om.ImplicitComponent):
             rows, cols = get_drdK_sparsity_pattern(ny)
             self.declare_partials(f"disp_aug_{name}", f"local_stiff_transformed_{name}", rows=rows, cols=cols)
 
-        # --- joint constraints (coupling terms between two surfaces) ---
-        joint_type = self.surfaces[0]["joint_type"]
-        if joint_type == 'ball':
+        # --- wing-strut joint constraints (coupling terms between two surfaces) ---
+        if wing_strut_joint_type == 'ball':
             self.n_con = n_con = 3   # number of joint constraints: translational only
-        elif joint_type == 'pin':
+        elif wing_strut_joint_type == 'pin':
             self.n_con = n_con = 5   # translational and rotational in y and z
-        elif joint_type == 'rigid':
+        elif wing_strut_joint_type == 'rigid':
             self.n_con = n_con = 6   # ranslational and rotational in x, y, and z
         else:
             raise ValueError("Joint type must be either 'pin' or 'rigid'.")
@@ -145,26 +185,18 @@ class FEMStrutBraced(om.ImplicitComponent):
         k_rows_joint = []
         k_cols_joint = []
         self.k_data_joint = []
-        for i, surface in enumerate(self.surfaces):
+        for i, surface in enumerate([self.wing_surface, self.strut_surface]):
             name = surface["name"]
 
-            # find the node index for the joint
-            joint_y = surface["joint_y"]
-            if not surface["symmetry"]:
-                raise NotImplementedError("Strut-braced wing joint is only implemented for symmetric surfaces.")
-            # check sign convention for y (spanwise coordinate)
-            if joint_y * surface["mesh"][0, 0, 1] < 0:
-                joint_y *= -1
-
-            joint_idx = np.argmin(np.abs(surface["mesh"][0, :, 1] - joint_y))
+            joint_idx = np.argmin(np.abs(surface["mesh"][0, :, 1] - wing_strut_joint_y))
             joint_indices.append(joint_idx)
             print("Surface", name, "joint y:", surface["mesh"][0, joint_idx, 1], "joint index:", joint_idx)
 
             # partials of joint constraint residuals w.r.t. displacement
             rows = np.arange(n_con)
-            if joint_type in ['ball', 'rigid']:
+            if wing_strut_joint_type in ['ball', 'rigid']:
                 cols = np.arange(n_con) + 6 * joint_idx
-            elif joint_type == 'pin':
+            elif wing_strut_joint_type == 'pin':
                 cols = np.array([0, 1, 2, 4, 5]) + 6 * joint_idx  # exclude x-rotation
             if i == 0:
                 vals = np.ones(n_con) * 1e9

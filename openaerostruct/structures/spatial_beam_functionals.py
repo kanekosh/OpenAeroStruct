@@ -76,8 +76,8 @@ class SpatialBeamFunctionals(om.Group):
                 "failure", FailureKS(surface=surface), promotes_inputs=["vonmises"], promotes_outputs=["failure"]
             )
 
-        # compute buckling failure
-        if "buckling" in surface and surface["buckling"]:
+        # compute panel local buckling failure
+        if "panel_buckling" in surface and surface["panel_buckling"]:
             # skin panel buckling and spar shear buckling
             self.add_subsystem(
                 "local_buckling",
@@ -90,11 +90,11 @@ class SpatialBeamFunctionals(om.Group):
             self.connect("vonmises.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
             self.connect("vonmises.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")
 
-            # global Euler column buckling
-            if surface["name"] == "strut":
-                self.add_subsystem(
-                    "column_buckling",
-                    EulerColumnBucklingFailureKS(surface=surface),
-                    promotes_inputs=["nodes", "joint_load", "Iz"],
-                    promotes_outputs=["failure_column_buckling"]
-                )
+        # global Euler column buckling
+        if "column_buckling" in surface and surface["column_buckling"]:
+            self.add_subsystem(
+                "column_buckling",
+                EulerColumnBucklingFailureKS(surface=surface),
+                promotes_inputs=["nodes", "joint_load", "Iz"],
+                promotes_outputs=["failure_column_buckling"]
+            )
