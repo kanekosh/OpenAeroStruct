@@ -40,6 +40,8 @@ class Disp(om.ExplicitComponent):
             dof_of_boundary = 3  # translation only
         elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
             dof_of_boundary = 5  # translation and rotation in y and z
+        elif "root_BC_type" in surface and surface["root_BC_type"] == "none":
+            dof_of_boundary = 0  # no boundary conditions (for jury strut)
         else:
             dof_of_boundary = 6  # translation and rotation
         self.add_input("disp_aug", val=np.zeros((self.ny * 6 + dof_of_boundary)), units="m")

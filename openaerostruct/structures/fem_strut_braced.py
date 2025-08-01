@@ -9,6 +9,46 @@ import openmdao.api as om
 from .fem import get_drdu_sparsity_pattern, get_drdK_sparsity_pattern
 
 
+def _get_joint_size(joint_type):
+    """
+    Return the number of joint constraints for a given joint type.
+    """
+    if joint_type == 'ball':
+        n_con = 3   # number of joint constraints: translational only
+    elif joint_type == 'pin':
+        n_con = 5   # translational and rotational in y and z
+    elif joint_type == 'rigid':
+        n_con = 6   # ranslational and rotational in x, y, and z
+    else:
+        raise ValueError("Joint type must be either 'pin' or 'rigid'.")
+    return n_con
+
+def _get_joint_idx_from_y(surface, joint_y):
+    """
+    Return the joint index from the joint y (spanwise) coordinate.
+    This is only good for wing or strut, but do not use for jury (or any vertical surface)
+    """
+    if surface["name"] == "jury":
+        raise RuntimeError("Cannot use _get_joint_idx_from_y for jury surface.")
+    joint_idx = np.argmin((np.abs(surface["mesh"][0, :, 1]) - abs(joint_y))**2)
+    return joint_idx
+
+def _joint_rows_cols(joint_type, surface, joint_idx):
+    """
+    Return rows and cols indices for joint constraints.
+    rows and cols are defined for the component-level indexing, but not the global wing-strut-jury system.
+    """
+    # partials of joint constraint residuals w.r.t. displacement
+    n_con = _get_joint_size(joint_type)
+    rows = np.arange(n_con)
+    if joint_type in ['ball', 'rigid']:
+        cols = np.arange(n_con) + 6 * joint_idx
+    elif joint_type == 'pin':
+        cols = np.array([0, 1, 2, 4, 5]) + 6 * joint_idx  # exclude x-rotation
+
+    return rows, cols
+
+
 class FEMStrutBraced(om.ImplicitComponent):
     """
     Component that solves an FEM linear system, K u = f.
@@ -77,13 +117,13 @@ class FEMStrutBraced(om.ImplicitComponent):
         if len(self.surfaces) == 2:
             if self.surface_names != ["wing", "strut"]:
                 raise ValueError("FEMStrutBraced component requires the surfaces to be in the order of [wing, strut].")
-            include_jury = False
+            self.include_jury = False
             self.wing_surface = self.surfaces[0]
             self.strut_surface = self.surfaces[1]
         elif len(self.surfaces) == 3:
             if self.surface_names != ["wing", "strut", "jury"]:
                 raise ValueError("FEMStrutBraced component requires the surfaces to be in the order of [wing, strut, jury].")
-            include_jury = True
+            self.include_jury = True
             self.wing_surface = self.surfaces[0]
             self.strut_surface = self.surfaces[1]
             self.jury_surface = self.surfaces[2]
@@ -103,24 +143,20 @@ class FEMStrutBraced(om.ImplicitComponent):
         # get joint information
         wing_strut_joint_type = self.strut_surface["wing_strut_joint_type"]
         wing_strut_joint_y = self.strut_surface["wing_strut_joint_y"]
-        # check sign convention for y (spanwise coordinate)
-        if wing_strut_joint_y * self.wing_surface["mesh"][0, 0, 1] < 0:
-            wing_strut_joint_y *= -1
 
-        if include_jury:
-            wing_jury_joint_type = self.jury_surface["wing_strut_joint_type"]
-            wing_jury_joint_y = self.jury_surface["wing_strut_joint_y"]
-            strut_jury_joint_type = self.jury_surface["strut_joint_type"]
-            strut_jury_joint_y = self.jury_surface["strut_joint_y"]
+        if self.include_jury:
+            wing_jury_joint_type = self.jury_surface["wing_jury_joint_type"]
+            wing_jury_joint_y = self.jury_surface["wing_jury_joint_y"]
+            strut_jury_joint_type = self.jury_surface["strut_jury_joint_type"]
+            strut_jury_joint_y = self.jury_surface["strut_jury_joint_y"]
 
         # prepare inputs
         self.ny = []  # number of spanwise nodes
-        self.size = []   # size of assembled K matrix for each surface
+        self.size = []   # list of size (num rows) of assembled K matrix for each surface
         self.num_k_data = []  # number of non-zero entries for assembled K matrix for each surface
         self._lup = []
         k_cols = []  # column indices for stiffness matrix sparsity pattern
         k_rows = []  # row indices for stiffness matrix sparsity pattern
-        joint_indices = []   # node index for the joint between wing and strut
 
         for i, surface in enumerate(self.surfaces):
             name = surface["name"]
@@ -135,6 +171,10 @@ class FEMStrutBraced(om.ImplicitComponent):
                 # pin boundary condition at the root. Constrain translation and rotation in y and z.
                 dof_of_boundary = 5
                 root_BC = "pin"
+            elif "root_BC_type" in surface and surface["root_BC_type"] == "none":
+                # no root boundary conditions for jury strut
+                dof_of_boundary = 0
+                root_BC = "none"
             else:
                 # rigid boundary condition at the root. Constrain translation and rotation.
                 dof_of_boundary = 6
@@ -170,61 +210,160 @@ class FEMStrutBraced(om.ImplicitComponent):
             self.declare_partials(f"disp_aug_{name}", f"local_stiff_transformed_{name}", rows=rows, cols=cols)
 
         # --- wing-strut joint constraints (coupling terms between two surfaces) ---
-        if wing_strut_joint_type == 'ball':
-            self.n_con = n_con = 3   # number of joint constraints: translational only
-        elif wing_strut_joint_type == 'pin':
-            self.n_con = n_con = 5   # translational and rotational in y and z
-        elif wing_strut_joint_type == 'rigid':
-            self.n_con = n_con = 6   # ranslational and rotational in x, y, and z
-        else:
-            raise ValueError("Joint type must be either 'pin' or 'rigid'.")
+        # list of all joing Lagrange multipliers (will use later)
+        self.joint_list = []
+        # number of joint constraints
+        self.n_con = 0  # total number of joint constraints (wing-strut + wing-jury + strut-jury)
+        n_con_ws = self.n_con_ws = _get_joint_size(wing_strut_joint_type)
+        self.n_con += n_con_ws
 
         # add Lagrange multipliers for joint constraints as state variables
-        self.add_output("joint_Lag", shape=(n_con,), val=0.0)
+        self.add_output("joint_Lag_wing_strut", shape=(n_con_ws,), val=0.0)
+        self.joint_list.append("wing_strut")
 
-        k_rows_joint = []
-        k_cols_joint = []
-        self.k_data_joint = []
+        k_rows_joint_ws = []
+        k_cols_joint_ws = []
+        self.k_data_joint = []  # for all joints (wing-strut, wing-jury, strut-jury)
         for i, surface in enumerate([self.wing_surface, self.strut_surface]):
             name = surface["name"]
 
-            joint_idx = np.argmin(np.abs(surface["mesh"][0, :, 1] - wing_strut_joint_y))
-            joint_indices.append(joint_idx)
-            print("Surface", name, "joint y:", surface["mesh"][0, joint_idx, 1], "joint index:", joint_idx)
-
             # partials of joint constraint residuals w.r.t. displacement
-            rows = np.arange(n_con)
-            if wing_strut_joint_type in ['ball', 'rigid']:
-                cols = np.arange(n_con) + 6 * joint_idx
-            elif wing_strut_joint_type == 'pin':
-                cols = np.array([0, 1, 2, 4, 5]) + 6 * joint_idx  # exclude x-rotation
+            joint_idx = _get_joint_idx_from_y(surface, wing_strut_joint_y)
+            print(f'Wing-strut joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+            rows, cols = _joint_rows_cols(wing_strut_joint_type, surface, joint_idx)
             if i == 0:
-                vals = np.ones(n_con) * 1e9
+                vals = np.ones(n_con_ws) * 1e9
             else:
-                vals = np.ones(n_con) * -1e9
-            self.declare_partials("joint_Lag", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+                vals = np.ones(n_con_ws) * -1e9
+            self.declare_partials("joint_Lag_wing_strut", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
 
             # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
-            self.declare_partials(f"disp_aug_{name}", "joint_Lag", rows=cols, cols=rows, val=vals)
+            self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_strut", rows=cols, cols=rows, val=vals)
 
-            # append these entries to the bottom and right of the entire K matrix
-            rows += self.size[0] + self.size[1]
-            if i == 1:
+            # rows/cols in the global K matrix (bottom of the matrix)
+            rows += sum(self.size)
+            if name == "strut":
                 cols += self.size[0]
 
-            # partials of joint constraint residuals w.r.t. local stiffness matrix
-            k_rows_joint.append(rows)
-            k_cols_joint.append(cols)
+            # append these entries to the bottom of the global K matrix and its transpose
+            k_rows_joint_ws.append(rows)
+            k_cols_joint_ws.append(cols)
             self.k_data_joint.append(vals)
-            # partials of FEM residuals wrt joint Lagrange multipliers
-            k_rows_joint.append(cols)
-            k_cols_joint.append(rows)
+            k_rows_joint_ws.append(cols)
+            k_cols_joint_ws.append(rows)
             self.k_data_joint.append(vals)
 
-        # row and col indices for the entire stiffness matrix (that combines wing, strut, and joint constraints)
-        self.k_cols = np.concatenate(k_cols + k_cols_joint)
-        self.k_rows = np.concatenate(k_rows + k_rows_joint)
-        self.total_size = sum(self.size) + n_con   # size of total stiffness matrix (wing + strut + constraints)
+            print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
+
+        # row and col indices for the entire stiffness matrix (that combines wing, strut, (jury), and joint constraints)
+        self.k_cols = np.concatenate(k_cols + k_cols_joint_ws)
+        self.k_rows = np.concatenate(k_rows + k_rows_joint_ws)
+        self.total_size = sum(self.size) + n_con_ws   # size (num rows) of total stiffness matrix (K matrices + joint constraints)
+
+        print('wing-strut joint added, total_size', self.total_size, '\n')
+
+        if self.include_jury:
+            # --- wing-jury joint constraints ---
+            n_con_wj = self.n_con_wj = _get_joint_size(wing_jury_joint_type)
+            self.n_con += n_con_wj
+
+            # add Lagrange multipliers for joint constraints as state variables
+            self.add_output("joint_Lag_wing_jury", shape=(n_con_wj,), val=0.0)
+            self.joint_list.append("wing_jury")
+
+            k_rows_joint_wj = []
+            k_cols_joint_wj = []
+            for i, surface in enumerate([self.wing_surface, self.jury_surface]):
+                name = surface["name"]
+
+                # partials of joint constraint residuals w.r.t. displacement
+                if name == "wing":
+                    joint_idx = _get_joint_idx_from_y(surface, wing_jury_joint_y)
+                elif name == "jury":
+                    joint_idx = 0  # jury index starts from 0 at the wing-jury joint
+                print(f'Wing-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+                rows, cols = _joint_rows_cols(wing_jury_joint_type, surface, joint_idx)
+                if i == 0:
+                    vals = np.ones(n_con_wj) * 1e9
+                else:
+                    vals = np.ones(n_con_wj) * -1e9
+                self.declare_partials("joint_Lag_wing_jury", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+
+                # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
+                self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_jury", rows=cols, cols=rows, val=vals)
+
+                # append these entries to the global K matrix
+                rows += self.total_size
+                if name == "jury":
+                    cols += self.size[0] + self.size[1]
+
+                print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
+
+                k_rows_joint_wj.append(rows)
+                k_cols_joint_wj.append(cols)
+                self.k_data_joint.append(vals)
+                k_rows_joint_wj.append(cols)
+                k_cols_joint_wj.append(rows)
+                self.k_data_joint.append(vals)
+
+            # row and col indices for the entire stiffness matrix
+            self.k_cols = np.concatenate((self.k_cols, np.concatenate(k_cols_joint_wj)))
+            self.k_rows = np.concatenate((self.k_rows, np.concatenate(k_rows_joint_wj)))
+            self.total_size += n_con_wj
+
+            print('wing-jury joint added, total_size', self.total_size, '\n')
+
+            # --- strut-jury joint constraints ---
+            n_con_sj = self.n_con_sj = _get_joint_size(strut_jury_joint_type)
+            self.n_con += n_con_sj
+
+            # add Lagrange multipliers for joint constraints as state variables
+            self.add_output("joint_Lag_strut_jury", shape=(n_con_sj,), val=0.0)
+            self.joint_list.append("strut_jury")
+
+            k_rows_joint_sj = []
+            k_cols_joint_sj = []
+            for i, surface in enumerate([self.strut_surface, self.jury_surface]):
+                name = surface["name"]
+
+                # partials of joint constraint residuals w.r.t. displacement
+                if name == "strut":
+                    joint_idx = _get_joint_idx_from_y(surface, strut_jury_joint_y)
+                elif name == "jury":
+                    joint_idx = surface["mesh"].shape[1] - 1  # last index of jury surface
+                print(f'Strut-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+                rows, cols = _joint_rows_cols(strut_jury_joint_type, surface, joint_idx)
+                if i == 0:
+                    vals = np.ones(n_con_sj) * 1e9
+                else:
+                    vals = np.ones(n_con_sj) * -1e9
+                self.declare_partials("joint_Lag_strut_jury", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+
+                # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
+                self.declare_partials(f"disp_aug_{name}", "joint_Lag_strut_jury", rows=cols, cols=rows, val=vals)
+
+                # append these entries to the bottom of the global K matrix (and the transpose to the right)
+                rows += self.total_size
+                if name == "strut":
+                    cols += self.size[0]
+                if name == "jury":
+                    cols += self.size[0] + self.size[1]
+
+                k_rows_joint_sj.append(rows)
+                k_cols_joint_sj.append(cols)
+                self.k_data_joint.append(vals)
+                k_rows_joint_sj.append(cols)
+                k_cols_joint_sj.append(rows)
+                self.k_data_joint.append(vals)
+
+                print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
+
+            # row and col indices for the entire stiffness matrix
+            self.k_cols = np.concatenate((self.k_cols, np.concatenate(k_cols_joint_sj)))
+            self.k_rows = np.concatenate((self.k_rows, np.concatenate(k_rows_joint_sj)))
+            self.total_size += n_con_sj
+
+            print('strut-jury joint added, total_size', self.total_size, '\n')
 
     def apply_nonlinear(self, inputs, outputs, residuals):
         """
@@ -241,17 +380,22 @@ class FEMStrutBraced(om.ImplicitComponent):
         """
         K = self.assemble_CSC_K(inputs)
         disp = np.concatenate([outputs[f"disp_aug_{name}"] for name in self.surface_names])
-        joint_Lag = outputs["joint_Lag"]
+        joint_Lag = np.concatenate([outputs[f"joint_Lag_{name}"] for name in self.joint_list])
         u = np.concatenate([disp, joint_Lag])
         force = np.concatenate([inputs[f"forces_{name}"] for name in self.surface_names])
         rhs = np.concatenate([force, np.zeros(self.n_con)])
 
         r = K.dot(u) - rhs
 
-        size0, size1 = self.size[0], self.size[1]  # size of each residuals
+        size0, size1 = self.size[0], self.size[1]  # size of each component's K matrix
+        sum_size = sum(self.size)
         residuals[f"disp_aug_{self.surface_names[0]}"] = r[:size0]
         residuals[f"disp_aug_{self.surface_names[1]}"] = r[size0:size0 + size1]
-        residuals["joint_Lag"] = r[size0 + size1:]
+        residuals["joint_Lag_wing_strut"] = r[sum_size:sum_size + self.n_con_ws]
+        if self.include_jury:
+            residuals[f"disp_aug_{self.surface_names[2]}"] = r[size0 + size1:sum_size]
+            residuals["joint_Lag_wing_jury"] = r[sum_size + self.n_con_ws:sum_size + self.n_con_ws + self.n_con_wj]
+            residuals["joint_Lag_strut_jury"] = r[sum_size + self.n_con_ws + self.n_con_wj:]
         
     def solve_nonlinear(self, inputs, outputs):
         """
@@ -266,16 +410,29 @@ class FEMStrutBraced(om.ImplicitComponent):
         """
         # lu factorization for use with solve_linear
         K = self.assemble_CSC_K(inputs)
+
+        # Print the matrix K in a nicely formatted way
+        print('K (dense):')
+        print(K.toarray())
+
         self._lup = splu(K)
         force = np.concatenate([inputs[f"forces_{name}"] for name in self.surface_names])
         rhs = np.concatenate([force, np.zeros(self.n_con)])
 
+        print('\nrhs shape', rhs.shape)
+        print('K shape', K.shape)
+
         u = self._lup.solve(rhs)
 
         size0, size1 = self.size[0], self.size[1]  # size of each displacement vectors
+        sum_size = sum(self.size)
         outputs[f"disp_aug_{self.surface_names[0]}"] = u[:size0]
         outputs[f"disp_aug_{self.surface_names[1]}"] = u[size0:size0 + size1]
-        outputs["joint_Lag"] = u[size0 + size1:]
+        outputs["joint_Lag_wing_strut"] = u[sum_size:sum_size + self.n_con_ws]
+        if self.include_jury:
+            outputs[f"disp_aug_{self.surface_names[2]}"] = u[size0 + size1:sum_size]
+            outputs["joint_Lag_wing_jury"] = u[sum_size + self.n_con_ws:sum_size + self.n_con_ws + self.n_con_wj]
+            outputs["joint_Lag_strut_jury"] = u[sum_size + self.n_con_ws + self.n_con_wj:]
 
     def linearize(self, inputs, outputs, J):
         """
@@ -290,6 +447,7 @@ class FEMStrutBraced(om.ImplicitComponent):
         J : Jacobian
             sub-jac components written to jacobian[output_name, input_name]
         """
+        raise RuntimeError("Not implemented")
         vec_size = self.options["vec_size"]
 
         name0, name1 = self.surface_names[0], self.surface_names[1]
@@ -325,6 +483,7 @@ class FEMStrutBraced(om.ImplicitComponent):
         mode : str
             either 'fwd' or 'rev'
         """
+        raise RuntimeError("Not implemented")
         vec_size = self.options["vec_size"]
         size0, size1 = self.size[0], self.size[1]
         name0, name1 = self.surface_names[0], self.surface_names[1]
@@ -334,31 +493,31 @@ class FEMStrutBraced(om.ImplicitComponent):
         if mode == "fwd":
             if vec_size > 1:
                 for j in range(vec_size):
-                    rhs = np.concatenate((d_residuals[f"disp_aug_{name0}"][j], d_residuals[f"disp_aug_{name1}"][j], d_residuals["joint_Lag"][j]))
+                    rhs = np.concatenate((d_residuals[f"disp_aug_{name0}"][j], d_residuals[f"disp_aug_{name1}"][j], d_residuals["joint_Lag_wing_strut"][j]))
                     sol = self._lup.solve(rhs)
                     d_outputs[f"disp_aug_{name0}"][j] = sol[:size0]
                     d_outputs[f"disp_aug_{name1}"][j] = sol[size0:size0 + size1]
-                    d_outputs["joint_Lag"][j] = sol[size0 + size1:]
+                    d_outputs["joint_Lag_wing_strut"][j] = sol[size0 + size1:]
             else:
-                rhs = np.concatenate((d_residuals[f"disp_aug_{name0}"], d_residuals[f"disp_aug_{name1}"], d_residuals["joint_Lag"]))
+                rhs = np.concatenate((d_residuals[f"disp_aug_{name0}"], d_residuals[f"disp_aug_{name1}"], d_residuals["joint_Lag_wing_strut"]))
                 sol = self._lup.solve(rhs)
                 d_outputs[f"disp_aug_{name0}"] = sol[:size0]
                 d_outputs[f"disp_aug_{name1}"] = sol[size0:size0 + size1]
-                d_outputs["joint_Lag"] = sol[size0 + size1:]
+                d_outputs["joint_Lag_wing_strut"] = sol[size0 + size1:]
         else:
             if vec_size > 1:
                 for j in range(vec_size):
-                    rhs = np.concatenate((d_outputs[f"disp_aug_{name0}"][j], d_outputs[f"disp_aug_{name1}"][j], d_outputs["joint_Lag"][j]))
+                    rhs = np.concatenate((d_outputs[f"disp_aug_{name0}"][j], d_outputs[f"disp_aug_{name1}"][j], d_outputs["joint_Lag_wing_strut"][j]))
                     sol = self._lup.solve(rhs)
                     d_residuals[f"disp_aug_{name0}"][j] = sol[:size0]
                     d_residuals[f"disp_aug_{name1}"][j] = sol[size0:size0 + size1]
-                    d_residuals["joint_Lag"][j] = sol[size0 + size1:]
+                    d_residuals["joint_Lag_wing_strut"][j] = sol[size0 + size1:]
             else:
-                rhs = np.concatenate((d_outputs[f"disp_aug_{name0}"], d_outputs[f"disp_aug_{name1}"], d_outputs["joint_Lag"]))
+                rhs = np.concatenate((d_outputs[f"disp_aug_{name0}"], d_outputs[f"disp_aug_{name1}"], d_outputs["joint_Lag_wing_strut"]))
                 sol = self._lup.solve(rhs)
                 d_residuals[f"disp_aug_{name0}"] = sol[:size0]
                 d_residuals[f"disp_aug_{name1}"] = sol[size0:size0 + size1]
-                d_residuals["joint_Lag"] = sol[size0 + size1:]
+                d_residuals["joint_Lag_wing_strut"] = sol[size0 + size1:]
 
     def assemble_CSC_K(self, inputs):
         """
@@ -387,6 +546,8 @@ class FEMStrutBraced(om.ImplicitComponent):
             elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
                 # for pin BC (constraint translation and rotation in y and z)
                 data6 = np.full((5,), 1e9)
+            elif "root_BC_type" in surface and surface["root_BC_type"] == "none":
+                data6 = np.array([])
             else:
                 # for rigid BC (constraint translation and rotation)
                 data6 = np.full((6,), 1e9)

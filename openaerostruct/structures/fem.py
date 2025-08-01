@@ -56,6 +56,9 @@ def get_drdu_sparsity_pattern(ny, vec_size, symmetry, root_BC="rigid"):
     elif root_BC == "ball":  # translation only
         row_arange = np.arange(3)
         col_arange = np.arange(3)
+    elif root_BC == "none":  # no root BC (e.g. for jury strut)
+        row_arange = np.array([])
+        col_arange = np.array([])
     else:
         raise ValueError(f"Invalid root boundary condition type: {root_BC}")
 
