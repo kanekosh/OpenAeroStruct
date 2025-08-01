@@ -235,8 +235,10 @@ class MultiSecAerostructGeometry(om.Group):
 
 
 class CoupledAS(om.Group):
+    """ FEM + displacement transfer + VLM geometry property computations for single surface """
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("include_FEM", default=True, types=bool, desc="If False, skip the FEM subsystem under this group; FEM should be added external to this group")
 
     def setup(self):
         surface = self.options["surface"]
@@ -251,12 +253,13 @@ class CoupledAS(om.Group):
                 set(["point_mass_locations", "point_masses", "nodes", "load_factor", "engine_thrusts"])
             )
 
-        self.add_subsystem(
-            "struct_states",
-            SpatialBeamStates(surface=surface),
-            promotes_inputs=["local_stiff_transformed", "forces", "loads"] + promotes,
-            promotes_outputs=["disp"],
-        )
+        if self.options["include_FEM"]:
+            self.add_subsystem(
+                "struct_states",
+                SpatialBeamStates(surface=surface),
+                promotes_inputs=["local_stiff_transformed", "forces", "loads"] + promotes,
+                promotes_outputs=["disp"],
+            )
 
         self.add_subsystem(
             "def_mesh",
@@ -311,22 +314,22 @@ class CoupledPerformance(om.Group):
             )
 
         elif surface["fem_model_type"] == "wingbox":
+            promotes_inputs = ["Qz", "J", "A_enc", "spar_thickness", "htop", "hbottom", "hfront", "hrear", "nodes", "disp"]
+            promotes_outputs = ["vonmises", "failure"]
+
+            # additional inputs/outputs for buckling
+            if "panel_buckling" in surface and surface["panel_buckling"]:
+                promotes_inputs += ["skin_thickness", "t_over_c", "fem_chords"]
+                promotes_outputs += ["failure_local_buckling"]
+            if "column_buckling" in surface and surface["column_buckling"]:
+                promotes_inputs += ["Iz", "joint_load"]
+                promotes_outputs += ["failure_column_buckling"]
+
             self.add_subsystem(
                 "struct_funcs",
                 SpatialBeamFunctionals(surface=surface),
-                promotes_inputs=[
-                    "Qz",
-                    "J",
-                    "A_enc",
-                    "spar_thickness",
-                    "htop",
-                    "hbottom",
-                    "hfront",
-                    "hrear",
-                    "nodes",
-                    "disp",
-                ],
-                promotes_outputs=["vonmises", "failure"],
+                promotes_inputs=promotes_inputs,
+                promotes_outputs=promotes_outputs,
             )
         else:
             raise NameError("Please select a valid `fem_model_type` from either `tube` or `wingbox`.")
@@ -346,6 +349,7 @@ class AerostructPoint(om.Group):
         self.options.declare(
             "rotational", False, types=bool, desc="Set to True to turn on support for computing angular velocities"
         )
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surfaces = self.options["surfaces"]
@@ -409,13 +413,60 @@ class AerostructPoint(om.Group):
 
         coupled = om.Group()
 
-        for surface in surfaces:
+        if self.options["strut_braced"]:
+            if len(surfaces) == 2:
+                # wing + strut. Make sure that the given surfaces are in order
+                if surfaces[0]["name"] == "wing" and surfaces[1]["name"] == "strut":
+                    surfaces_all = surfaces
+                    surfaces_AS = surfaces
+                    pass
+                else:
+                    raise ValueError("surfaces must be in order of [wing_surface, strut_surface, (optional) jury_surface]")
+            elif len(surfaces) == 3:
+                # wing + strut + jury
+                if surfaces[0]["name"] == "wing" and surfaces[1]["name"] == "strut" and surfaces[2]["name"] == "jury":
+                    surfaces_all = surfaces
+                    surfaces_AS = [surfaces[0], surfaces[1]]   # exclude jury from VLM
+                    pass
+                else:
+                    raise ValueError("surfaces must be in order of [wing_surface, strut_surface, (optional) jury_surface]")
+
+                # disable jury strut root boundary condition
+                surfaces[2]["root_BC_type"] = "none"
+                surfaces_all[2]["root_BC_type"] = "none"
+
+            # add coupled FEM group
+            coupled.add_subsystem(
+                "FEM_SBW",
+                SpatialBeamStates(surface=surfaces_all, strut_braced=True),
+                promotes_inputs=["*"],
+                promotes_outputs=["disp_*"]
+            )
+        else:
+            surfaces_all = surfaces
+            surfaces_AS = surfaces
+
+        # connections for all structural components
+        for surface in surfaces_all:
+            name = surface["name"]
+
+            # connect displacements to the performance group
+            disp_source = f"coupled.disp_{name}" if self.options["strut_braced"] else f"coupled.{name}.disp"
+            self.connect(disp_source, name + "_perf.disp")
+
+        # connections for all aerostructural surfaces
+        for surface in surfaces_AS:
             name = surface["name"]
 
             # Connect the output of the loads component with the FEM
             # displacement parameter. This links the coupling within the coupled
             # group that necessitates the subgroup solver.
-            coupled.connect(name + "_loads.loads", name + ".loads")
+            loads_target = f"forces_{name}.loads" if self.options["strut_braced"] else f"{name}.loads"
+            coupled.connect(name + "_loads.loads", loads_target)
+
+            # Connect displacement from FEM to transfer model. This is automatically done by promotion for non-SBW cases
+            if self.options["strut_braced"]:
+                coupled.connect(f"disp_{name}", f"{name}.disp")
 
             # Perform the connections with the modified names within the
             # 'aero_states' group.
@@ -437,7 +488,6 @@ class AerostructPoint(om.Group):
 
             # Connect parameters from the 'coupled' group to the performance
             # groups for the individual surfaces.
-            self.connect("coupled." + name + ".disp", name + "_perf.disp")
             self.connect("coupled." + name + ".S_ref", name + "_perf.S_ref")
             self.connect("coupled." + name + ".widths", name + "_perf.widths")
             # self.connect('coupled.' + name + '.chords', name + '_perf.chords')
@@ -453,13 +503,14 @@ class AerostructPoint(om.Group):
             # Add components to the 'coupled' group for each surface.
             # The 'coupled' group must contain all components and parameters
             # needed to converge the aerostructural system.
-            coupled_AS_group = CoupledAS(surface=surface)
+            include_FEM = False if self.options["strut_braced"] else True   # For strut-braced case, FEM is already added outside of coupled AS
+            coupled_AS_group = CoupledAS(surface=surface, include_FEM=include_FEM)
 
             if (
                 surface["distributed_fuel_weight"]
                 or "n_point_masses" in surface.keys()
                 or surface["struct_weight_relief"]
-            ):
+            ) and not self.options["strut_braced"]:
                 prom_in = ["load_factor"]
             else:
                 prom_in = []
@@ -473,10 +524,10 @@ class AerostructPoint(om.Group):
                 ground_effect = True
 
         if self.options["compressible"] is True:
-            aero_states = CompressibleVLMStates(surfaces=surfaces, rotational=rotational)
+            aero_states = CompressibleVLMStates(surfaces=surfaces_AS, rotational=rotational)
             prom_in = ["v", "alpha", "beta", "rho", "Mach_number"]
         else:
-            aero_states = VLMStates(surfaces=surfaces, rotational=rotational)
+            aero_states = VLMStates(surfaces=surfaces_AS, rotational=rotational)
             prom_in = ["v", "alpha", "beta", "rho"]
         if ground_effect:
             prom_in.append("height_agl")
@@ -490,7 +541,7 @@ class AerostructPoint(om.Group):
 
         # Explicitly connect parameters from each surface's group and the common
         # 'aero_states' group.
-        for surface in surfaces:
+        for surface in surfaces_AS:
             name = surface["name"]
 
             # Add a loads component to the coupled group
@@ -533,7 +584,8 @@ class AerostructPoint(om.Group):
         # Add the coupled group to the model problem
         self.add_subsystem("coupled", coupled, promotes_inputs=prom_in)
 
-        for surface in surfaces:
+        # post-AS-analysis computations for aerostructural surfaces
+        for surface in surfaces_AS:
             name = surface["name"]
 
             # Add a performance group which evaluates the data after solving
@@ -544,6 +596,13 @@ class AerostructPoint(om.Group):
                 name + "_perf", perf_group, promotes_inputs=["rho", "v", "alpha", "beta", "re", "Mach_number"]
             )
 
+        # post-AS-analysis computations for structure-only components
+        for surface in [s for s in surfaces_all if s not in surfaces_AS]:
+            self.add_subsystem(
+                f"{surface["name"]}_perf",
+                SpatialBeamFunctionals(surface=surface),
+            )
+
         # Add functionals to evaluate performance of the system.
         # Note that only the interesting results are promoted here; not all
         # of the parameters.
@@ -551,6 +610,7 @@ class AerostructPoint(om.Group):
             "total_perf",
             TotalPerformance(
                 surfaces=surfaces,
+                strut_braced=self.options["strut_braced"],
                 user_specified_Sref=self.options["user_specified_Sref"],
                 internally_connect_fuelburn=self.options["internally_connect_fuelburn"],
             ),
