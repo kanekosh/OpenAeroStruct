@@ -119,6 +119,12 @@ class SpatialBeamStates(om.Group):
                     surf["distributed_fuel_weight"] = False
                     surf.pop("n_point_masses", None)
 
+                # see if we have load_factor input
+                if surf["struct_weight_relief"] or surf["distributed_fuel_weight"] or "n_point_masses" in surf.keys():
+                    promotes_inputs = ["load_factor"]
+                else:
+                    promotes_inputs = []
+
                 if name == "jury":
                     # jury is structure-only component so no external loads
                     ny = surf["mesh"].shape[1]
@@ -126,7 +132,7 @@ class SpatialBeamStates(om.Group):
                     indep.add_output("jury_loads", val=np.zeros((ny, 6)))
                     self.connect("zero.jury_loads", f"forces_{name}.loads")
 
-                self.add_subsystem(f'forces_{name}', FEMloads(surface=surf), promotes_inputs=["load_factor"])
+                self.add_subsystem(f'forces_{name}', FEMloads(surface=surf), promotes_inputs=promotes_inputs)
                 self.connect(f"forces_{name}.forces", f"fem.forces_{name}")
 
             # FEM of wing-strut system
