@@ -111,6 +111,11 @@ class SpatialBeamStates(om.Group):
             self.add_subsystem("disp", Disp(surface=surface), promotes_inputs=["*"], promotes_outputs=["*"])
 
         else:
+            # set no root boundary conditions for jury strut
+            for i, surf in enumerate(surface):
+                if surf["name"] == "jury":
+                    surface[i]["root_BC_type"] = "none"
+
             # compute RHS force vector for wing and strut, respectively
             for surf in surface:
                 name = surf["name"]

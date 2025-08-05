@@ -32,6 +32,7 @@ coeffs_z = np.array(
 class LocalStiff(om.ExplicitComponent):
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surface = self.options["surface"]
@@ -55,6 +56,11 @@ class LocalStiff(om.ExplicitComponent):
         self.declare_partials("local_stiff", "Iz", rows=rows, cols=cols)
         self.declare_partials("local_stiff", "element_lengths", rows=rows, cols=cols)
 
+        self.scale_EI = 1.0
+        if self.options["strut_braced"] and surface["name"] == "jury":
+            # for jury strut, we set very low bending stiffness to effectively make this a rod element
+            self.scale_EI = 1.0
+
     def compute(self, inputs, outputs):
         surface = self.options["surface"]
 
@@ -76,8 +82,8 @@ class LocalStiff(om.ExplicitComponent):
 
         for i in range(4):
             for j in range(4):
-                outputs["local_stiff"][:, 4 + i, 4 + j] = E * Iy / L**3 * coeffs_y[i, j]
-                outputs["local_stiff"][:, 8 + i, 8 + j] = E * Iz / L**3 * coeffs_z[i, j]
+                outputs["local_stiff"][:, 4 + i, 4 + j] = E * Iy / L**3 * coeffs_y[i, j] * self.scale_EI
+                outputs["local_stiff"][:, 8 + i, 8 + j] = E * Iz / L**3 * coeffs_z[i, j] * self.scale_EI
 
         for i in [1, 3]:
             for j in range(4):
@@ -122,31 +128,31 @@ class LocalStiff(om.ExplicitComponent):
 
         for i in range(4):
             for j in range(4):
-                derivs_Iy[:, 4 + i, 4 + j] = E / L**3 * coeffs_y[i, j]
-                derivs_L[:, 4 + i, 4 + j] = -3 * E * Iy / L**4 * coeffs_y[i, j]
+                derivs_Iy[:, 4 + i, 4 + j] = E / L**3 * coeffs_y[i, j] * self.scale_EI
+                derivs_L[:, 4 + i, 4 + j] = -3 * E * Iy / L**4 * coeffs_y[i, j] * self.scale_EI
 
-                derivs_Iz[:, 8 + i, 8 + j] = E / L**3 * coeffs_z[i, j]
-                derivs_L[:, 8 + i, 8 + j] = -3 * E * Iz / L**4 * coeffs_z[i, j]
+                derivs_Iz[:, 8 + i, 8 + j] = E / L**3 * coeffs_z[i, j] * self.scale_EI
+                derivs_L[:, 8 + i, 8 + j] = -3 * E * Iz / L**4 * coeffs_z[i, j] * self.scale_EI
 
         for i in [1, 3]:
             for j in range(4):
-                derivs_Iy[:, 4 + i, 4 + j] = E / L**2 * coeffs_y[i, j]
-                derivs_L[:, 4 + i, 4 + j] = -2 * E * Iy / L**3 * coeffs_y[i, j]
+                derivs_Iy[:, 4 + i, 4 + j] = E / L**2 * coeffs_y[i, j] * self.scale_EI
+                derivs_L[:, 4 + i, 4 + j] = -2 * E * Iy / L**3 * coeffs_y[i, j] * self.scale_EI
 
-                derivs_Iz[:, 8 + i, 8 + j] = E / L**2 * coeffs_z[i, j]
-                derivs_L[:, 8 + i, 8 + j] = -2 * E * Iz / L**3 * coeffs_z[i, j]
+                derivs_Iz[:, 8 + i, 8 + j] = E / L**2 * coeffs_z[i, j] * self.scale_EI
+                derivs_L[:, 8 + i, 8 + j] = -2 * E * Iz / L**3 * coeffs_z[i, j] * self.scale_EI
         for i in range(4):
             for j in [1, 3]:
-                derivs_Iy[:, 4 + i, 4 + j] = E / L**2 * coeffs_y[i, j]
-                derivs_L[:, 4 + i, 4 + j] = -2 * E * Iy / L**3 * coeffs_y[i, j]
+                derivs_Iy[:, 4 + i, 4 + j] = E / L**2 * coeffs_y[i, j] * self.scale_EI
+                derivs_L[:, 4 + i, 4 + j] = -2 * E * Iy / L**3 * coeffs_y[i, j] * self.scale_EI
 
-                derivs_Iz[:, 8 + i, 8 + j] = E / L**2 * coeffs_z[i, j]
-                derivs_L[:, 8 + i, 8 + j] = -2 * E * Iz / L**3 * coeffs_z[i, j]
+                derivs_Iz[:, 8 + i, 8 + j] = E / L**2 * coeffs_z[i, j] * self.scale_EI
+                derivs_L[:, 8 + i, 8 + j] = -2 * E * Iz / L**3 * coeffs_z[i, j] * self.scale_EI
 
         for i in [1, 3]:
             for j in [1, 3]:
-                derivs_Iy[:, 4 + i, 4 + j] = E / L * coeffs_y[i, j]
-                derivs_L[:, 4 + i, 4 + j] = -E * Iy / L**2 * coeffs_y[i, j]
+                derivs_Iy[:, 4 + i, 4 + j] = E / L * coeffs_y[i, j] * self.scale_EI
+                derivs_L[:, 4 + i, 4 + j] = -E * Iy / L**2 * coeffs_y[i, j] * self.scale_EI
 
-                derivs_Iz[:, 8 + i, 8 + j] = E / L * coeffs_z[i, j]
-                derivs_L[:, 8 + i, 8 + j] = -E * Iz / L**2 * coeffs_z[i, j]
+                derivs_Iz[:, 8 + i, 8 + j] = E / L * coeffs_z[i, j] * self.scale_EI
+                derivs_L[:, 8 + i, 8 + j] = -E * Iz / L**2 * coeffs_z[i, j] * self.scale_EI

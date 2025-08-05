@@ -145,9 +145,7 @@ class FEMStrutBraced(om.ImplicitComponent):
         wing_strut_joint_y = self.strut_surface["wing_strut_joint_y"]
 
         if self.include_jury:
-            wing_jury_joint_type = self.jury_surface["wing_jury_joint_type"]
             wing_jury_joint_y = self.jury_surface["wing_jury_joint_y"]
-            strut_jury_joint_type = self.jury_surface["strut_jury_joint_type"]
             strut_jury_joint_y = self.jury_surface["strut_jury_joint_y"]
 
         # prepare inputs
@@ -253,18 +251,14 @@ class FEMStrutBraced(om.ImplicitComponent):
             k_cols_joint_ws.append(rows)
             self.k_data_joint.append(vals)
 
-            print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
-
         # row and col indices for the entire stiffness matrix (that combines wing, strut, (jury), and joint constraints)
         self.k_cols = np.concatenate(k_cols + k_cols_joint_ws)
         self.k_rows = np.concatenate(k_rows + k_rows_joint_ws)
         self.total_size = sum(self.size) + n_con_ws   # size (num rows) of total stiffness matrix (K matrices + joint constraints)
 
-        print('wing-strut joint added, total_size', self.total_size, '\n')
-
         if self.include_jury:
             # --- wing-jury joint constraints ---
-            n_con_wj = self.n_con_wj = _get_joint_size(wing_jury_joint_type)
+            n_con_wj = self.n_con_wj = 6  # need to constrain all DOFs to avoid singularity
             self.n_con += n_con_wj
 
             # add Lagrange multipliers for joint constraints as state variables
@@ -282,7 +276,7 @@ class FEMStrutBraced(om.ImplicitComponent):
                 elif name == "jury":
                     joint_idx = 0  # jury index starts from 0 at the wing-jury joint
                 print(f'Wing-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
-                rows, cols = _joint_rows_cols(wing_jury_joint_type, surface, joint_idx)
+                rows, cols = _joint_rows_cols("rigid", surface, joint_idx)
                 if i == 0:
                     vals = np.ones(n_con_wj) * 1e9
                 else:
@@ -297,8 +291,6 @@ class FEMStrutBraced(om.ImplicitComponent):
                 if name == "jury":
                     cols += self.size[0] + self.size[1]
 
-                print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
-
                 k_rows_joint_wj.append(rows)
                 k_cols_joint_wj.append(cols)
                 self.k_data_joint.append(vals)
@@ -311,10 +303,8 @@ class FEMStrutBraced(om.ImplicitComponent):
             self.k_rows = np.concatenate((self.k_rows, np.concatenate(k_rows_joint_wj)))
             self.total_size += n_con_wj
 
-            print('wing-jury joint added, total_size', self.total_size, '\n')
-
             # --- strut-jury joint constraints ---
-            n_con_sj = self.n_con_sj = _get_joint_size(strut_jury_joint_type)
+            n_con_sj = self.n_con_sj = 6
             self.n_con += n_con_sj
 
             # add Lagrange multipliers for joint constraints as state variables
@@ -332,7 +322,7 @@ class FEMStrutBraced(om.ImplicitComponent):
                 elif name == "jury":
                     joint_idx = surface["mesh"].shape[1] - 1  # last index of jury surface
                 print(f'Strut-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
-                rows, cols = _joint_rows_cols(strut_jury_joint_type, surface, joint_idx)
+                rows, cols = _joint_rows_cols("rigid", surface, joint_idx)
                 if i == 0:
                     vals = np.ones(n_con_sj) * 1e9
                 else:
@@ -356,14 +346,10 @@ class FEMStrutBraced(om.ImplicitComponent):
                 k_cols_joint_sj.append(rows)
                 self.k_data_joint.append(vals)
 
-                print(f'name = {name}, rows = {rows}, cols = {cols}, vals = {vals}')
-
             # row and col indices for the entire stiffness matrix
             self.k_cols = np.concatenate((self.k_cols, np.concatenate(k_cols_joint_sj)))
             self.k_rows = np.concatenate((self.k_rows, np.concatenate(k_rows_joint_sj)))
             self.total_size += n_con_sj
-
-            print('strut-jury joint added, total_size', self.total_size, '\n')
 
     def apply_nonlinear(self, inputs, outputs, residuals):
         """
@@ -411,16 +397,9 @@ class FEMStrutBraced(om.ImplicitComponent):
         # lu factorization for use with solve_linear
         K = self.assemble_CSC_K(inputs)
 
-        # Print the matrix K in a nicely formatted way
-        print('K (dense):')
-        print(K.toarray())
-
         self._lup = splu(K)
         force = np.concatenate([inputs[f"forces_{name}"] for name in self.surface_names])
         rhs = np.concatenate([force, np.zeros(self.n_con)])
-
-        print('\nrhs shape', rhs.shape)
-        print('K shape', K.shape)
 
         u = self._lup.solve(rhs)
 
