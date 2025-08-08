@@ -146,8 +146,8 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
     ----------
     nodes[ny, 3] : numpy array
         FEM node coordinates.
-    joint_load[3] : numpy array
-        Force vector applied to the strut at the joint.
+    joint_load : numpy array or float
+        Force vector applied to the strut at the joint. If `joint_load_type` is `vector`, this is a 3-element vector. If `joint_load_type` is `scaler`, this is a scalar tensile force.
     Iz[ny-1] : numpy array
         Moment of inertia of the strut about the z-axis.
 
@@ -160,14 +160,20 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("ny", desc="number of nodes in the strut")
         self.options.declare("rho", types=float, default=100.0, desc="KS aggregation smoothness parameter")
+        self.options.declare("joint_load_type", types=str, default="vector", desc="type of joint load, either `vector` or `scaler`. If scaler, this should be the axial tension force")
 
     def setup(self):
-        surface = self.options["surface"]
-        ny = surface["mesh"].shape[1]
+        ny = self.options["ny"]
 
         self.add_input("nodes", shape=(ny, 3), units="m", desc="FEM node coordinates")
-        self.add_input("joint_load", shape=3, desc="load vector applied to the strut at the joint")
+        if self.options["joint_load_type"] == "vector":
+            self.add_input("joint_load", shape=3, desc="load vector applied to the strut at the joint")
+        elif self.options["joint_load_type"] == "scaler":
+            self.add_input("joint_load", shape=1, desc="tension force applied to the strut at the joint")
+        else:
+            raise ValueError(f"Invalid joint load type: {self.options['joint_load_type']}")
         self.add_input("Iz", shape=(ny - 1), units="m**4")  # use Iz because Iz < Iy
 
         self.add_output("failure_column_buckling", val=0.0, desc="Euler column buckling failure metric, should be <= 0")
@@ -192,10 +198,13 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
         strut_len = np.linalg.norm(nodes[0, :] - nodes[-1, :]) * column_length_factor
 
         # compression load
-        strut_direction = (nodes[-1, :] - nodes[0, :])
-        strut_direction /= np.linalg.norm(strut_direction)  # unit magniture
-        # multiply by 1e9 to make the units to N (FEM normalizes this by 1e9)
-        comp_load = np.dot(joint_load, strut_direction) * 1e9
+        if self.options["joint_load_type"] == "vector":
+            strut_direction = (nodes[-1, :] - nodes[0, :])
+            strut_direction /= np.linalg.norm(strut_direction)  # unit magniture
+            # multiply by 1e9 to make the units to N (FEM normalizes this by 1e9)
+            comp_load = np.dot(joint_load, strut_direction) * 1e9
+        elif self.options["joint_load_type"] == "scaler":
+            comp_load = -joint_load  # flip sign to make compression positive
         
         # critical load with safety factor of 1.5
         sf = 1.5

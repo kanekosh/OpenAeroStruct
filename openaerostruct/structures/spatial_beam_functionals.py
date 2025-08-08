@@ -8,7 +8,7 @@ from openaerostruct.structures.vonmises_wingbox import VonMisesWingbox
 from openaerostruct.structures.non_intersecting_thickness import NonIntersectingThickness
 from openaerostruct.structures.failure_exact import FailureExact
 from openaerostruct.structures.failure_ks import FailureKS
-from openaerostruct.structures.failure_buckling_ks import PanelLocalBucklingFailureKS, EulerColumnBucklingFailureKS
+from openaerostruct.structures.failure_buckling_ks import PanelLocalBucklingFailureKS
 
 
 class SpatialBeamFunctionals(om.Group):
@@ -89,12 +89,3 @@ class SpatialBeamFunctionals(om.Group):
             self.connect("vonmises.lower_skin_comp_stress", "local_buckling.lower_skin_comp_stress")
             self.connect("vonmises.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
             self.connect("vonmises.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")
-
-        # global Euler column buckling
-        if "column_buckling" in surface and surface["column_buckling"]:
-            self.add_subsystem(
-                "column_buckling",
-                EulerColumnBucklingFailureKS(surface=surface),
-                promotes_inputs=["nodes", "joint_load", "Iz"],
-                promotes_outputs=["failure_column_buckling"]
-            )

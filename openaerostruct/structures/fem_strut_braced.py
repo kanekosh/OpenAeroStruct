@@ -23,13 +23,13 @@ def _get_joint_size(joint_type):
         raise ValueError("Joint type must be either 'pin' or 'rigid'.")
     return n_con
 
-def _get_joint_idx_from_y(surface, joint_y):
+def get_joint_idx_from_y(surface, joint_y):
     """
     Return the joint index from the joint y (spanwise) coordinate.
     This is only good for wing or strut, but do not use for jury (or any vertical surface)
     """
     if surface["name"] == "jury":
-        raise RuntimeError("Cannot use _get_joint_idx_from_y for jury surface.")
+        raise RuntimeError("Cannot use get_joint_idx_from_y for jury surface.")
     joint_idx = np.argmin((np.abs(surface["mesh"][0, :, 1]) - abs(joint_y))**2)
     return joint_idx
 
@@ -127,6 +127,7 @@ class FEMStrutBraced(om.ImplicitComponent):
             self.wing_surface = self.surfaces[0]
             self.strut_surface = self.surfaces[1]
             self.jury_surface = self.surfaces[2]
+            raise NotImplementedError("Jury strut FEM model is still under debugging")
         else:
             raise ValueError("FEMStrutBraced component requires exactly two or three surfaces (wing, strut, and/or jury).")
 
@@ -226,7 +227,7 @@ class FEMStrutBraced(om.ImplicitComponent):
             name = surface["name"]
 
             # partials of joint constraint residuals w.r.t. displacement
-            joint_idx = _get_joint_idx_from_y(surface, wing_strut_joint_y)
+            joint_idx = get_joint_idx_from_y(surface, wing_strut_joint_y)
             print(f'Wing-strut joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
             rows, cols = _joint_rows_cols(wing_strut_joint_type, surface, joint_idx)
             if i == 0:
@@ -272,7 +273,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
                 # partials of joint constraint residuals w.r.t. displacement
                 if name == "wing":
-                    joint_idx = _get_joint_idx_from_y(surface, wing_jury_joint_y)
+                    joint_idx = get_joint_idx_from_y(surface, wing_jury_joint_y)
                 elif name == "jury":
                     joint_idx = 0  # jury index starts from 0 at the wing-jury joint
                 print(f'Wing-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
@@ -318,7 +319,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
                 # partials of joint constraint residuals w.r.t. displacement
                 if name == "strut":
-                    joint_idx = _get_joint_idx_from_y(surface, strut_jury_joint_y)
+                    joint_idx = get_joint_idx_from_y(surface, strut_jury_joint_y)
                 elif name == "jury":
                     joint_idx = surface["mesh"].shape[1] - 1  # last index of jury surface
                 print(f'Strut-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
@@ -426,7 +427,9 @@ class FEMStrutBraced(om.ImplicitComponent):
         J : Jacobian
             sub-jac components written to jacobian[output_name, input_name]
         """
-        raise RuntimeError("Not implemented")
+        if self.include_jury:
+            raise RuntimeError("Not implemented for jury strut")
+
         vec_size = self.options["vec_size"]
 
         name0, name1 = self.surface_names[0], self.surface_names[1]
@@ -462,7 +465,9 @@ class FEMStrutBraced(om.ImplicitComponent):
         mode : str
             either 'fwd' or 'rev'
         """
-        raise RuntimeError("Not implemented")
+        if self.include_jury:
+            raise RuntimeError("Not implemented for jury strut")
+
         vec_size = self.options["vec_size"]
         size0, size1 = self.size[0], self.size[1]
         name0, name1 = self.surface_names[0], self.surface_names[1]

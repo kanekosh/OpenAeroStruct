@@ -1,8 +1,11 @@
 from openaerostruct.aerodynamics.geometry import VLMGeometry
 from openaerostruct.geometry.geometry_group import Geometry
 from openaerostruct.transfer.displacement_transfer_group import DisplacementTransferGroup
+from openaerostruct.structures.failure_buckling_ks import EulerColumnBucklingFailureKS
+from openaerostruct.structures.fem_strut_braced import get_joint_idx_from_y
 from openaerostruct.structures.spatial_beam_setup import SpatialBeamSetup
 from openaerostruct.structures.spatial_beam_states import SpatialBeamStates
+from openaerostruct.structures.spatial_beam_states_truss_braced import SpatialBeamStatesTrussBraced
 from openaerostruct.aerodynamics.functionals import VLMFunctionals
 from openaerostruct.structures.spatial_beam_functionals import SpatialBeamFunctionals
 from openaerostruct.functionals.total_performance import TotalPerformance
@@ -190,9 +193,6 @@ class CoupledPerformance(om.Group):
             if "panel_buckling" in surface and surface["panel_buckling"]:
                 promotes_inputs += ["skin_thickness", "t_over_c", "fem_chords"]
                 promotes_outputs += ["failure_local_buckling"]
-            if "column_buckling" in surface and surface["column_buckling"]:
-                promotes_inputs += ["Iz", "joint_load"]
-                promotes_outputs += ["failure_column_buckling"]
 
             self.add_subsystem(
                 "struct_funcs",
@@ -235,6 +235,17 @@ class AerostructPoint(om.Group):
                     pass
                 else:
                     raise ValueError("surfaces must be in order of [wing_surface, strut_surface, (optional) jury_surface]")
+
+                # add coupled FEM group
+                coupled.add_subsystem(
+                    "FEM_SBW",
+                    SpatialBeamStates(surface=surfaces_all, strut_braced=True),
+                    promotes_inputs=["*"],
+                    promotes_outputs=["disp_*"]
+                )
+
+                include_jury = False
+
             elif len(surfaces) == 3:
                 # wing + strut + jury
                 if surfaces[0]["name"] == "wing" and surfaces[1]["name"] == "strut" and surfaces[2]["name"] == "jury":
@@ -248,19 +259,22 @@ class AerostructPoint(om.Group):
                 surfaces[2]["root_BC_type"] = "none"
                 surfaces_all[2]["root_BC_type"] = "none"
 
-            # add coupled FEM group
-            coupled.add_subsystem(
-                "FEM_SBW",
-                SpatialBeamStates(surface=surfaces_all, strut_braced=True),
-                promotes_inputs=["*"],
-                promotes_outputs=["disp_*"]
-            )
+                # add coupled FEM group
+                coupled.add_subsystem(
+                    "FEM_SBW",
+                    SpatialBeamStatesTrussBraced(surfaces=surfaces_all, strut_braced=True),
+                    promotes_inputs=["*"],
+                    promotes_outputs=["disp_*"]
+                )
+
+                include_jury = True
+                surface_jury = surfaces[2]
         else:
             surfaces_all = surfaces
             surfaces_AS = surfaces
 
         # connections for all structural components
-        for surface in surfaces_all:
+        for surface in surfaces_AS:
             name = surface["name"]
 
             # connect displacements to the performance group
@@ -274,7 +288,13 @@ class AerostructPoint(om.Group):
             # Connect the output of the loads component with the FEM
             # displacement parameter. This links the coupling within the coupled
             # group that necessitates the subgroup solver.
-            loads_target = f"forces_{name}.loads" if self.options["strut_braced"] else f"{name}.loads"
+            if self.options["strut_braced"] and include_jury:
+                loads_target = f"external_loads_{name}.loads"
+            elif self.options["strut_braced"]:
+                loads_target = f"forces_{name}.loads"
+            else:
+                loads_target = f"{name}.loads"
+
             coupled.connect(name + "_loads.loads", loads_target)
 
             # Connect displacement from FEM to transfer model. This is automatically done by promotion for non-SBW cases
@@ -404,12 +424,71 @@ class AerostructPoint(om.Group):
                 name + "_perf", perf_group, promotes_inputs=["rho", "v", "alpha", "beta", "re", "Mach_number"]
             )
 
+            # column buckling failure for strut
+            if "column_buckling" in surface and surface["column_buckling"]:
+                if include_jury:
+                    ny = surface["mesh"].shape[1]
+                    passthru = om.ExecComp(
+                        ["nodes_all = nodes", "Iz_all = Iz"],
+                        nodes_all={'units': 'm', 'shape': (ny, 3)},
+                        nodes={'units': 'm', 'shape': (ny, 3)},
+                        Iz_all={'units': 'm**4', 'shape': ny - 1},
+                        Iz={'units': 'm**4', 'shape': ny - 1}
+                    )
+                    perf_group.add_subsystem("passthru", passthru, promotes_inputs=["nodes", "Iz"])
+
+                    # strut-jury joint index
+                    joint_idx = get_joint_idx_from_y(surface, surface_jury["strut_jury_joint_y"])
+                    ny_outer = joint_idx + 1  # number of nodes from wing to strut-jury joint, including the joint node
+                    ny_inner = ny - joint_idx  # number of nodes from strut-jury joint to root, including the joint node
+
+                    # column buckling for outer strut segment. Use strut-wing joint load as a compression load
+                    perf_group.add_subsystem(
+                        "column_buckling_outer",
+                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_outer),
+                        promotes_inputs=[("joint_load", "joint_load_strut_wing")],
+                        promotes_outputs=[("failure_column_buckling", "failure_column_buckling_outer")]
+                    )
+                    perf_group.connect("passthru.nodes_all", "column_buckling_outer.nodes", src_indices=om.slicer[0:ny_outer, :])
+                    perf_group.connect("passthru.Iz_all", "column_buckling_outer.Iz", src_indices=om.slicer[0:ny_outer - 1])
+                    
+                    # column buckling for inner strut segment. Use strut-root reaction force as a compression load
+                    perf_group.add_subsystem(
+                        "column_buckling_inner",
+                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_inner),
+                        promotes_inputs=[("joint_load", "reaction_load_strut_root")],
+                        promotes_outputs=[("failure_column_buckling", "failure_column_buckling_inner")]
+                    )
+                    perf_group.connect("passthru.nodes_all", "column_buckling_inner.nodes", src_indices=om.slicer[joint_idx:, :])
+                    perf_group.connect("passthru.Iz_all", "column_buckling_inner.Iz", src_indices=om.slicer[joint_idx:])
+                else:
+                    # column buckling for the entire strut. Use strut-wing joint load as a compression load
+                    ny = surface["mesh"].shape[1]
+                    perf_group.add_subsystem(
+                        "column_buckling",
+                        EulerColumnBucklingFailureKS(surface=surface, ny=ny, joint_load_type="vector"),
+                        promotes_inputs=["nodes", "Iz", ("joint_load", "joint_load_strut_wing")],
+                        promotes_outputs=["failure_column_buckling"]
+                    )
+
         # post-AS-analysis computations for structure-only components
+        # for surface in [s for s in surfaces_all if s not in surfaces_AS]:
+        #     self.add_subsystem(
+        #         f"{surface["name"]}_perf",
+        #         SpatialBeamFunctionals(surface=surface),
+        #     )
+
+        # column buckling failure for jury strut
         for surface in [s for s in surfaces_all if s not in surfaces_AS]:
-            self.add_subsystem(
-                f"{surface["name"]}_perf",
-                SpatialBeamFunctionals(surface=surface),
+            ny = surface["mesh"].shape[1]
+            perf_group = self.add_subsystem(f"{surface["name"]}_perf", om.Group())
+            perf_group.add_subsystem(
+                "column_buckling",
+                EulerColumnBucklingFailureKS(surface=surface, ny=ny, joint_load_type="scaler"),
+                promotes_inputs=["nodes", "Iz", "joint_load"],
+                promotes_outputs=["failure_column_buckling"]
             )
+            self.connect("coupled.FEM_SBW.joint_axias_force", f"{surface["name"]}_perf.joint_load")
 
         # Add functionals to evaluate performance of the system.
         # Note that only the interesting results are promoted here; not all

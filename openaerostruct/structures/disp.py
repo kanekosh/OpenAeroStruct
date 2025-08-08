@@ -47,12 +47,15 @@ class Disp(om.ExplicitComponent):
         self.add_input("disp_aug", val=np.zeros((self.ny * 6 + dof_of_boundary)), units="m")
 
         self.add_output("disp", val=np.zeros((self.ny, 6)), units="m")
+        self.add_output("boundary_Lag", val=np.zeros(dof_of_boundary))  # Lagrange multipliers for boundary conditions
 
         n = self.ny * 6
         arange = np.arange((n))
         self.declare_partials("disp", "disp_aug", val=1.0, rows=arange, cols=arange)
+        self.declare_partials("boundary_Lag", "disp_aug", val=1.0, rows=np.arange(dof_of_boundary), cols=np.arange(dof_of_boundary) + n)
 
     def compute(self, inputs, outputs):
         # Obtain the relevant portions of disp_aug and store the reshaped
         # displacements in disp
         outputs["disp"] = inputs["disp_aug"][:self.ny * 6].reshape((-1, 6))
+        outputs["boundary_Lag"] = inputs["disp_aug"][self.ny * 6:] * 1.0
