@@ -9,14 +9,15 @@ class Disp(om.ExplicitComponent):
     a 2D array so we can more easily use the results.
 
     The solution to the linear system has meaingless entires due to the
-    constraints on the FEM model. The displacements from this portion of
+    boundary conditions on the FEM model. The "displacements" from this portion of
     the linear system are not needed, so we select only the relevant
     portion of the displacements for further calculations.
 
     Parameters
     ----------
     disp_aug[6*(ny+1)] : numpy array
-        Augmented displacement array. Obtained by solving the system
+        Augmented displacement array with additional 6 Lagrange multipliers 
+        for clamp boundary conditions at the end. Obtained by solving the system
         K * disp_aug = forces, where forces is a flattened version of loads.
 
     Returns
@@ -34,14 +35,27 @@ class Disp(om.ExplicitComponent):
 
         self.ny = surface["mesh"].shape[1]
 
-        self.add_input("disp_aug", val=np.zeros(((self.ny + 1) * 6)), units="m")
+        # shape of disp_aug depends on the root boundary condition type
+        if "root_BC_type" in surface and surface["root_BC_type"] == "ball":
+            dof_of_boundary = 3  # translation only
+        elif "root_BC_type" in surface and surface["root_BC_type"] == "pin":
+            dof_of_boundary = 5  # translation and rotation in y and z
+        elif "root_BC_type" in surface and surface["root_BC_type"] == "none":
+            dof_of_boundary = 0  # no boundary conditions (for jury strut)
+        else:
+            dof_of_boundary = 6  # translation and rotation
+        self.add_input("disp_aug", val=np.zeros((self.ny * 6 + dof_of_boundary)), units="m")
+
         self.add_output("disp", val=np.zeros((self.ny, 6)), units="m")
+        self.add_output("boundary_Lag", val=np.zeros(dof_of_boundary))  # Lagrange multipliers for boundary conditions
 
         n = self.ny * 6
         arange = np.arange((n))
         self.declare_partials("disp", "disp_aug", val=1.0, rows=arange, cols=arange)
+        self.declare_partials("boundary_Lag", "disp_aug", val=1.0, rows=np.arange(dof_of_boundary), cols=np.arange(dof_of_boundary) + n)
 
     def compute(self, inputs, outputs):
         # Obtain the relevant portions of disp_aug and store the reshaped
         # displacements in disp
-        outputs["disp"] = inputs["disp_aug"][:-6].reshape((-1, 6))
+        outputs["disp"] = inputs["disp_aug"][:self.ny * 6].reshape((-1, 6))
+        outputs["boundary_Lag"] = inputs["disp_aug"][self.ny * 6:] * 1.0
