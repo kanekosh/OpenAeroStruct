@@ -474,14 +474,14 @@ class AerostructPoint(om.Group):
         # post-AS-analysis computations for structure-only components
         # for surface in [s for s in surfaces_all if s not in surfaces_AS]:
         #     self.add_subsystem(
-        #         f"{surface["name"]}_perf",
+        #         surface["name"] + "_perf",
         #         SpatialBeamFunctionals(surface=surface),
         #     )
 
         # column buckling failure for jury strut
         for surface in [s for s in surfaces_all if s not in surfaces_AS]:
             ny = surface["mesh"].shape[1]
-            perf_group = self.add_subsystem(f"{surface["name"]}_perf", om.Group())
+            perf_group = self.add_subsystem(surface["name"] + "_perf", om.Group())
             perf_group.add_subsystem(
                 "column_buckling",
                 EulerColumnBucklingFailureKS(surface=surface, ny=ny, joint_load_type="scaler"),
