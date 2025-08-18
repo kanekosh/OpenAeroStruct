@@ -40,6 +40,9 @@ class TotalPerformance(om.Group):
                     raise ValueError("surfaces must be in order of [wing_surface, strut_surface, (optional) jury_surface]")
             else:
                 raise ValueError("surfaces must be in order of [wing_surface, strut_surface, (optional) jury_surface]")
+        else:
+            surfaces_all = surfaces
+            surfaces_AS = surfaces
 
         if not self.options["user_specified_Sref"]:
             self.add_subsystem(
