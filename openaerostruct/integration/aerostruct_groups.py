@@ -488,7 +488,7 @@ class AerostructPoint(om.Group):
                 promotes_inputs=["nodes", "Iz", "joint_load"],
                 promotes_outputs=["failure_column_buckling"]
             )
-            self.connect("coupled.FEM_SBW.joint_axias_force", f"{surface["name"]}_perf.joint_load")
+            self.connect("coupled.FEM_SBW.joint_axias_force", surface["name"] + "_perf.joint_load")
 
         # Add functionals to evaluate performance of the system.
         # Note that only the interesting results are promoted here; not all
