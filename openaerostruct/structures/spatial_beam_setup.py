@@ -12,11 +12,14 @@ class SpatialBeamSetup(om.Group):
 
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surface = self.options["surface"]
 
-        self.add_subsystem("nodes", ComputeNodes(surface=surface), promotes_inputs=["mesh"], promotes_outputs=["nodes"])
+        if not (self.options["strut_braced"] and surface["name"] == "jury"):
+            # skip node computation for jury strut because no VLM mesh exists for jury strut
+            self.add_subsystem("nodes", ComputeNodes(surface=surface), promotes_inputs=["mesh"], promotes_outputs=["nodes"])
 
         self.add_subsystem(
             "assembly",

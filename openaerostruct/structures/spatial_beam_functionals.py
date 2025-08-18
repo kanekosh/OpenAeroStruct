@@ -8,6 +8,7 @@ from openaerostruct.structures.vonmises_wingbox import VonMisesWingbox
 from openaerostruct.structures.non_intersecting_thickness import NonIntersectingThickness
 from openaerostruct.structures.failure_exact import FailureExact
 from openaerostruct.structures.failure_ks import FailureKS
+from openaerostruct.structures.failure_buckling_ks import PanelLocalBucklingFailureKS
 
 
 class SpatialBeamFunctionals(om.Group):
@@ -74,3 +75,17 @@ class SpatialBeamFunctionals(om.Group):
             self.add_subsystem(
                 "failure", FailureKS(surface=surface), promotes_inputs=["vonmises"], promotes_outputs=["failure"]
             )
+
+        # compute panel local buckling failure
+        if "panel_buckling" in surface and surface["panel_buckling"]:
+            # skin panel buckling and spar shear buckling
+            self.add_subsystem(
+                "local_buckling",
+                PanelLocalBucklingFailureKS(surface=surface),
+                promotes_inputs=["skin_thickness", "spar_thickness", "t_over_c", "fem_chords"],
+                promotes_outputs=["failure_local_buckling"]
+            )
+            self.connect("vonmises.upper_skin_comp_stress", "local_buckling.upper_skin_comp_stress")
+            self.connect("vonmises.lower_skin_comp_stress", "local_buckling.lower_skin_comp_stress")
+            self.connect("vonmises.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
+            self.connect("vonmises.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")
