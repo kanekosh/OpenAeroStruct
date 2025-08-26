@@ -163,6 +163,7 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
         self.options.declare("ny", desc="number of nodes in the strut")
         self.options.declare("rho", types=float, default=100.0, desc="KS aggregation smoothness parameter")
         self.options.declare("joint_load_type", types=str, default="vector", desc="type of joint load, either `vector` or `scaler`. If scaler, this should be the axial tension force")
+        self.options.declare("column_length_factor", types=float, default=1.0, desc="factor to multiply the strut length to account for e.g. mount")
 
     def setup(self):
         ny = self.options["ny"]
@@ -194,7 +195,7 @@ class EulerColumnBucklingFailureKS(om.ExplicitComponent):
         # strut length
         # The length we compute from the FEM nodes are longer than the actual length because e.g. we don't model fuselage so the strut root is at the symmetry plane.
         # To account for this, apply a factor < 1 to the strut length.
-        column_length_factor = self.options["surface"]["column_length_factor"]
+        column_length_factor = self.options["column_length_factor"]
         strut_len = np.linalg.norm(nodes[0, :] - nodes[-1, :]) * column_length_factor
 
         # compression load

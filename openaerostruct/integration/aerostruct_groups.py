@@ -445,7 +445,7 @@ class AerostructPoint(om.Group):
                     # column buckling for outer strut segment. Use strut-wing joint load as a compression load
                     perf_group.add_subsystem(
                         "column_buckling_outer",
-                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_outer),
+                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_outer, column_length_factor=surface["column_length_factor_outer"]),
                         promotes_inputs=[("joint_load", "joint_load_strut_wing")],
                         promotes_outputs=[("failure_column_buckling", "failure_column_buckling_outer")]
                     )
@@ -455,7 +455,7 @@ class AerostructPoint(om.Group):
                     # column buckling for inner strut segment. Use strut-root reaction force as a compression load
                     perf_group.add_subsystem(
                         "column_buckling_inner",
-                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_inner),
+                        EulerColumnBucklingFailureKS(surface=surface, joint_load_type="vector", ny=ny_inner, column_length_factor=surface["column_length_factor_inner"]),
                         promotes_inputs=[("joint_load", "reaction_load_strut_root")],
                         promotes_outputs=[("failure_column_buckling", "failure_column_buckling_inner")]
                     )
@@ -466,7 +466,7 @@ class AerostructPoint(om.Group):
                     ny = surface["mesh"].shape[1]
                     perf_group.add_subsystem(
                         "column_buckling",
-                        EulerColumnBucklingFailureKS(surface=surface, ny=ny, joint_load_type="vector"),
+                        EulerColumnBucklingFailureKS(surface=surface, ny=ny, joint_load_type="vector", column_length_factor=surface["column_length_factor"]),
                         promotes_inputs=["nodes", "Iz", ("joint_load", "joint_load_strut_wing")],
                         promotes_outputs=["failure_column_buckling"]
                     )
