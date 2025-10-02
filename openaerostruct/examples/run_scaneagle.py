@@ -11,7 +11,7 @@
 
 import numpy as np
 
-from openaerostruct.geometry.utils import generate_mesh
+from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 
@@ -97,6 +97,7 @@ surface = {
     "E": 85.0e9,
     "G": 25.0e9,
     "yield": 350.0e6,
+    "safety_factor": 1,
     "mrho": 1.6e3,
     "fem_origin": 0.35,  # normalized chordwise location of the spar
     "wing_weight_ratio": 1.0,  # multiplicative factor on the computed structural weight

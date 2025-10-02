@@ -8,7 +8,8 @@ from openaerostruct.structures.fuel_vol import WingboxFuelVol
 
 class SpatialBeamSetup(om.Group):
     """Group that sets up the spatial beam components and assembles the
-    stiffness matrix."""
+    stiffness matrix.
+    """
 
     def initialize(self):
         self.options.declare("surface", types=dict)
@@ -42,7 +43,7 @@ class SpatialBeamSetup(om.Group):
             promotes_outputs=["cg_location"],
         )
 
-        if surface["fem_model_type"] == "wingbox":
+        if "wingbox" in surface["fem_model_type"].lower():
             self.add_subsystem(
                 "fuel_vol",
                 WingboxFuelVol(surface=surface),

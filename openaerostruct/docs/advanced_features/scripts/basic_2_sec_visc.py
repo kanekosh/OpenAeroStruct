@@ -1,6 +1,7 @@
 """Optimizes the section chord distribution of a two section symmetrical wing with thickenss and viscous effects accounted
 for. This examples is similar to the inviscid case but explains how to connect the unified t/c B-spline to the OAS performance
-component for correct viscous drag computation. This example is referenced as part of the multi-section tutorial."""
+component for correct viscous drag computation. This example is referenced as part of the multi-section tutorial.
+"""
 
 import numpy as np
 
@@ -8,9 +9,9 @@ import openmdao.api as om
 
 from openaerostruct.geometry.geometry_group import MultiSecGeometry
 from openaerostruct.aerodynamics.aero_groups import AeroPoint
-from openaerostruct.geometry.geometry_group import build_sections
-from openaerostruct.geometry.geometry_unification import unify_mesh
-from openaerostruct.geometry.multi_unified_bspline_utils import build_multi_spline, connect_multi_spline
+from openaerostruct.geometry.utils import build_section_dicts
+from openaerostruct.geometry.utils import unify_mesh
+from openaerostruct.geometry.utils import build_multi_spline, connect_multi_spline
 import matplotlib.pyplot as plt
 
 
@@ -86,7 +87,7 @@ indep_var_comp.add_output("cg", val=np.zeros((3)), units="m")
 prob.model.add_subsystem("prob_vars", indep_var_comp, promotes=["*"])
 
 # Generate the sections and unified mesh here. It's needed to join the sections by construction.
-section_surfaces = build_sections(surface)
+section_surfaces = build_section_dicts(surface)
 uniMesh = unify_mesh(section_surfaces)
 surface["mesh"] = uniMesh
 
@@ -167,8 +168,9 @@ mesh2 = prob.get_val("surface.sec1.mesh", units="m")
 meshUni = prob.get_val(name + "." + unification_name + "." + name + "_uni_mesh")
 
 
+# Plot the results
 def plot_meshes(meshes):
-    """this function plots to plot the mesh"""
+    """This function plots to plot the mesh"""
     plt.figure(figsize=(8, 4))
     for i, mesh in enumerate(meshes):
         mesh_x = mesh[:, :, 0]

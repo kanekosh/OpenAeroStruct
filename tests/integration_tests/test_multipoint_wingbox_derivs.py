@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from openaerostruct.geometry.utils import generate_mesh
+from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 
@@ -276,7 +276,6 @@ class Test(unittest.TestCase):
             "data_x_lower": lower_x,
             "data_y_upper": upper_y,
             "data_y_lower": lower_y,
-            "strength_factor_for_upper_skin": 1.0,
             # Aerodynamic performance of the lifting surface at
             # an angle of attack of 0 (alpha=0).
             # These CL0 and CD0 values are added to the CL and CD
@@ -296,7 +295,8 @@ class Test(unittest.TestCase):
             # Structural values are based on aluminum 7075
             "E": 73.1e9,  # [Pa] Young's modulus
             "G": (73.1e9 / 2 / 1.33),  # [Pa] shear modulus (calculated using E and the Poisson's ratio here)
-            "yield": (420.0e6 / 1.5),  # [Pa] allowable yield stress
+            "yield": 420.0e6,  # [Pa] yield stress
+            "safety_factor": 1.5,  # safety factor
             "mrho": 2.78e3,  # [kg/m^3] material density
             "strength_factor_for_upper_skin": 1.0,  # the yield stress is multiplied by this factor for the upper skin
             # 'fem_origin' : 0.35,    # normalized chordwise location of the spar

@@ -2,7 +2,7 @@ import openmdao.api as om
 
 from openmdao.utils.assert_utils import assert_check_partials
 import numpy as np
-from openaerostruct.geometry.utils import generate_mesh
+from openaerostruct.meshing.mesh_generator import generate_mesh
 
 
 def assert_opt_successful(test, optResult):
@@ -153,7 +153,8 @@ def get_default_surfaces():
         # Structural values are based on aluminum 7075
         "E": 70.0e9,  # [Pa] Young's modulus of the spar
         "G": 30.0e9,  # [Pa] shear modulus of the spar
-        "yield": 500.0e6 / 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
+        "yield": 500.0e6,
+        "safety_factor": 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
         "mrho": 3.0e3,  # [kg/m^3] material density
         "fem_origin": 0.35,  # normalized chordwise location of the spar
         "wing_weight_ratio": 2.0,
@@ -204,7 +205,8 @@ def get_ground_effect_surfaces():
         # Structural values are based on aluminum 7075
         "E": 70.0e9,  # [Pa] Young's modulus of the spar
         "G": 30.0e9,  # [Pa] shear modulus of the spar
-        "yield": 500.0e6 / 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
+        "yield": 500.0e6,
+        "safety_factor": 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
         "mrho": 3.0e3,  # [kg/m^3] material density
         "fem_origin": 0.35,  # normalized chordwise location of the spar
         "wing_weight_ratio": 2.0,
@@ -231,6 +233,11 @@ def get_three_section_surface(sym=True, visc=False):
     # Set-up B-splines for each section. Done here since this information will be needed multiple times.
     sec_chord_cp = [np.ones(2), np.ones(2), np.ones(2)]
 
+    if sym:
+        span = [0.5, 0.5, 0.5]
+    else:
+        span = [1.0, 1.0, 1.0]
+
     surface_dict = {
         # Wing definition
         # Basic surface parameters
@@ -243,11 +250,12 @@ def get_three_section_surface(sym=True, visc=False):
         # can be 'wetted' or 'projected'
         # Geometry Parameters
         "taper": [1.0, 1.0, 1.0],  # Wing taper for each section
-        "span": [1.0, 1.0, 1.0],  # Wing span for each section
+        "span": span,  # Wing span for each section
         "sweep": [0.0, 0, 0.0],  # Wing sweep for each section
         "dihedral": [0.0, 0.0, 0.0],
         "twist_cp": [np.zeros(2), np.zeros(2), np.zeros(2)],
         "chord_cp": sec_chord_cp,
+        "ref_axis_pos": 0.25,
         "root_chord": 1.0,  # Wing root chord for each section
         # Mesh Parameters
         "meshes": "gen-meshes",  # Supply a mesh for each section or "gen-meshes" for automatic mesh generation
@@ -286,6 +294,11 @@ def get_two_section_surface(sym=True, visc=False):
     # Set-up B-splines for each section. Done here since this information will be needed multiple times.
     sec_chord_cp = [np.array([1.0, 1.0]), np.array([1.0, 1.0])]
 
+    if sym:
+        span = [0.5, 0.5]
+    else:
+        span = [1.0, 1.0]
+
     # Create a dictionary with info and options about the multi-section aerodynamic
     # lifting surface
     surface_dict = {
@@ -300,11 +313,12 @@ def get_two_section_surface(sym=True, visc=False):
         "root_section": 1,
         # Geometry Parameters
         "taper": [1.0, 1.0],  # Wing taper for each section
-        "span": [1.0, 1.0],  # Wing span for each section
+        "span": span,  # Wing span for each section
         "sweep": [0.0, 0.0],  # Wing sweep for each section
         "chord_cp": sec_chord_cp,
         "twist_cp": [np.zeros(2), np.zeros(2)],
         # "chord_cp": [np.ones(1),2*np.ones(1),3*np.ones(1)], #Chord B-spline control points for each section
+        "ref_axis_pos": 0.25,
         "root_chord": 1.0,  # Wing root chord for each section
         # Mesh Parameters
         "meshes": "gen-meshes",  # Supply a mesh for each section or "gen-meshes" for automatic mesh generation
@@ -336,7 +350,8 @@ def get_two_section_surface(sym=True, visc=False):
 
 def get_single_section_surface():
     """Create a dictionary with info and options about the aerodynamic
-    single section lifting surface"""
+    single section lifting surface
+    """
 
     # Create a dictionary to store options about the mesh
     mesh_dict = {
@@ -368,6 +383,7 @@ def get_single_section_surface():
         # flow, used for viscous drag
         "c_max_t": 0.303,  # chordwise location of maximum (NACA0015)
         # thickness
+        "ref_axis_pos": 0.25,
         "with_viscous": False,  # if true, compute viscous drag
         "with_wave": False,  # if true, compute wave drag
         "groundplane": False,
@@ -376,40 +392,129 @@ def get_single_section_surface():
     return surface_dict
 
 
-def assert_check_totals(totals, atol=1e-6, rtol=1e-6):
-    for of_wrt_pair in totals.keys():
-        of, wrt = of_wrt_pair
-        total_dict = totals[of_wrt_pair]
-        abs_error = total_dict["abs error"]
-        rel_error = total_dict["rel error"]
-        for i_mode, mode in enumerate(["forward", "forward_reverse", "reverse"]):
-            if rel_error[i_mode] is not None:
-                if np.abs(rel_error[i_mode]) - rtol > 0.0:
-                    err_str = (
-                        "Total deriv (mode "
-                        + mode
-                        + ") of "
-                        + of
-                        + " with respect to "
-                        + wrt
-                        + " had rel error "
-                        + str(rel_error[i_mode])
-                        + " which is greater than tol "
-                        + str(rtol)
-                    )
-                    raise ValueError(err_str)
-            if abs_error[i_mode] is not None:
-                if np.abs(abs_error[i_mode]) - atol > 0.0:
-                    err_str = (
-                        "Total deriv (mode "
-                        + mode
-                        + ") of "
-                        + of
-                        + " with respect to "
-                        + wrt
-                        + " had abs error "
-                        + str(abs_error[i_mode])
-                        + " which is greater than tol "
-                        + str(atol)
-                    )
-                    raise ValueError(err_str)
+def get_two_section_surface_AS(sym=True):
+    # Outputs a symmetric two section wing surface
+    # Set-up B-splines for each section. Done here since this information will be needed multiple times.
+    sec_twist_cp = [np.array([0.0, 0.0]), np.array([0.0, 0.0])]
+
+    if sym:
+        span = [10.0, 10.0]
+    else:
+        span = [20.0, 20.0]
+
+    # Create a dictionary with info and options about the multi-section aerodynamic
+    # lifting surface
+    surface_dict = {
+        # Wing definition
+        # Basic surface parameters
+        "name": "surface",
+        "is_multi_section": True,
+        "num_sections": 2,  # The number of sections in the multi-section surface
+        "sec_name": ["sec0", "sec1"],  # names of the individual sections
+        "symmetry": sym,  # if true, model one half of wing. reflected across the midspan of the root section
+        "S_ref_type": "wetted",  # how we compute the wing area, can be 'wetted' or 'projected'
+        "root_section": 1,
+        # Geometry Parameters
+        "taper": [1.0, 1.0],  # Wing taper for each section
+        "span": span,  # Wing span for each section
+        "sweep": [0.0, 0.0],  # Wing sweep for each section
+        "twist_cp": sec_twist_cp,
+        "t_over_c_cp": [np.array([0.15]), np.array([0.15])],
+        "root_chord": 5.0,  # Wing root chord for each section
+        # Mesh Parameters
+        "meshes": "gen-meshes",  # Supply a mesh for each section or "gen-meshes" for automatic mesh generation
+        "nx": 2,  # Number of chordwise points. Same for all sections
+        "ny": [3, 3],  # Number of spanwise points for each section
+        # Aerodynamic Parameters
+        "CL0": 0.0,  # CL of the surface at alpha=0
+        "CD0": 0.015,  # CD of the surface at alpha=0
+        # Airfoil properties for viscous drag calculation
+        "k_lam": 0.05,  # percentage of chord with laminar
+        # flow, used for viscous drag
+        # "t_over_c_cp": [np.array([0.15]),np.array([0.15])],  # thickness over chord ratio (NACA0015)
+        "c_max_t": 0.303,  # chordwise location of maximum (NACA0015)
+        # thickness
+        "with_viscous": True,  # if true, compute viscous drag
+        "with_wave": False,  # if true, compute wave drag
+        "groundplane": False,
+        # Structural
+        "fem_model_type": "tube",
+        "thickness_cp": 0.1 * np.ones(2),
+        "E": 70.0e9,  # [Pa] Young's modulus of the spar
+        "G": 30.0e9,  # [Pa] shear modulus of the spar
+        "yield": 500.0e6 / 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
+        "mrho": 3.0e3,  # [kg/m^3] material density
+        "fem_origin": 0.35,  # normalized chordwise location of the spar
+        "wing_weight_ratio": 2.0,
+        "struct_weight_relief": False,  # True to add the weight of the structure to the loads on the structure
+        "distributed_fuel_weight": False,
+        # Constraints
+        "exact_failure_constraint": False,  # if false, use KS function
+    }
+
+    if sym is False:
+        surface_dict["root_section"] = 1
+
+    return surface_dict, sec_twist_cp
+
+
+def get_single_section_surface_AS():
+    """Create a dictionary with info and options about the aerodynamic
+    single section lifting surface
+    """
+
+    # Create a dictionary to store options about the mesh
+    mesh_dict = {
+        "num_y": 9,
+        "num_x": 2,
+        "wing_type": "rect",
+        "span": 40.0,
+        "root_chord": 5.0,
+        "symmetry": True,
+        "span_cos_spacing": 0.0,
+        "chord_cos_spacing": 0.0,
+    }
+
+    # Generate the aerodynamic mesh based on the previous dictionary
+    mesh = generate_mesh(mesh_dict)
+    surface_dict = {
+        # Wing definition
+        "name": "surface",  # name of the surface
+        "symmetry": True,  # if true, model one half of wing
+        # reflected across the plane y = 0
+        "S_ref_type": "wetted",  # how we compute the wing area,
+        # can be 'wetted' or 'projected'
+        "fem_model_type": "tube",
+        "thickness_cp": np.ones((2)) * 0.1,
+        "twist_cp": np.ones((3)),
+        "mesh": mesh,
+        # Aerodynamic performance of the lifting surface at
+        # an angle of attack of 0 (alpha=0).
+        # These CL0 and CD0 values are added to the CL and CD
+        # obtained from aerodynamic analysis of the surface to get
+        # the total CL and CD.
+        # These CL0 and CD0 values do not vary wrt alpha.
+        "CL0": 0.0,  # CL of the surface at alpha=0
+        "CD0": 0.015,  # CD of the surface at alpha=0
+        # Airfoil properties for viscous drag calculation
+        "k_lam": 0.05,  # percentage of chord with laminar
+        # flow, used for viscous drag
+        "t_over_c_cp": np.array([0.15]),  # thickness over chord ratio (NACA0015)
+        "c_max_t": 0.303,  # chordwise location of maximum (NACA0015)
+        # thickness
+        "with_viscous": True,
+        "with_wave": False,  # if true, compute wave drag
+        # Structural values are based on aluminum 7075
+        "E": 70.0e9,  # [Pa] Young's modulus of the spar
+        "G": 30.0e9,  # [Pa] shear modulus of the spar
+        "yield": 500.0e6 / 2.5,  # [Pa] yield stress divided by 2.5 for limiting case
+        "mrho": 3.0e3,  # [kg/m^3] material density
+        "fem_origin": 0.35,  # normalized chordwise location of the spar
+        "wing_weight_ratio": 2.0,
+        "struct_weight_relief": False,  # True to add the weight of the structure to the loads on the structure
+        "distributed_fuel_weight": False,
+        # Constraints
+        "exact_failure_constraint": False,  # if false, use KS function
+    }
+
+    return surface_dict
