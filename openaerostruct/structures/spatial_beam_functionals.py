@@ -114,6 +114,29 @@ class SpatialBeamFunctionals(om.Group):
 
         # compute panel local buckling failure
         if "panel_buckling" in surface and surface["panel_buckling"]:
+            if "useComposite" in surface.keys() and surface["useComposite"]:
+                # need to use the von Mises component to compute skin and spar stresses
+                stress_comp = "stress"
+                self.add_subsystem(
+                    "stress",
+                    VonMisesWingbox(surface=surface),
+                    promotes_inputs=[
+                        "Qz",
+                        "J",
+                        "A_enc",
+                        "spar_thickness",
+                        "htop",
+                        "hbottom",
+                        "hfront",
+                        "hrear",
+                        "nodes",
+                        "disp",
+                    ],
+                )
+            else:
+                # reuse the existing vonmises component
+                stress_comp = "vonmises"
+
             # skin panel buckling and spar shear buckling
             self.add_subsystem(
                 "local_buckling",
@@ -121,7 +144,7 @@ class SpatialBeamFunctionals(om.Group):
                 promotes_inputs=["skin_thickness", "spar_thickness", "t_over_c", "fem_chords"],
                 promotes_outputs=["failure_local_buckling"]
             )
-            self.connect("vonmises.upper_skin_comp_stress", "local_buckling.upper_skin_comp_stress")
-            self.connect("vonmises.lower_skin_comp_stress", "local_buckling.lower_skin_comp_stress")
-            self.connect("vonmises.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
-            self.connect("vonmises.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")
+            self.connect(f"{stress_comp}.upper_skin_comp_stress", "local_buckling.upper_skin_comp_stress")
+            self.connect(f"{stress_comp}.lower_skin_comp_stress", "local_buckling.lower_skin_comp_stress")
+            self.connect(f"{stress_comp}.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
+            self.connect(f"{stress_comp}.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")
