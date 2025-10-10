@@ -228,7 +228,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # partials of joint constraint residuals w.r.t. displacement
             joint_idx = get_joint_idx_from_y(surface, wing_strut_joint_y)
-            print(f'Wing-strut joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+            # print(f'Wing-strut joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
             rows, cols = _joint_rows_cols(wing_strut_joint_type, surface, joint_idx)
             if i == 0:
                 vals = np.ones(n_con_ws) * 1e9
@@ -276,7 +276,7 @@ class FEMStrutBraced(om.ImplicitComponent):
                     joint_idx = get_joint_idx_from_y(surface, wing_jury_joint_y)
                 elif name == "jury":
                     joint_idx = 0  # jury index starts from 0 at the wing-jury joint
-                print(f'Wing-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+                # print(f'Wing-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
                 rows, cols = _joint_rows_cols("rigid", surface, joint_idx)
                 if i == 0:
                     vals = np.ones(n_con_wj) * 1e9
@@ -322,7 +322,7 @@ class FEMStrutBraced(om.ImplicitComponent):
                     joint_idx = get_joint_idx_from_y(surface, strut_jury_joint_y)
                 elif name == "jury":
                     joint_idx = surface["mesh"].shape[1] - 1  # last index of jury surface
-                print(f'Strut-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
+                # print(f'Strut-jury joint ({surface["name"]}): joint y = {surface["mesh"][0, joint_idx, 1]} and joint index = {joint_idx}')
                 rows, cols = _joint_rows_cols("rigid", surface, joint_idx)
                 if i == 0:
                     vals = np.ones(n_con_sj) * 1e9
