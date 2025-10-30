@@ -191,7 +191,7 @@ class FEMStrutBraced(om.ImplicitComponent):
 
             # Set up the derivatives.
             row_col = np.arange(full_size, dtype="int")
-            self.declare_partials(f"disp_aug_{name}", f"forces_{name}", val=np.full(full_size, -1.0), rows=row_col, cols=row_col)
+            self.declare_partials(f"disp_aug_{name}", f"forces_{name}", val=np.full(full_size, -1.0), rows=row_col.copy(), cols=row_col.copy())
 
             # The derivative of residual wrt displacements is the stiffness matrix K. We can use the
             # sparsity pattern here and when constucting the sparse matrix, so save rows and cols.
@@ -203,10 +203,10 @@ class FEMStrutBraced(om.ImplicitComponent):
             k_rows.append(rows)
             k_cols.append(cols)
             self.num_k_data.append(len(rows))
-            self.declare_partials(of=f"disp_aug_{name}", wrt=f"disp_aug_{name}", rows=vec_rows, cols=vec_cols)
+            self.declare_partials(of=f"disp_aug_{name}", wrt=f"disp_aug_{name}", rows=vec_rows.copy(), cols=vec_cols.copy())
 
             rows, cols = get_drdK_sparsity_pattern(ny)
-            self.declare_partials(f"disp_aug_{name}", f"local_stiff_transformed_{name}", rows=rows, cols=cols)
+            self.declare_partials(f"disp_aug_{name}", f"local_stiff_transformed_{name}", rows=rows.copy(), cols=cols.copy())
 
         # --- wing-strut joint constraints (coupling terms between two surfaces) ---
         # list of all joing Lagrange multipliers (will use later)
@@ -234,10 +234,11 @@ class FEMStrutBraced(om.ImplicitComponent):
                 vals = np.ones(n_con_ws) * 1e9
             else:
                 vals = np.ones(n_con_ws) * -1e9
-            self.declare_partials("joint_Lag_wing_strut", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+            
+            self.declare_partials("joint_Lag_wing_strut", f"disp_aug_{name}", rows=rows.copy(), cols=cols.copy(), val=vals.copy())
 
             # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
-            self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_strut", rows=cols, cols=rows, val=vals)
+            self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_strut", rows=cols.copy(), cols=rows.copy(), val=vals.copy())
 
             # rows/cols in the global K matrix (bottom of the matrix)
             rows += sum(self.size)
@@ -282,10 +283,10 @@ class FEMStrutBraced(om.ImplicitComponent):
                     vals = np.ones(n_con_wj) * 1e9
                 else:
                     vals = np.ones(n_con_wj) * -1e9
-                self.declare_partials("joint_Lag_wing_jury", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+                self.declare_partials("joint_Lag_wing_jury", f"disp_aug_{name}", rows=rows.copy(), cols=cols.copy(), val=vals.copy())
 
                 # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
-                self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_jury", rows=cols, cols=rows, val=vals)
+                self.declare_partials(f"disp_aug_{name}", "joint_Lag_wing_jury", rows=cols.copy(), cols=rows.copy(), val=vals.copy())
 
                 # append these entries to the global K matrix
                 rows += self.total_size
@@ -328,10 +329,10 @@ class FEMStrutBraced(om.ImplicitComponent):
                     vals = np.ones(n_con_sj) * 1e9
                 else:
                     vals = np.ones(n_con_sj) * -1e9
-                self.declare_partials("joint_Lag_strut_jury", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
+                self.declare_partials("joint_Lag_strut_jury", f"disp_aug_{name}", rows=rows.copy(), cols=cols.copy(), val=vals.copy())
 
                 # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
-                self.declare_partials(f"disp_aug_{name}", "joint_Lag_strut_jury", rows=cols, cols=rows, val=vals)
+                self.declare_partials(f"disp_aug_{name}", "joint_Lag_strut_jury", rows=cols.copy(), cols=rows.copy(), val=vals.copy())
 
                 # append these entries to the bottom of the global K matrix (and the transpose to the right)
                 rows += self.total_size
