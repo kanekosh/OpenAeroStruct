@@ -234,6 +234,8 @@ class FEMStrutBraced(om.ImplicitComponent):
                 vals = np.ones(n_con_ws) * 1e9
             else:
                 vals = np.ones(n_con_ws) * -1e9
+            
+            print('\n\n Declaring partials! Surface name: ', name, ' rows shape: ', rows.shape, ' cols shape: ', cols.shape, ' vals shape: ', vals.shape)
             self.declare_partials("joint_Lag_wing_strut", f"disp_aug_{name}", rows=rows, cols=cols, val=vals)
 
             # partials of FEM residuals (r = Ku - f) w.r.t. joint Lagrange multipliers: transpose of above
