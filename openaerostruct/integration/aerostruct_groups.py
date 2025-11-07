@@ -368,6 +368,7 @@ class AerostructPoint(om.Group):
             "rotational", False, types=bool, desc="Set to True to turn on support for computing angular velocities"
         )
         self.options.declare("strut_braced", default=False, types=bool)
+        self.options.declare("include_climb_Breguet", default=False, types=bool)
 
     def setup(self):
         surfaces = self.options["surfaces"]
@@ -703,6 +704,27 @@ class AerostructPoint(om.Group):
         # Add functionals to evaluate performance of the system.
         # Note that only the interesting results are promoted here; not all
         # of the parameters.
+        promotes_inputs = [
+            "v",
+            "rho",
+            "empty_cg",
+            "total_weight",
+            "CT",
+            "speed_of_sound",
+            "R",
+            "Mach_number",
+            "W0",
+            "load_factor",
+            "S_ref_total",
+        ]
+        if self.options["include_climb_Breguet"]:
+            # additional inputs for climb fuel burn computation
+            promotes_inputs.extend([
+                "speed_of_sound_climb",
+                "R_climb",
+                "Mach_number_climb",
+                "gamma_climb",
+            ])
         self.add_subsystem(
             "total_perf",
             TotalPerformance(
@@ -710,19 +732,8 @@ class AerostructPoint(om.Group):
                 strut_braced=self.options["strut_braced"],
                 user_specified_Sref=self.options["user_specified_Sref"],
                 internally_connect_fuelburn=self.options["internally_connect_fuelburn"],
+                include_climb_Breguet=self.options["include_climb_Breguet"],
             ),
-            promotes_inputs=[
-                "v",
-                "rho",
-                "empty_cg",
-                "total_weight",
-                "CT",
-                "speed_of_sound",
-                "R",
-                "Mach_number",
-                "W0",
-                "load_factor",
-                "S_ref_total",
-            ],
+            promotes_inputs=promotes_inputs,
             promotes_outputs=["L_equals_W", "fuelburn", "CL", "CD", "CM", "cg"],
         )

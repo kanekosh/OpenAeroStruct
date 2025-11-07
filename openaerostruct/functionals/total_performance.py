@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from openaerostruct.functionals.breguet_range import BreguetRange
+from openaerostruct.functionals.breguet_range import BreguetRange, BreguetRangeClimbAndCruise
 from openaerostruct.functionals.equilibrium import Equilibrium
 from openaerostruct.functionals.center_of_gravity import CenterOfGravity
 from openaerostruct.functionals.moment_coefficient import MomentCoefficient
@@ -18,6 +18,7 @@ class TotalPerformance(om.Group):
         self.options.declare("user_specified_Sref", types=bool)
         self.options.declare("internally_connect_fuelburn", types=bool, default=True)
         self.options.declare("strut_braced", default=False, types=bool)
+        self.options.declare("include_climb_Breguet", default=False, types=bool)
 
     def setup(self):
         surfaces = self.options["surfaces"]
@@ -61,12 +62,22 @@ class TotalPerformance(om.Group):
             promotes_outputs=["CL", "CD", "L", "D"],
         )
 
-        self.add_subsystem(
-            "fuelburn",
-            BreguetRange(surfaces=surfaces_all),
-            promotes_inputs=["*structural_mass", "CL", "CD", "CT", "speed_of_sound", "R", "Mach_number", "W0"],
-            promotes_outputs=["fuelburn"],
-        )
+        if self.options["include_climb_Breguet"]:
+            # climb + cruise fuel burn
+            self.add_subsystem(
+                "fuelburn",
+                BreguetRangeClimbAndCruise(surfaces=surfaces_all),
+                promotes_inputs=["*structural_mass", "CL", "CD", "CT", "speed_of_sound", "speed_of_sound_climb", "R", "R_climb", "Mach_number", "Mach_number_climb", "gamma_climb", "W0"],
+                promotes_outputs=["fuelburn"],
+            )
+        else:
+            # cruise only
+            self.add_subsystem(
+                "fuelburn",
+                BreguetRange(surfaces=surfaces_all),
+                promotes_inputs=["*structural_mass", "CL", "CD", "CT", "speed_of_sound", "R", "Mach_number", "W0"],
+                promotes_outputs=["fuelburn"],
+            )
 
         self.add_subsystem(
             "L_equals_W",
