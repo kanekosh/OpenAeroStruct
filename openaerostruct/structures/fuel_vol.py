@@ -51,6 +51,6 @@ class WingboxFuelVol(om.ExplicitComponent):
 
         # fraction of the fuel tank volume to the wingbox volume. This should be <= 1.
         if "fuel_tank_volume_fraction" in self.options["surface"]:
-            vols *= self.options["surface"]['fuel_tank_volume_fraction']
+            vols *= self.options["surface"]["fuel_tank_volume_fraction"]
 
         outputs["fuel_vols"] = vols
