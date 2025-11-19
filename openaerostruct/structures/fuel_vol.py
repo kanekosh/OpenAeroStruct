@@ -49,4 +49,8 @@ class WingboxFuelVol(om.ExplicitComponent):
         # Next we multiply the element lengths with the A_int for the internal volumes of the wingobox segments
         vols = element_lengths * inputs["A_int"]
 
+        # fraction of the fuel tank volume to the wingbox volume. This should be <= 1.
+        if "fuel_tank_volume_fraction" in self.options["surface"]:
+            vols *= self.options["surface"]['fuel_tank_volume_fraction']
+
         outputs["fuel_vols"] = vols
