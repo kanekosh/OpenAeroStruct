@@ -51,5 +51,11 @@ class WingboxFuelVolDelta(om.ExplicitComponent):
 
         sum_vols = np.sum(vols)
 
+        # fraction of the fuel tank volume to the wingbox volume. This should be <= 1.
+        if "fuel_tank_volume_fraction" in self.options["surface"]:
+            factor = self.options["surface"]["fuel_tank_volume_fraction"]
+        else:
+            factor = 1.0
+
         # This is used for the fuel-volume constraint. It should be positive for fuel to fit.
-        outputs["fuel_vol_delta"] = sum_vols - (fuel_weight + reserves) / fuel_density
+        outputs["fuel_vol_delta"] = sum_vols * factor - (fuel_weight + reserves) / fuel_density

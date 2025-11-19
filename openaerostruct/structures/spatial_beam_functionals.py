@@ -5,14 +5,17 @@ import openmdao.api as om
 # from openaerostruct.structures.spar_within_wing import SparWithinWing
 from openaerostruct.structures.vonmises_tube import VonMisesTube
 from openaerostruct.structures.vonmises_wingbox import VonMisesWingbox
+from openaerostruct.structures.tsaiwu_wingbox import TsaiWuWingbox
 from openaerostruct.structures.non_intersecting_thickness import NonIntersectingThickness
 from openaerostruct.structures.failure_exact import FailureExact
 from openaerostruct.structures.failure_ks import FailureKS
+from openaerostruct.structures.failure_buckling_ks import PanelLocalBucklingFailureKS
 
 
 class SpatialBeamFunctionals(om.Group):
     """Group that contains the spatial beam functionals used to evaluate
-    performance."""
+    performance.
+    """
 
     def initialize(self):
         self.options.declare("surface", types=dict)
@@ -25,7 +28,7 @@ class SpatialBeamFunctionals(om.Group):
         #          Energy(surface=surface),
         #          promotes=['*'])
 
-        if surface["fem_model_type"] == "tube":
+        if surface["fem_model_type"].lower() == "tube":
             self.add_subsystem(
                 "thicknessconstraint",
                 NonIntersectingThickness(surface=surface),
@@ -39,24 +42,44 @@ class SpatialBeamFunctionals(om.Group):
                 promotes_inputs=["radius", "nodes", "disp"],
                 promotes_outputs=["vonmises"],
             )
-        elif surface["fem_model_type"] == "wingbox":
-            self.add_subsystem(
-                "vonmises",
-                VonMisesWingbox(surface=surface),
-                promotes_inputs=[
-                    "Qz",
-                    "J",
-                    "A_enc",
-                    "spar_thickness",
-                    "htop",
-                    "hbottom",
-                    "hfront",
-                    "hrear",
-                    "nodes",
-                    "disp",
-                ],
-                promotes_outputs=["vonmises"],
-            )
+
+        elif surface["fem_model_type"].lower() == "wingbox":
+            if "useComposite" in surface.keys() and surface["useComposite"]:  # using the Composite wingbox
+                self.add_subsystem(
+                    "tsaiwu_sr",
+                    TsaiWuWingbox(surface=surface),
+                    promotes_inputs=[
+                        "Qz",
+                        "J",
+                        "A_enc",
+                        "spar_thickness",
+                        "htop",
+                        "hbottom",
+                        "hfront",
+                        "hrear",
+                        "nodes",
+                        "disp",
+                    ],
+                    promotes_outputs=["tsaiwu_sr"],
+                )
+            else:  # using the Isotropic wingbox
+                self.add_subsystem(
+                    "vonmises",
+                    VonMisesWingbox(surface=surface),
+                    promotes_inputs=[
+                        "Qz",
+                        "J",
+                        "A_enc",
+                        "spar_thickness",
+                        "htop",
+                        "hbottom",
+                        "hfront",
+                        "hrear",
+                        "nodes",
+                        "disp",
+                    ],
+                    promotes_outputs=["vonmises"],
+                )
         else:
             raise NameError("Please select a valid `fem_model_type` from either `tube` or `wingbox`.")
 
@@ -67,10 +90,61 @@ class SpatialBeamFunctionals(om.Group):
         #          promotes=['*'])
 
         if surface["exact_failure_constraint"]:
+            if "useComposite" in surface.keys() and surface["useComposite"]:  # using the Composite wingbox
+                promotedinput = "tsaiwu_sr"
+            else:  # using the Isotropic structures
+                promotedinput = "vonmises"
+
             self.add_subsystem(
-                "failure", FailureExact(surface=surface), promotes_inputs=["vonmises"], promotes_outputs=["failure"]
+                "failure",
+                FailureExact(surface=surface),
+                promotes_inputs=[promotedinput],
+                promotes_outputs=["failure"],
             )
+
         else:
+            if "useComposite" in surface.keys() and surface["useComposite"]:  # using the Composite wingbox
+                promotedinput = "tsaiwu_sr"
+            else:  # using the Isotropic structures
+                promotedinput = "vonmises"
+
             self.add_subsystem(
-                "failure", FailureKS(surface=surface), promotes_inputs=["vonmises"], promotes_outputs=["failure"]
+                "failure", FailureKS(surface=surface), promotes_inputs=[promotedinput], promotes_outputs=["failure"]
             )
+
+        # compute panel local buckling failure
+        if "panel_buckling" in surface and surface["panel_buckling"]:
+            if "useComposite" in surface.keys() and surface["useComposite"]:
+                # need to use the von Mises component to compute skin and spar stresses
+                stress_comp = "stress"
+                self.add_subsystem(
+                    "stress",
+                    VonMisesWingbox(surface=surface),
+                    promotes_inputs=[
+                        "Qz",
+                        "J",
+                        "A_enc",
+                        "spar_thickness",
+                        "htop",
+                        "hbottom",
+                        "hfront",
+                        "hrear",
+                        "nodes",
+                        "disp",
+                    ],
+                )
+            else:
+                # reuse the existing vonmises component
+                stress_comp = "vonmises"
+
+            # skin panel buckling and spar shear buckling
+            self.add_subsystem(
+                "local_buckling",
+                PanelLocalBucklingFailureKS(surface=surface),
+                promotes_inputs=["skin_thickness", "spar_thickness", "t_over_c", "fem_chords"],
+                promotes_outputs=["failure_local_buckling"]
+            )
+            self.connect(f"{stress_comp}.upper_skin_comp_stress", "local_buckling.upper_skin_comp_stress")
+            self.connect(f"{stress_comp}.lower_skin_comp_stress", "local_buckling.lower_skin_comp_stress")
+            self.connect(f"{stress_comp}.front_spar_shear_stress", "local_buckling.front_spar_shear_stress")
+            self.connect(f"{stress_comp}.rear_spar_shear_stress", "local_buckling.rear_spar_shear_stress")

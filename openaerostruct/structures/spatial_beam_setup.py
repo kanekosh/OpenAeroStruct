@@ -8,15 +8,19 @@ from openaerostruct.structures.fuel_vol import WingboxFuelVol
 
 class SpatialBeamSetup(om.Group):
     """Group that sets up the spatial beam components and assembles the
-    stiffness matrix."""
+    stiffness matrix.
+    """
 
     def initialize(self):
         self.options.declare("surface", types=dict)
+        self.options.declare("strut_braced", default=False, types=bool)
 
     def setup(self):
         surface = self.options["surface"]
 
-        self.add_subsystem("nodes", ComputeNodes(surface=surface), promotes_inputs=["mesh"], promotes_outputs=["nodes"])
+        if not (self.options["strut_braced"] and surface["name"] == "jury"):
+            # skip node computation for jury strut because no VLM mesh exists for jury strut
+            self.add_subsystem("nodes", ComputeNodes(surface=surface), promotes_inputs=["mesh"], promotes_outputs=["nodes"])
 
         self.add_subsystem(
             "assembly",
@@ -39,7 +43,7 @@ class SpatialBeamSetup(om.Group):
             promotes_outputs=["cg_location"],
         )
 
-        if surface["fem_model_type"] == "wingbox":
+        if "wingbox" in surface["fem_model_type"].lower():
             self.add_subsystem(
                 "fuel_vol",
                 WingboxFuelVol(surface=surface),
